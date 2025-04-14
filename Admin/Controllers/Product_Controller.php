@@ -102,13 +102,7 @@ class ProductController {
     public function update() {
         require_once './Models/Product_Model.php';
         $product = new ProductModel;
-        $id = $_POST['id'];
-    
-        // Lấy thông tin sản phẩm hiện tại
-        $oldProduct = $product->getById($id);
-        $oldImages = $oldProduct['images'];
-    
-        // Gán các giá trị khác
+        $id = $_POST['id']; // Dữ liệu từ hidden input
         $product->name = $_POST['name'];
         $product->slug = $_POST['slug'];
         $product->summary = $_POST['summary'];
@@ -118,37 +112,41 @@ class ProductController {
         $product->disscounted_price = $_POST['disscounted_price'];
         $product->category_id = $_POST['category_id'];
         $product->brand_id = $_POST['brand_id'];
-    
         $product->countfiles = count($_FILES['images']['name']);
-        $newImages = ''; // Ảnh upload mới
-    
+        
+        $product->images = '';
         for ($i = 0; $i < $product->countfiles; $i++) {
             $filename = $_FILES['images']['name'][$i];
+
+            ## Location
             $location = "../Uploads/" . uniqid() . $filename;
-            $extension = strtolower(pathinfo($location, PATHINFO_EXTENSION));
+            //pathinfo ( string $path [, int $options = PATHINFO_DIRNAME | PATHINFO_BASENAME | PATHINFO_EXTENSION | PATHINFO_FILENAME ] ) : mixed
+            $extension = pathinfo($location, PATHINFO_EXTENSION);
+            $extension = strtolower($extension);
+
+            ## File upload allowed extensions
             $valid_extensions = array("jpg", "jpeg", "png");
-    
-            if (in_array($extension, $valid_extensions)) {
+
+            $response = 0;
+            ## Check file extension
+            if (in_array(strtolower($extension), $valid_extensions)) {
+
+                // them vao CSDL - them thah cong moi upload anh len
+                ## Upload file
+                //$_FILES['file']['tmp_name']: $_FILES['file']['tmp_name'] - The temporary filename of the file in which the uploaded file was stored on the server.
                 if (move_uploaded_file($_FILES['images']['tmp_name'][$i], $location)) {
-                    $newImages .= $location . ";";
+
+                    $product->images .= $location . ";";
                 }
             }
+
         }
-    
-        // Gộp ảnh cũ và mới (nếu có)
-        if (!empty($newImages)) {
-            $newImages = rtrim($newImages, ";");
-            if (!empty($oldImages)) {
-                $product->images = $oldImages . ";" . $newImages;
-            } else {
-                $product->images = $newImages;
-            }
-        } else {
-            $product->images = $oldImages; // Nếu không upload ảnh mới, giữ nguyên ảnh cũ
-        }
-    
+        $product->images = substr($product->images, 0, -1);
+
+        // echo substr($images, 0, -1); exit;
         if ($product->update($id)) {
-            $this->index(); // Reload danh sách sản phẩm
+            $this->index(); //
+            // header("Location: ./index.php?controller=product&action=index"); // Chuyển hướng về danh sách sản phẩm
         } else {
             echo "Lỗi khi cập nhật sản phẩm.";
         }
