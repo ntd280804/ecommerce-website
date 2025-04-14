@@ -52,5 +52,28 @@ class CategoryController {
             echo "Lỗi khi thêm sản phẩm.";
         }
     }
+    public function update() {
+        require_once './Models/Category_Model.php';
+        $categorymodel = new CategoryModel;
+    
+        $id = $_POST['id']; // Dữ liệu từ hidden input
+        $categorymodel->name = $_POST['name'];
+        $categorymodel->slug = $_POST['slug'];
+    
+        if ($categorymodel->update($id)) {
+            $this->index(); // Quay lại danh sách
+        } else {
+            echo "Lỗi khi cập nhật thương hiệu.";
+        }
+    }
+    public function edit() {
+        require_once './Models/Category_Model.php';
+        $categorymodel = new CategoryModel;
+    
+        $id = $_GET['id']; // Lấy id từ URL
+        $category = $categorymodel->getById($id); // Gọi hàm lấy dữ liệu trong model
+    
+        include './Views/EditCategory.php'; // Truyền biến $brand sang View
+    }
 }
 

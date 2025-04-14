@@ -53,7 +53,7 @@
                                 <td><?= htmlspecialchars($brand['status']) ?></td>
                                 <td>
                                     <a class="btn btn-warning"
-                                    href=""
+                                    href="./index.php?controller=brand&action=edit&id=<?= $brand['id'] ?>"
                                     onclick="return confirm('Bạn có chắc muốn sửa thương hiệu này?');">Edit</a>
                                     
                                     

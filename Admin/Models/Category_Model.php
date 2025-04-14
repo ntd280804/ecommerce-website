@@ -52,4 +52,19 @@ class CategoryModel {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function getById($id) {
+        $sql = "SELECT * FROM categories WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    public function update($id) {
+        $sql = "UPDATE categories SET name = :name, slug = :slug WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':name', $this->name);
+        $stmt->bindParam(':slug', $this->slug);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
 }

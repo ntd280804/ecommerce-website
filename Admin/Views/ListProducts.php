@@ -67,19 +67,21 @@
                             <td><?= htmlspecialchars($product['disscounted_price']) ?></td>
                             <td><?= htmlspecialchars($product['status']) ?></td>
 
-                                <td>
-                                    <a class="btn btn-warning">Edit</a>
+                            <td>
+                            <a class="btn btn-warning"
+                                    href="./index.php?controller=product&action=edit&id=<?= $product['id'] ?>"
+                                    onclick="return confirm('Bạn có chắc muốn sửa sản phẩm này?');">Edit</a>
 
-                                    <?php if ($product['status'] == 'Active') : ?>
-                                        <a class="btn btn-danger"
-                                           href="./index.php?controller=product&action=toggleStatus&id=<?= $product['id'] ?>&status=<?= $product['status'] ?>"
-                                           onclick="return confirm('Bạn có chắc muốn vô hiệu hóa sản phẩm này?');">Inactivate</a>
-                                    <?php else : ?>
-                                        <a class="btn btn-success"
-                                           href="./index.php?controller=product&action=toggleStatus&id=<?= $product['id'] ?>&status=<?= $product['status'] ?>"
-                                           onclick="return confirm('Bạn có chắc muốn kích hoạt sản phẩm này?');">Activate</a>
-                                    <?php endif; ?>
-                                </td>
+                                <?php if ($product['status'] == 'Active') : ?>
+                                    <a class="btn btn-danger"
+                                        href="./index.php?controller=product&action=toggleStatus&id=<?= $product['id'] ?>&status=<?= $product['status'] ?>"
+                                        onclick="return confirm('Bạn có chắc muốn vô hiệu hóa sản phẩm này?');">Inactivate</a>
+                                <?php else : ?>
+                                    <a class="btn btn-success"
+                                        href="./index.php?controller=product&action=toggleStatus&id=<?= $product['id'] ?>&status=<?= $product['status'] ?>"
+                                        onclick="return confirm('Bạn có chắc muốn kích hoạt sản phẩm này?');">Activate</a>
+                                <?php endif; ?>
+                            </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else : ?>

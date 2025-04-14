@@ -78,6 +78,18 @@ class ProductModel {
         $arr = explode(';', $arrstr);
         return "<img src='$arr[0]' height='$height' alt='Product Image' />";
     }
+    public function getAllImages($arrstr, $height = 100)
+    {
+        $arr = explode(';', $arrstr);
+        $html = '';
+        foreach ($arr as $img) {
+            if (!empty($img)) {
+                $html .= "<img src='" . htmlspecialchars($img) . "' height='$height' style='margin-right:10px;' alt='Product Image' />";
+            }
+        }
+        return $html;
+    }
+
     public function getBrandNameById($brand_id) {
         $stmt = $this->conn->prepare("SELECT name FROM brands WHERE id = :id");
         $stmt->bindParam(':id', $brand_id, PDO::PARAM_INT);
@@ -93,6 +105,42 @@ class ProductModel {
         $category = $stmt->fetch(PDO::FETCH_ASSOC);
         return $category ? $category['name'] : 'N/A';
     }
-    
+    public function getById($id) {
+        $sql = "SELECT * FROM products WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    public function update($id) {
+        $sql = "UPDATE products 
+        SET name = :name, 
+            slug = :slug, 
+            summary = :summary, 
+            description = :description, 
+            stock = :stock, 
+            price = :price, 
+            disscounted_price = :disscounted_price, 
+            images = :images, 
+            category_id = :category_id, 
+            brand_id = :brand_id 
+        WHERE id = :id";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->bindParam(':name', $this->name);
+        $stmt->bindParam(':slug', $this->slug);
+        $stmt->bindParam(':summary', $this->summary);
+        $stmt->bindParam(':description', $this->description);
+        $stmt->bindParam(':stock', $this->stock);
+        $stmt->bindParam(':price', $this->price);
+        $stmt->bindParam(':disscounted_price', $this->disscounted_price);
+        $stmt->bindParam(':images', $this->images);
+        $stmt->bindParam(':category_id', $this->category_id);
+        $stmt->bindParam(':brand_id', $this->brand_id);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+        return $stmt->execute();
+    }
 }
 

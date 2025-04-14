@@ -3,8 +3,6 @@ require("Includes/Header.php");
 require_once("../Config/Database.php"); 
 
 ?>
-
-
 <div class="container">
 
 <div class="card o-hidden border-0 shadow-lg my-5">
@@ -15,25 +13,24 @@ require_once("../Config/Database.php");
             <div class="col-lg-12">
                 <div class="p-5">
                     <div class="text-center">
-                        <h1 class="h4 text-gray-900 mb-4">Cập nhật thương hiệu</h1>
+                        <h1 class="h4 text-gray-900 mb-4">Cập nhật danh mục</h1>
                     </div>
-                    <form class="user" method="post" action="./index.php?controller=brand&action=update">
-
-                        <input type="hidden" name="id" value="<?php echo $brand['id']; ?>">
+                    <form class="user" method="post" action="./index.php?controller=category&action=update">
+                    <input type="hidden" name="id" value="<?php echo $category['id']; ?>">
                         <div class="form-group">
                             <input type="text" class="form-control form-control-user"
                                 id="name" name="name" aria-describedby="name"
-                                placeholder="Nhập tên thương hiệu" value="<?php echo $brand['name']; ?>">
+                                placeholder="Nhập tên danh mục" value="<?php echo $category['name']; ?>">
                         </div>
                         <div class="form-group">
                             <input type="text" class="form-control form-control-user"
                                 id="slug" name="slug" aria-describedby="name"
-                                placeholder="Nhập slug thương hiệu" value="<?php echo $brand['slug']; ?>">
+                                placeholder="Nhập slug danh mục" value="<?php echo $category['slug']; ?>">
                         </div>
                         
                         <button class="btn btn-primary" type="submit">Cập nhật</button>
+                        
                     </form>
-
 
                 </div>
             </div>

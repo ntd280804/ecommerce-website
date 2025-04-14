@@ -17,6 +17,7 @@ class BrandController {
         include './Views/ListBrands.php';
     }
     
+    
     public function toggleStatus() {
         if (isset($_GET['id']) && isset($_GET['status'])) {
             $id = $_GET['id'];
@@ -34,14 +35,9 @@ class BrandController {
             }
         }
     }
-    
     public function add() {
         include './Views/AddBrand.php';
     }
-    
-    
-    
-
     public function store() {
         require_once './Models/Brand_Model.php';
         $product = new BrandModel;
@@ -55,6 +51,29 @@ class BrandController {
         } else {
             echo "Lỗi khi thêm sản phẩm.";
         }
+    }
+    public function update() {
+        require_once './Models/Brand_Model.php';
+        $brandmodel = new BrandModel;
+    
+        $id = $_POST['id']; // Dữ liệu từ hidden input
+        $brandmodel->name = $_POST['name'];
+        $brandmodel->slug = $_POST['slug'];
+    
+        if ($brandmodel->update($id)) {
+            $this->index(); // Quay lại danh sách
+        } else {
+            echo "Lỗi khi cập nhật thương hiệu.";
+        }
+    }
+    public function edit() {
+        require_once './Models/Brand_Model.php';
+        $brandModel = new BrandModel();
+    
+        $id = $_GET['id']; // Lấy id từ URL
+        $brand = $brandModel->getById($id); // Gọi hàm lấy dữ liệu trong model
+    
+        include './Views/EditBrand.php'; // Truyền biến $brand sang View
     }
     
 }

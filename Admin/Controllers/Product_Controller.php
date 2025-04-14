@@ -15,7 +15,7 @@ class ProductController {
         $status = $_GET['status'] ?? 'all'; 
         $products = $productModel->getByStatus($status);
 
-include './Views/ListProducts.php';
+        include './Views/ListProducts.php';
 
     
         include './Views/ListProducts.php';
@@ -99,5 +99,76 @@ include './Views/ListProducts.php';
             echo "Lỗi khi thêm sản phẩm.";
         }
     }
+    public function update() {
+        require_once './Models/Product_Model.php';
+        $product = new ProductModel;
+        $id = $_POST['id'];
+    
+        // Lấy thông tin sản phẩm hiện tại
+        $oldProduct = $product->getById($id);
+        $oldImages = $oldProduct['images'];
+    
+        // Gán các giá trị khác
+        $product->name = $_POST['name'];
+        $product->slug = $_POST['slug'];
+        $product->summary = $_POST['summary'];
+        $product->description = $_POST['description'];
+        $product->stock = $_POST['stock'];
+        $product->price = $_POST['price'];
+        $product->disscounted_price = $_POST['disscounted_price'];
+        $product->category_id = $_POST['category_id'];
+        $product->brand_id = $_POST['brand_id'];
+    
+        $product->countfiles = count($_FILES['images']['name']);
+        $newImages = ''; // Ảnh upload mới
+    
+        for ($i = 0; $i < $product->countfiles; $i++) {
+            $filename = $_FILES['images']['name'][$i];
+            $location = "../Uploads/" . uniqid() . $filename;
+            $extension = strtolower(pathinfo($location, PATHINFO_EXTENSION));
+            $valid_extensions = array("jpg", "jpeg", "png");
+    
+            if (in_array($extension, $valid_extensions)) {
+                if (move_uploaded_file($_FILES['images']['tmp_name'][$i], $location)) {
+                    $newImages .= $location . ";";
+                }
+            }
+        }
+    
+        // Gộp ảnh cũ và mới (nếu có)
+        if (!empty($newImages)) {
+            $newImages = rtrim($newImages, ";");
+            if (!empty($oldImages)) {
+                $product->images = $oldImages . ";" . $newImages;
+            } else {
+                $product->images = $newImages;
+            }
+        } else {
+            $product->images = $oldImages; // Nếu không upload ảnh mới, giữ nguyên ảnh cũ
+        }
+    
+        if ($product->update($id)) {
+            $this->index(); // Reload danh sách sản phẩm
+        } else {
+            echo "Lỗi khi cập nhật sản phẩm.";
+        }
+    }
+    
+    public function edit() {
+        require_once './Models/Brand_Model.php';
+        $brandModel = new BrandModel();
+        $brands = $brandModel->getByStatus('all'); // Lấy danh sách thương hiệu từ model
+        require_once './Models/Category_Model.php';
+        $categoryModel = new CategoryModel();
+        $categories = $categoryModel->getByStatus('all'); // Lấy danh sách danh mục từ model
+        require_once './Models/Product_Model.php';
+        $productmodel = new ProductModel();
+    
+        $id = $_GET['id']; // Lấy id từ URL
+        $product = $productmodel->getById($id); // Gọi hàm lấy dữ liệu trong model
+    
+        include './Views/EditProduct.php'; // Truyền biến $brand sang View
+    }
+    
     
 }

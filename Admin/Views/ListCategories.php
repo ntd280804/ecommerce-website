@@ -52,19 +52,22 @@
                                 <td><?= htmlspecialchars($category['slug']) ?></td>
                                 <td><?= htmlspecialchars($category['status']) ?></td>
                                 <td>
-                                    <a class="btn btn-warning">Edit</a>
+                                <a class="btn btn-warning"
+                                    href="./index.php?controller=category&action=edit&id=<?= $category['id'] ?>"
+                                    onclick="return confirm('Bạn có chắc muốn sửa danh mục này?');">Edit
+                                </a>
                                     
-                                    <?php if ($category['status'] == 'Active') : ?>
-                                        <!-- If the category is active, show a button to deactivate it -->
-                                        <a class="btn btn-danger"
-                                        href="./index.php?controller=category&action=toggleStatus&id=<?= $category['id'] ?>&status=<?= $category['status'] ?>"
-                                        onclick="return confirm('Bạn có chắc muốn vô hiệu hóa thương hiệu này?');">Inactivate</a>
-                                    <?php else : ?>
-                                        <!-- If the category is inactive, show a button to activate it -->
-                                        <a class="btn btn-success"
-                                        href="./index.php?controller=category&action=toggleStatus&id=<?= $category['id'] ?>&status=<?= $category['status'] ?>"
-                                        onclick="return confirm('Bạn có chắc muốn kích hoạt thương hiệu này?');">Activate</a>
-                                    <?php endif; ?>
+                                <?php if ($category['status'] == 'Active') : ?>
+                                    <!-- If the category is active, show a button to deactivate it -->
+                                    <a class="btn btn-danger"
+                                    href="./index.php?controller=category&action=toggleStatus&id=<?= $category['id'] ?>&status=<?= $category['status'] ?>"
+                                    onclick="return confirm('Bạn có chắc muốn vô hiệu hóa thương hiệu này?');">Inactivate</a>
+                                <?php else : ?>
+                                    <!-- If the category is inactive, show a button to activate it -->
+                                    <a class="btn btn-success"
+                                    href="./index.php?controller=category&action=toggleStatus&id=<?= $category['id'] ?>&status=<?= $category['status'] ?>"
+                                    onclick="return confirm('Bạn có chắc muốn kích hoạt thương hiệu này?');">Activate</a>
+                                <?php endif; ?>
 
                                 </td>
                             </tr>

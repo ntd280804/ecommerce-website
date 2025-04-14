@@ -14,14 +14,13 @@ class BrandModel {
 
         $sql = "INSERT INTO brands (name,slug)
                 VALUES (:name,:slug)";
-        
         $stmt = $this->conn->prepare($sql);
-
-
         $stmt->bindParam(':name', $this->name);
         $stmt->bindParam(':slug', $this->slug);
         return $stmt->execute();
     }
+    
+    
     
     public function updateStatus($id, $currentStatus) {
         // Toggle the status based on the current status
@@ -55,5 +54,19 @@ class BrandModel {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    
+    public function getById($id) {
+        $sql = "SELECT * FROM brands WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    public function update($id) {
+        $sql = "UPDATE brands SET name = :name, slug = :slug WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':name', $this->name);
+        $stmt->bindParam(':slug', $this->slug);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
 }
