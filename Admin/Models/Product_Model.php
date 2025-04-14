@@ -89,7 +89,18 @@ class ProductModel {
         }
         return $html;
     }
-
+    public function getImagesById($id) {
+        // Truy vấn lấy hình ảnh của sản phẩm theo id
+        $sql = "SELECT images FROM products WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);  // Sử dụng $this->conn thay vì DB::prepare()
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+    
+        // Trả về danh sách hình ảnh của sản phẩm
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['images'] ?? ''; // Trả về chuỗi hình ảnh nếu có, nếu không trả về chuỗi rỗng
+    }
+    
     public function getBrandNameById($brand_id) {
         $stmt = $this->conn->prepare("SELECT name FROM brands WHERE id = :id");
         $stmt->bindParam(':id', $brand_id, PDO::PARAM_INT);

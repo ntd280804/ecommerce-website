@@ -112,45 +112,53 @@ class ProductController {
         $product->disscounted_price = $_POST['disscounted_price'];
         $product->category_id = $_POST['category_id'];
         $product->brand_id = $_POST['brand_id'];
+    
+        // Lấy danh sách các file hình ảnh cũ từ CSDL
+        $oldImages = $product->getImagesById($id);
+        $oldImages = explode(";", $oldImages); // Chia các đường dẫn file hình ảnh cũ
+    
+        // Lưu các file mới
         $product->countfiles = count($_FILES['images']['name']);
-        
         $product->images = '';
+        $newImages = [];
+    
         for ($i = 0; $i < $product->countfiles; $i++) {
             $filename = $_FILES['images']['name'][$i];
-
-            ## Location
+    
+            // Định vị lưu trữ
             $location = "../Uploads/" . uniqid() . $filename;
-            //pathinfo ( string $path [, int $options = PATHINFO_DIRNAME | PATHINFO_BASENAME | PATHINFO_EXTENSION | PATHINFO_FILENAME ] ) : mixed
             $extension = pathinfo($location, PATHINFO_EXTENSION);
             $extension = strtolower($extension);
-
-            ## File upload allowed extensions
+    
+            // Các định dạng file hợp lệ
             $valid_extensions = array("jpg", "jpeg", "png");
-
-            $response = 0;
-            ## Check file extension
+    
             if (in_array(strtolower($extension), $valid_extensions)) {
-
-                // them vao CSDL - them thah cong moi upload anh len
-                ## Upload file
-                //$_FILES['file']['tmp_name']: $_FILES['file']['tmp_name'] - The temporary filename of the file in which the uploaded file was stored on the server.
                 if (move_uploaded_file($_FILES['images']['tmp_name'][$i], $location)) {
-
                     $product->images .= $location . ";";
+                    $newImages[] = $location; // Lưu đường dẫn hình ảnh mới vào mảng
                 }
             }
-
         }
-        $product->images = substr($product->images, 0, -1);
-
-        // echo substr($images, 0, -1); exit;
+    
+        $product->images = substr($product->images, 0, -1); // Cắt dấu ";" cuối cùng
+    
+        // Xóa các file cũ không còn trong danh sách mới
+        $imagesToDelete = array_diff($oldImages, $newImages); // Các hình ảnh cũ không còn trong mảng mới
+        foreach ($imagesToDelete as $image) {
+            if (file_exists($image)) {
+                unlink($image); // Xóa file cũ
+            }
+        }
+    
+        // Cập nhật cơ sở dữ liệu
         if ($product->update($id)) {
-            $this->index(); //
-            // header("Location: ./index.php?controller=product&action=index"); // Chuyển hướng về danh sách sản phẩm
+            $this->index(); // Quay lại danh sách sản phẩm
         } else {
             echo "Lỗi khi cập nhật sản phẩm.";
         }
     }
+    
     
     public function edit() {
         require_once './Models/Brand_Model.php';
