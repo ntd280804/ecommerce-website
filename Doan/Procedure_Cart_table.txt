@@ -1,0 +1,32 @@
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `AddToCart`(
+    IN p_user_id INT,
+    IN p_product_id INT,
+    IN p_qty INT
+)
+BEGIN
+    INSERT INTO cart (user_id, product_id, qty)
+    VALUES (p_user_id, p_product_id, p_qty)
+    ON DUPLICATE KEY UPDATE qty = qty + p_qty, updated_at = CURRENT_TIMESTAMP;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `DeleteCartItem`(IN p_id INT)
+BEGIN
+    DELETE FROM cart WHERE id = p_id;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateCartItemQty`(
+    IN p_id INT,
+    IN p_qty INT
+)
+BEGIN
+    UPDATE cart
+    SET qty = p_qty,
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = p_id;
+END$$
+DELIMITER ;

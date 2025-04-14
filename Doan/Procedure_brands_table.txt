@@ -1,0 +1,35 @@
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `AddBrand`(
+    IN p_name VARCHAR(255),
+    IN p_slug VARCHAR(255),
+    IN p_status ENUM('Active', 'Inactive')
+)
+BEGIN
+    INSERT INTO brands (name, slug, status)
+    VALUES (p_name, p_slug, p_status);
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `DeleteBrand`(IN p_id INT)
+BEGIN
+    DELETE FROM brands WHERE id = p_id;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateBrand`(
+    IN p_id INT,
+    IN p_name VARCHAR(255),
+    IN p_slug VARCHAR(255),
+    IN p_status ENUM('Active', 'Inactive')
+)
+BEGIN
+    UPDATE brands
+    SET name = p_name,
+        slug = p_slug,
+        status = p_status,
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = p_id;
+END$$
+DELIMITER ;

@@ -1,0 +1,730 @@
+-- Thay đổi dấu phân cách để tạo procedures
+DELIMITER //
+
+-- =============================================
+-- Procedures cho bảng admins
+-- =============================================
+
+-- Tạo admin mới
+CREATE PROCEDURE sp_admin_create (
+    IN p_name VARCHAR(255),
+    IN p_email VARCHAR(255),
+    IN p_password VARCHAR(255), -- Nhớ băm mật khẩu ở phía ứng dụng!
+    IN p_phone VARCHAR(20),
+    IN p_address TEXT,
+    IN p_status ENUM('Active', 'Inactive'),
+    IN p_type ENUM('Admin', 'Staff'),
+    OUT p_new_id INT
+)
+BEGIN
+    INSERT INTO admins (name, email, password, phone, address, status, type)
+    VALUES (p_name, p_email, p_password, p_phone, p_address, p_status, p_type);
+    SET p_new_id = LAST_INSERT_ID();
+END //
+
+-- Lấy thông tin admin theo ID
+CREATE PROCEDURE sp_admin_get_by_id (
+    IN p_id INT
+)
+BEGIN
+    SELECT id, name, email, phone, address, status, type, created_at, updated_at
+    FROM admins
+    WHERE id = p_id;
+END //
+
+-- Lấy thông tin admin theo Email (Hữu ích cho việc đăng nhập)
+CREATE PROCEDURE sp_admin_get_by_email (
+    IN p_email VARCHAR(255)
+)
+BEGIN
+    SELECT id, name, email, password, phone, address, status, type, created_at, updated_at
+    FROM admins
+    WHERE email = p_email;
+END //
+
+-- Lấy danh sách tất cả admin
+CREATE PROCEDURE sp_admin_get_all ()
+BEGIN
+    SELECT id, name, email, phone, address, status, type, created_at, updated_at
+    FROM admins;
+END //
+
+-- Cập nhật thông tin admin
+CREATE PROCEDURE sp_admin_update (
+    IN p_id INT,
+    IN p_name VARCHAR(255),
+    IN p_email VARCHAR(255),
+    IN p_password VARCHAR(255), -- Chỉ cập nhật nếu giá trị mới được cung cấp và đã băm
+    IN p_phone VARCHAR(20),
+    IN p_address TEXT,
+    IN p_status ENUM('Active', 'Inactive'),
+    IN p_type ENUM('Admin', 'Staff')
+)
+BEGIN
+    UPDATE admins
+    SET
+        name = p_name,
+        email = p_email,
+        -- Chỉ cập nhật mật khẩu nếu p_password không rỗng hoặc null
+        password = IF(p_password IS NOT NULL AND p_password != '', p_password, password),
+        phone = p_phone,
+        address = p_address,
+        status = p_status,
+        type = p_type
+        -- updated_at sẽ tự động cập nhật bởi định nghĩa bảng
+    WHERE id = p_id;
+END //
+
+-- Xóa admin
+CREATE PROCEDURE sp_admin_delete (
+    IN p_id INT
+)
+BEGIN
+    DELETE FROM admins WHERE id = p_id;
+END //
+
+-- =============================================
+-- Procedures cho bảng users
+-- =============================================
+
+-- Tạo user mới
+CREATE PROCEDURE sp_user_create (
+    IN p_name VARCHAR(255),
+    IN p_email VARCHAR(255),
+    IN p_password VARCHAR(255), -- Nhớ băm mật khẩu ở phía ứng dụng!
+    IN p_phone VARCHAR(20),
+    IN p_address TEXT,
+    IN p_status ENUM('Active', 'Inactive'),
+    OUT p_new_id INT
+)
+BEGIN
+    INSERT INTO users (name, email, password, phone, address, status)
+    VALUES (p_name, p_email, p_password, p_phone, p_address, p_status);
+    SET p_new_id = LAST_INSERT_ID();
+END //
+
+-- Lấy thông tin user theo ID
+CREATE PROCEDURE sp_user_get_by_id (
+    IN p_id INT
+)
+BEGIN
+    SELECT id, name, email, phone, address, status, created_at, updated_at
+    FROM users
+    WHERE id = p_id;
+END //
+
+-- Lấy thông tin user theo Email (Hữu ích cho việc đăng nhập)
+CREATE PROCEDURE sp_user_get_by_email (
+    IN p_email VARCHAR(255)
+)
+BEGIN
+    SELECT id, name, email, password, phone, address, status, created_at, updated_at
+    FROM users
+    WHERE email = p_email;
+END //
+
+-- Lấy danh sách tất cả user
+CREATE PROCEDURE sp_user_get_all ()
+BEGIN
+    SELECT id, name, email, phone, address, status, created_at, updated_at
+    FROM users;
+END //
+
+-- Cập nhật thông tin user
+CREATE PROCEDURE sp_user_update (
+    IN p_id INT,
+    IN p_name VARCHAR(255),
+    IN p_email VARCHAR(255),
+    IN p_password VARCHAR(255), -- Chỉ cập nhật nếu giá trị mới được cung cấp và đã băm
+    IN p_phone VARCHAR(20),
+    IN p_address TEXT,
+    IN p_status ENUM('Active', 'Inactive')
+)
+BEGIN
+    UPDATE users
+    SET
+        name = p_name,
+        email = p_email,
+        password = IF(p_password IS NOT NULL AND p_password != '', p_password, password),
+        phone = p_phone,
+        address = p_address,
+        status = p_status
+        -- updated_at sẽ tự động cập nhật
+    WHERE id = p_id;
+END //
+
+-- Xóa user
+CREATE PROCEDURE sp_user_delete (
+    IN p_id INT
+)
+BEGIN
+    -- Cân nhắc: Xóa user có thể ảnh hưởng đến các bảng khác (reviews, orders, cart).
+    -- Có thể bạn muốn cập nhật status thành 'Inactive' thay vì xóa cứng (soft delete).
+    -- Hoặc đảm bảo các ràng buộc khóa ngoại (ON DELETE CASCADE/SET NULL) được thiết lập đúng.
+    -- Ví dụ này thực hiện xóa cứng.
+    DELETE FROM users WHERE id = p_id;
+END //
+
+
+-- =============================================
+-- Procedures cho bảng categories
+-- =============================================
+
+CREATE PROCEDURE sp_category_create (
+    IN p_name VARCHAR(255),
+    IN p_slug VARCHAR(255),
+    IN p_status ENUM('Active', 'Inactive'),
+    OUT p_new_id INT
+)
+BEGIN
+    INSERT INTO categories (name, slug, status)
+    VALUES (p_name, p_slug, p_status);
+    SET p_new_id = LAST_INSERT_ID();
+END //
+
+CREATE PROCEDURE sp_category_get_by_id (
+    IN p_id INT
+)
+BEGIN
+    SELECT id, name, slug, status, created_at, updated_at
+    FROM categories
+    WHERE id = p_id;
+END //
+
+CREATE PROCEDURE sp_category_get_all (
+    IN p_only_active BOOLEAN -- Tham số tùy chọn để chỉ lấy các mục đang hoạt động
+)
+BEGIN
+    IF p_only_active IS TRUE THEN
+        SELECT id, name, slug, status, created_at, updated_at FROM categories WHERE status = 'Active';
+    ELSE
+        SELECT id, name, slug, status, created_at, updated_at FROM categories;
+    END IF;
+END //
+
+CREATE PROCEDURE sp_category_update (
+    IN p_id INT,
+    IN p_name VARCHAR(255),
+    IN p_slug VARCHAR(255),
+    IN p_status ENUM('Active', 'Inactive')
+)
+BEGIN
+    UPDATE categories
+    SET
+        name = p_name,
+        slug = p_slug,
+        status = p_status
+        -- updated_at sẽ tự động cập nhật
+    WHERE id = p_id;
+END //
+
+CREATE PROCEDURE sp_category_delete (
+    IN p_id INT
+)
+BEGIN
+    -- Cân nhắc: Xóa category có thể ảnh hưởng đến products.
+    -- Có thể muốn cập nhật status hoặc kiểm tra xem có product nào đang dùng category này không.
+    DELETE FROM categories WHERE id = p_id;
+END //
+
+
+-- =============================================
+-- Procedures cho bảng brands
+-- =============================================
+
+CREATE PROCEDURE sp_brand_create (
+    IN p_name VARCHAR(255),
+    IN p_slug VARCHAR(255),
+    IN p_status ENUM('Active', 'Inactive'),
+    OUT p_new_id INT
+)
+BEGIN
+    INSERT INTO brands (name, slug, status)
+    VALUES (p_name, p_slug, p_status);
+    SET p_new_id = LAST_INSERT_ID();
+END //
+
+CREATE PROCEDURE sp_brand_get_by_id (
+    IN p_id INT
+)
+BEGIN
+    SELECT id, name, slug, status, created_at, updated_at
+    FROM brands
+    WHERE id = p_id;
+END //
+
+CREATE PROCEDURE sp_brand_get_all (
+    IN p_only_active BOOLEAN
+)
+BEGIN
+    IF p_only_active IS TRUE THEN
+        SELECT id, name, slug, status, created_at, updated_at FROM brands WHERE status = 'Active';
+    ELSE
+        SELECT id, name, slug, status, created_at, updated_at FROM brands;
+    END IF;
+END //
+
+CREATE PROCEDURE sp_brand_update (
+    IN p_id INT,
+    IN p_name VARCHAR(255),
+    IN p_slug VARCHAR(255),
+    IN p_status ENUM('Active', 'Inactive')
+)
+BEGIN
+    UPDATE brands
+    SET
+        name = p_name,
+        slug = p_slug,
+        status = p_status
+        -- updated_at sẽ tự động cập nhật
+    WHERE id = p_id;
+END //
+
+CREATE PROCEDURE sp_brand_delete (
+    IN p_id INT
+)
+BEGIN
+    -- Cân nhắc tương tự như category
+    DELETE FROM brands WHERE id = p_id;
+END //
+
+
+-- =============================================
+-- Procedures cho bảng products
+-- =============================================
+
+CREATE PROCEDURE sp_product_create (
+    IN p_name VARCHAR(255),
+    IN p_slug VARCHAR(255),
+    IN p_description TEXT,
+    IN p_summary TEXT,
+    IN p_stock INT,
+    IN p_price DECIMAL(10,2),
+    IN p_discounted_price DECIMAL(10,2),
+    IN p_images TEXT,
+    IN p_category_id INT,
+    IN p_brand_id INT,
+    IN p_status ENUM('Active', 'Inactive'),
+    OUT p_new_id INT
+)
+BEGIN
+    INSERT INTO products (name, slug, description, summary, stock, price, discounted_price, images, category_id, brand_id, status)
+    VALUES (p_name, p_slug, p_description, p_summary, p_stock, p_price, p_discounted_price, p_images, p_category_id, p_brand_id, p_status);
+    SET p_new_id = LAST_INSERT_ID();
+END //
+
+CREATE PROCEDURE sp_product_get_by_id (
+    IN p_id INT
+)
+BEGIN
+    SELECT p.id, p.name, p.slug, p.description, p.summary, p.stock, p.price, p.discounted_price, p.images,
+           p.category_id, c.name as category_name,
+           p.brand_id, b.name as brand_name,
+           p.status, p.created_at, p.updated_at
+    FROM products p
+    LEFT JOIN categories c ON p.category_id = c.id
+    LEFT JOIN brands b ON p.brand_id = b.id
+    WHERE p.id = p_id;
+END //
+
+-- Lấy danh sách sản phẩm (có thể thêm bộ lọc và phân trang)
+CREATE PROCEDURE sp_product_get_all (
+    IN p_category_id INT, -- NULL để không lọc theo category
+    IN p_brand_id INT,    -- NULL để không lọc theo brand
+    IN p_status ENUM('Active', 'Inactive', ''), -- '' hoặc NULL để không lọc theo status
+    IN p_limit INT,       -- Số lượng bản ghi tối đa (NULL để lấy hết)
+    IN p_offset INT       -- Bắt đầu từ bản ghi thứ mấy (NULL hoặc 0 để bắt đầu từ đầu)
+)
+BEGIN
+    SET @sql = 'SELECT p.id, p.name, p.slug, p.summary, p.stock, p.price, p.discounted_price, p.images,
+                      p.category_id, c.name as category_name,
+                      p.brand_id, b.name as brand_name,
+                      p.status, p.created_at, p.updated_at
+               FROM products p
+               LEFT JOIN categories c ON p.category_id = c.id
+               LEFT JOIN brands b ON p.brand_id = b.id
+               WHERE 1=1'; -- Điều kiện luôn đúng để dễ dàng nối các điều kiện khác
+
+    IF p_category_id IS NOT NULL THEN
+        SET @sql = CONCAT(@sql, ' AND p.category_id = ', p_category_id);
+    END IF;
+
+    IF p_brand_id IS NOT NULL THEN
+        SET @sql = CONCAT(@sql, ' AND p.brand_id = ', p_brand_id);
+    END IF;
+
+    IF p_status IS NOT NULL AND p_status != '' THEN
+        SET @sql = CONCAT(@sql, ' AND p.status = ''', p_status, ''''); -- Chú ý dấu nháy đơn
+    END IF;
+
+    IF p_limit IS NOT NULL THEN
+        IF p_offset IS NULL THEN
+            SET p_offset = 0;
+        END IF;
+        SET @sql = CONCAT(@sql, ' LIMIT ', p_offset, ', ', p_limit);
+    END IF;
+
+    PREPARE stmt FROM @sql;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;
+END //
+
+CREATE PROCEDURE sp_product_update (
+    IN p_id INT,
+    IN p_name VARCHAR(255),
+    IN p_slug VARCHAR(255),
+    IN p_description TEXT,
+    IN p_summary TEXT,
+    IN p_stock INT,
+    IN p_price DECIMAL(10,2),
+    IN p_discounted_price DECIMAL(10,2),
+    IN p_images TEXT,
+    IN p_category_id INT,
+    IN p_brand_id INT,
+    IN p_status ENUM('Active', 'Inactive')
+)
+BEGIN
+    UPDATE products
+    SET
+        name = p_name,
+        slug = p_slug,
+        description = p_description,
+        summary = p_summary,
+        stock = p_stock,
+        price = p_price,
+        discounted_price = p_discounted_price,
+        images = p_images,
+        category_id = p_category_id,
+        brand_id = p_brand_id,
+        status = p_status
+        -- updated_at sẽ tự động cập nhật
+    WHERE id = p_id;
+END //
+
+CREATE PROCEDURE sp_product_delete (
+    IN p_id INT
+)
+BEGIN
+    -- Cân nhắc: Xóa sản phẩm có thể ảnh hưởng đến reviews, order_details, cart.
+    -- Kiểm tra hoặc sử dụng soft delete (cập nhật status) là tốt hơn.
+    DELETE FROM products WHERE id = p_id;
+END //
+
+-- =============================================
+-- Procedures cho bảng reviews
+-- =============================================
+
+CREATE PROCEDURE sp_review_create (
+    IN p_user_id INT,
+    IN p_product_id INT,
+    IN p_comment TEXT,
+    IN p_rating INT,
+    OUT p_new_id INT
+)
+BEGIN
+    INSERT INTO reviews (user_id, product_id, comment, rating)
+    VALUES (p_user_id, p_product_id, p_comment, p_rating);
+    SET p_new_id = LAST_INSERT_ID();
+END //
+
+CREATE PROCEDURE sp_review_get_by_id (
+    IN p_id INT
+)
+BEGIN
+    SELECT r.id, r.user_id, u.name as user_name, r.product_id, p.name as product_name, r.comment, r.rating, r.created_at, r.updated_at
+    FROM reviews r
+    JOIN users u ON r.user_id = u.id
+    JOIN products p ON r.product_id = p.id
+    WHERE r.id = p_id;
+END //
+
+-- Lấy reviews theo sản phẩm
+CREATE PROCEDURE sp_review_get_by_product_id (
+    IN p_product_id INT
+)
+BEGIN
+    SELECT r.id, r.user_id, u.name as user_name, r.product_id, r.comment, r.rating, r.created_at, r.updated_at
+    FROM reviews r
+    JOIN users u ON r.user_id = u.id
+    WHERE r.product_id = p_product_id
+    ORDER BY r.created_at DESC;
+END //
+
+-- Lấy reviews theo người dùng
+CREATE PROCEDURE sp_review_get_by_user_id (
+    IN p_user_id INT
+)
+BEGIN
+    SELECT r.id, r.user_id, r.product_id, p.name as product_name, r.comment, r.rating, r.created_at, r.updated_at
+    FROM reviews r
+    JOIN products p ON r.product_id = p.id
+    WHERE r.user_id = p_user_id
+    ORDER BY r.created_at DESC;
+END //
+
+CREATE PROCEDURE sp_review_update (
+    IN p_id INT,
+    IN p_comment TEXT,
+    IN p_rating INT
+)
+BEGIN
+    UPDATE reviews
+    SET
+        comment = p_comment,
+        rating = p_rating
+        -- updated_at sẽ tự động cập nhật
+    WHERE id = p_id;
+    -- Thường không cho phép cập nhật user_id hoặc product_id của review
+END //
+
+CREATE PROCEDURE sp_review_delete (
+    IN p_id INT
+)
+BEGIN
+    DELETE FROM reviews WHERE id = p_id;
+END //
+
+
+-- =============================================
+-- Procedures cho bảng orders
+-- =============================================
+
+CREATE PROCEDURE sp_order_create (
+    IN p_user_id INT,
+    IN p_status ENUM('Processing', 'Confirmed', 'Shipping', 'Delivered', 'Cancelled'),
+    OUT p_new_id INT
+)
+BEGIN
+    INSERT INTO orders (user_id, status)
+    VALUES (p_user_id, p_status);
+    SET p_new_id = LAST_INSERT_ID();
+END //
+
+CREATE PROCEDURE sp_order_get_by_id (
+    IN p_id INT
+)
+BEGIN
+    SELECT o.id, o.user_id, u.name as user_name, u.email as user_email, o.status, o.created_at, o.updated_at
+    FROM orders o
+    JOIN users u ON o.user_id = u.id
+    WHERE o.id = p_id;
+END //
+
+-- Lấy orders theo user
+CREATE PROCEDURE sp_order_get_by_user_id (
+    IN p_user_id INT
+)
+BEGIN
+    SELECT id, user_id, status, created_at, updated_at
+    FROM orders
+    WHERE user_id = p_user_id
+    ORDER BY created_at DESC;
+END //
+
+-- Lấy tất cả orders (có thể thêm bộ lọc status)
+CREATE PROCEDURE sp_order_get_all (
+    IN p_status ENUM('Processing', 'Confirmed', 'Shipping', 'Delivered', 'Cancelled', '')
+)
+BEGIN
+    IF p_status IS NOT NULL AND p_status != '' THEN
+       SELECT o.id, o.user_id, u.name as user_name, o.status, o.created_at, o.updated_at
+       FROM orders o
+       JOIN users u ON o.user_id = u.id
+       WHERE o.status = p_status
+       ORDER BY o.created_at DESC;
+    ELSE
+       SELECT o.id, o.user_id, u.name as user_name, o.status, o.created_at, o.updated_at
+       FROM orders o
+       JOIN users u ON o.user_id = u.id
+       ORDER BY o.created_at DESC;
+    END IF;
+END //
+
+-- Cập nhật trạng thái đơn hàng
+CREATE PROCEDURE sp_order_update_status (
+    IN p_id INT,
+    IN p_status ENUM('Processing', 'Confirmed', 'Shipping', 'Delivered', 'Cancelled')
+)
+BEGIN
+    UPDATE orders
+    SET
+        status = p_status
+        -- updated_at sẽ tự động cập nhật
+    WHERE id = p_id;
+END //
+
+CREATE PROCEDURE sp_order_delete (
+    IN p_id INT
+)
+BEGIN
+    -- Cảnh báo: Xóa order nên được thực hiện cẩn thận.
+    -- Trước tiên, bạn cần xóa các bản ghi liên quan trong order_details.
+    -- Tốt hơn là cập nhật status thành 'Cancelled' hoặc dùng soft delete.
+    -- Ví dụ này xóa cứng cả order details trước.
+    DELETE FROM order_details WHERE order_id = p_id;
+    DELETE FROM orders WHERE id = p_id;
+END //
+
+
+-- =============================================
+-- Procedures cho bảng order_details
+-- =============================================
+
+CREATE PROCEDURE sp_order_detail_create (
+    IN p_order_id INT,
+    IN p_product_id INT,
+    IN p_qty INT,
+    IN p_price DECIMAL(10,2), -- Giá tại thời điểm mua hàng
+    OUT p_new_id INT
+)
+BEGIN
+    DECLARE v_total DECIMAL(10,2);
+    SET v_total = p_qty * p_price;
+
+    INSERT INTO order_details (order_id, product_id, qty, price, total)
+    VALUES (p_order_id, p_product_id, p_qty, p_price, v_total);
+    SET p_new_id = LAST_INSERT_ID();
+END //
+
+CREATE PROCEDURE sp_order_detail_get_by_id (
+    IN p_id INT
+)
+BEGIN
+    SELECT od.id, od.order_id, od.product_id, p.name as product_name, od.qty, od.price, od.total, od.created_at, od.updated_at
+    FROM order_details od
+    JOIN products p ON od.product_id = p.id
+    WHERE od.id = p_id;
+END //
+
+-- Lấy chi tiết của một đơn hàng
+CREATE PROCEDURE sp_order_detail_get_by_order_id (
+    IN p_order_id INT
+)
+BEGIN
+    SELECT od.id, od.order_id, od.product_id, p.name as product_name, p.slug as product_slug, p.images as product_images, od.qty, od.price, od.total
+    FROM order_details od
+    JOIN products p ON od.product_id = p.id
+    WHERE od.order_id = p_order_id;
+END //
+
+-- Cập nhật chi tiết đơn hàng (ít khi dùng, thường chỉ cập nhật qty nếu đơn hàng chưa xử lý)
+CREATE PROCEDURE sp_order_detail_update (
+    IN p_id INT,
+    IN p_qty INT,
+    IN p_price DECIMAL(10,2) -- Có thể không nên cho cập nhật giá sau khi đã tạo
+)
+BEGIN
+    DECLARE v_total DECIMAL(10,2);
+    SET v_total = p_qty * p_price;
+
+    UPDATE order_details
+    SET
+        qty = p_qty,
+        price = p_price,
+        total = v_total
+        -- updated_at sẽ tự động cập nhật
+    WHERE id = p_id;
+END //
+
+CREATE PROCEDURE sp_order_detail_delete (
+    IN p_id INT
+)
+BEGIN
+    -- Thường không xóa riêng lẻ detail mà xóa theo order hoặc không xóa
+    DELETE FROM order_details WHERE id = p_id;
+END //
+
+
+-- =============================================
+-- Procedures cho bảng cart (Giỏ hàng)
+-- =============================================
+
+-- Thêm/Cập nhật sản phẩm vào giỏ hàng
+CREATE PROCEDURE sp_cart_add_or_update_item (
+    IN p_user_id INT,
+    IN p_product_id INT,
+    IN p_qty INT
+)
+BEGIN
+    DECLARE v_existing_id INT DEFAULT NULL;
+    DECLARE v_new_qty INT;
+
+    -- Kiểm tra xem sản phẩm đã có trong giỏ của user chưa
+    SELECT id INTO v_existing_id
+    FROM cart
+    WHERE user_id = p_user_id AND product_id = p_product_id
+    LIMIT 1;
+
+    IF v_existing_id IS NOT NULL THEN
+        -- Nếu đã tồn tại, cập nhật số lượng
+        -- Có thể bạn muốn cộng dồn: SET v_new_qty = (SELECT qty FROM cart WHERE id = v_existing_id) + p_qty;
+        -- Hoặc chỉ đặt lại số lượng:
+        SET v_new_qty = p_qty;
+
+        IF v_new_qty > 0 THEN
+             UPDATE cart SET qty = v_new_qty WHERE id = v_existing_id;
+        ELSE
+             -- Nếu số lượng mới <= 0, xóa khỏi giỏ hàng
+             DELETE FROM cart WHERE id = v_existing_id;
+        END IF;
+    ELSE
+        -- Nếu chưa tồn tại và số lượng > 0, thêm mới
+        IF p_qty > 0 THEN
+            INSERT INTO cart (user_id, product_id, qty)
+            VALUES (p_user_id, p_product_id, p_qty);
+        END IF;
+    END IF;
+END //
+
+-- Lấy giỏ hàng của một user
+CREATE PROCEDURE sp_cart_get_by_user_id (
+    IN p_user_id INT
+)
+BEGIN
+    SELECT c.id, c.user_id, c.product_id, p.name as product_name, p.slug as product_slug, p.price as product_price, p.discounted_price as product_discounted_price, p.stock as product_stock, p.images as product_images, c.qty, c.created_at, c.updated_at
+    FROM cart c
+    JOIN products p ON c.product_id = p.id
+    WHERE c.user_id = p_user_id;
+END //
+
+-- Cập nhật số lượng của một item trong giỏ hàng (cách khác)
+CREATE PROCEDURE sp_cart_update_item_qty (
+    IN p_cart_item_id INT,
+    IN p_new_qty INT
+)
+BEGIN
+    IF p_new_qty > 0 THEN
+        UPDATE cart SET qty = p_new_qty WHERE id = p_cart_item_id;
+    ELSE
+        DELETE FROM cart WHERE id = p_cart_item_id;
+    END IF;
+END //
+
+-- Xóa một item khỏi giỏ hàng
+CREATE PROCEDURE sp_cart_remove_item (
+    IN p_cart_item_id INT -- ID của bản ghi trong bảng cart
+)
+BEGIN
+    DELETE FROM cart WHERE id = p_cart_item_id;
+END //
+
+-- Xóa một item khỏi giỏ hàng bằng user_id và product_id
+CREATE PROCEDURE sp_cart_remove_item_by_product (
+    IN p_user_id INT,
+    IN p_product_id INT
+)
+BEGIN
+    DELETE FROM cart WHERE user_id = p_user_id AND product_id = p_product_id;
+END //
+
+-- Xóa sạch giỏ hàng của một user
+CREATE PROCEDURE sp_cart_clear_by_user_id (
+    IN p_user_id INT
+)
+BEGIN
+    DELETE FROM cart WHERE user_id = p_user_id;
+END //
+
+
+-- Đặt lại dấu phân cách về mặc định
+DELIMITER ;

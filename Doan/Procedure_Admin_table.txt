@@ -1,0 +1,43 @@
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `AddAdmin`(
+    IN p_name VARCHAR(255),
+    IN p_email VARCHAR(255),
+    IN p_password VARCHAR(255),
+    IN p_phone VARCHAR(20),
+    IN p_address TEXT,
+    IN p_status ENUM('Active', 'Inactive'),
+    IN p_type ENUM('Admin', 'Staff')
+)
+BEGIN
+    INSERT INTO admins (name, email, password, phone, address, status, type)
+    VALUES (p_name, p_email, p_password, p_phone, p_address, p_status, p_type);
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `DeleteAdmin`(
+    IN p_id INT
+)
+BEGIN
+    DELETE FROM admins WHERE id = p_id;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateAdmin`(
+    IN p_id INT,
+    IN p_name VARCHAR(255),
+    IN p_email VARCHAR(255),
+    IN p_password VARCHAR(255),
+    IN p_phone VARCHAR(20),
+    IN p_address TEXT,
+    IN p_status ENUM('Active', 'Inactive'),
+    IN p_type ENUM('Admin', 'Staff')
+)
+BEGIN
+    UPDATE admins 
+    SET name = p_name, email = p_email, password = p_password, 
+        phone = p_phone, address = p_address, status = p_status, type = p_type
+    WHERE id = p_id;
+END$$
+DELIMITER ;

@@ -1,0 +1,41 @@
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `AddOrderDetail`(
+    IN p_order_id INT,
+    IN p_product_id INT,
+    IN p_qty INT,
+    IN p_price DECIMAL(10,2),
+    IN p_total DECIMAL(10,2)
+)
+BEGIN
+    INSERT INTO order_details (order_id, product_id, qty, price, total)
+    VALUES (p_order_id, p_product_id, p_qty, p_price, p_total);
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `DeleteOrderDetail`(IN p_id INT)
+BEGIN
+    DELETE FROM order_details WHERE id = p_id;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateOrderDetail`(
+    IN p_id INT,
+    IN p_order_id INT,
+    IN p_product_id INT,
+    IN p_qty INT,
+    IN p_price DECIMAL(10,2),
+    IN p_total DECIMAL(10,2)
+)
+BEGIN
+    UPDATE order_details
+    SET order_id = p_order_id,
+        product_id = p_product_id,
+        qty = p_qty,
+        price = p_price,
+        total = p_total,
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = p_id;
+END$$
+DELIMITER ;

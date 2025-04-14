@@ -1,0 +1,32 @@
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `AddOrder`(
+    IN p_user_id INT,
+    IN p_status ENUM('Processing', 'Confirmed', 'Shipping', 'Delivered', 'Cancelled')
+)
+BEGIN
+    INSERT INTO orders (user_id, status)
+    VALUES (p_user_id, p_status);
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `DeleteOrder`(IN p_id INT)
+BEGIN
+    DELETE FROM orders WHERE id = p_id;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateOrder`(
+    IN p_id INT,
+    IN p_user_id INT,
+    IN p_status ENUM('Processing', 'Confirmed', 'Shipping', 'Delivered', 'Cancelled')
+)
+BEGIN
+    UPDATE orders
+    SET user_id = p_user_id,
+        status = p_status,
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = p_id;
+END$$
+DELIMITER ;

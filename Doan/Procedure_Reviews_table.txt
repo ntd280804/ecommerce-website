@@ -1,0 +1,38 @@
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `AddReview`(
+    IN p_user_id INT,
+    IN p_product_id INT,
+    IN p_comment TEXT,
+    IN p_rating INT
+)
+BEGIN
+    INSERT INTO reviews (user_id, product_id, comment, rating)
+    VALUES (p_user_id, p_product_id, p_comment, p_rating);
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `DeleteReview`(IN p_id INT)
+BEGIN
+    DELETE FROM reviews WHERE id = p_id;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateReview`(
+    IN p_id INT,
+    IN p_user_id INT,
+    IN p_product_id INT,
+    IN p_comment TEXT,
+    IN p_rating INT
+)
+BEGIN
+    UPDATE reviews
+    SET user_id = p_user_id,
+        product_id = p_product_id,
+        comment = p_comment,
+        rating = p_rating,
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = p_id;
+END$$
+DELIMITER ;

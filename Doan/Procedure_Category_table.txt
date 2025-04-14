@@ -1,0 +1,35 @@
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `AddCategory`(
+    IN p_name VARCHAR(255),
+    IN p_slug VARCHAR(255),
+    IN p_status ENUM('Active', 'Inactive')
+)
+BEGIN
+    INSERT INTO categories (name, slug, status)
+    VALUES (p_name, p_slug, p_status);
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `DeleteCategory`(IN p_id INT)
+BEGIN
+    DELETE FROM categories WHERE id = p_id;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateCategory`(
+    IN p_id INT,
+    IN p_name VARCHAR(255),
+    IN p_slug VARCHAR(255),
+    IN p_status ENUM('Active', 'Inactive')
+)
+BEGIN
+    UPDATE categories
+    SET name = p_name,
+        slug = p_slug,
+        status = p_status,
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = p_id;
+END$$
+DELIMITER ;
