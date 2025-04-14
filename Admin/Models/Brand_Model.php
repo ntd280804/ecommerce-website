@@ -22,38 +22,38 @@ class BrandModel {
         $stmt->bindParam(':slug', $this->slug);
         return $stmt->execute();
     }
-
-    public function delete($id) {
-        if ($id == 1) {
-            // Không cho phép xóa thương hiệu mặc định
-            return false;
-        }
     
-        try {
-            $this->conn->beginTransaction();
+    public function updateStatus($id, $currentStatus) {
+        // Toggle the status based on the current status
+        $newStatus = ($currentStatus == 'Active') ? 'Inactive' : 'Active';
     
-            // Cập nhật sản phẩm sang thương hiệu mặc định
-            $query1 = "UPDATE products SET brand_id = 1 WHERE brand_id = :id";
-            $stmt1 = $this->conn->prepare($query1);
-            $stmt1->execute(['id' => $id]);
-    
-            // Xóa thương hiệu (nếu không phải id = 1)
-            $query2 = "DELETE FROM brands WHERE id = :id";
-            $stmt2 = $this->conn->prepare($query2);
-            $stmt2->execute(['id' => $id]);
-    
-            $this->conn->commit();
-            return true;
-        } catch (PDOException $e) {
-            $this->conn->rollBack();
-            return false;
-        }
+        $sql = "UPDATE brands SET status = :status WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
+        
+        $stmt->bindParam(':status', $newStatus);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        
+        return $stmt->execute();
     }
+    
       
 
-    public function getAll() {
-        $stmt = $this->conn->prepare("SELECT * FROM brands");
+    public function getByStatus($status) {
+        // Assuming you are using PDO to interact with the database
+        if ($status === 'all') {
+            $query = "SELECT * FROM brands";
+        } else {
+            $query = "SELECT * FROM brands WHERE status = :status";
+        }
+
+        $stmt = $this->conn->prepare($query);
+
+        if ($status !== 'all') {
+            $stmt->bindParam(':status', $status, PDO::PARAM_STR);
+        }
+
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
 }

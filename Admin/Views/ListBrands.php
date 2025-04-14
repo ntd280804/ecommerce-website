@@ -1,9 +1,23 @@
-<?php
-require("Includes/Header.php"); 
-require_once("../Config/Database.php"); 
-?>
+<?php require("Includes/Header.php"); ?>
+<?php require_once("../Config/Database.php"); ?>
 
-<!-- DataTales Example -->
+<!-- Tabs to filter by status -->
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link <?php echo (empty($_GET['status']) || $_GET['status'] == 'all') ? 'active' : ''; ?>" 
+           href="./index.php?controller=brand&action=index&status=all">All</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link <?php echo ($_GET['status'] == 'active') ? 'active' : ''; ?>" 
+           href="./index.php?controller=brand&action=index&status=active">Active</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link <?php echo ($_GET['status'] == 'inactive') ? 'active' : ''; ?>" 
+           href="./index.php?controller=brand&action=index&status=inactive">Inactive</a>
+    </li>
+</ul>
+
+<!-- DataTable -->
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">Danh sách thương hiệu</h6>
@@ -38,10 +52,23 @@ require_once("../Config/Database.php");
                                 <td><?= htmlspecialchars($brand['slug']) ?></td>
                                 <td><?= htmlspecialchars($brand['status']) ?></td>
                                 <td>
-                                    <a class="btn btn-warning">Edit</a>
-                                    <a class="btn btn-danger"
-                                    href="./index.php?controller=brand&action=delete&id=<?= $brand['id'] ?>"
-                                    onclick="return confirm('Bạn có chắc muốn xóa mục này?');">Delete</a>
+                                    <a class="btn btn-warning"
+                                    href=""
+                                    onclick="return confirm('Bạn có chắc muốn sửa thương hiệu này?');">Edit</a>
+                                    
+                                    
+                                    <?php if ($brand['status'] == 'Active') : ?>
+                                        <!-- If the brand is active, show a button to deactivate it -->
+                                        <a class="btn btn-danger"
+                                        href="./index.php?controller=brand&action=toggleStatus&id=<?= $brand['id'] ?>&status=<?= $brand['status'] ?>"
+                                        onclick="return confirm('Bạn có chắc muốn vô hiệu hóa thương hiệu này?');">Inactivate</a>
+                                    <?php else : ?>
+                                        <!-- If the brand is inactive, show a button to activate it -->
+                                        <a class="btn btn-success"
+                                        href="./index.php?controller=brand&action=toggleStatus&id=<?= $brand['id'] ?>&status=<?= $brand['status'] ?>"
+                                        onclick="return confirm('Bạn có chắc muốn kích hoạt thương hiệu này?');">Activate</a>
+                                    <?php endif; ?>
+
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -56,6 +83,4 @@ require_once("../Config/Database.php");
     </div>
 </div>
 
-<?php
-require("Includes/Footer.php"); 
-?>
+<?php require("Includes/Footer.php"); ?>

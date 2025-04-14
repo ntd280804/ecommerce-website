@@ -2,17 +2,49 @@
 class ProductController {
     public function index() {
         require_once './Models/Product_Model.php';
+    
+        // If 'status' is not set in the URL, redirect to the URL with 'status=all'
+        if (empty($_GET['status'])) {
+            header("Location: ./index.php?controller=product&action=index&status=all");
+            exit();
+        }
+    
+        // Get the status, defaulting to 'all' if not set
         $productModel = new ProductModel();
-        $products = $productModel->getAll(); // Lấy danh sách sản phẩm từ model
+
+        $status = $_GET['status'] ?? 'all'; 
+        $products = $productModel->getByStatus($status);
+
+include './Views/ListProducts.php';
+
+    
         include './Views/ListProducts.php';
+    }
+    
+    public function toggleStatus() {
+        if (isset($_GET['id']) && isset($_GET['status'])) {
+            $id = $_GET['id'];
+            $status = $_GET['status'];
+            
+            require_once './Models/Product_Model.php';
+            $Productmodel = new ProductModel();
+            
+            // Call a method to update the brand's status
+            if ($Productmodel->updateStatus($id, $status)) {
+                header("Location: ./index.php?controller=product&action=index");
+                exit();
+            } else {
+                echo "Error updating product status.";
+            }
+        }
     }
     public function add() {
         require_once './Models/Brand_Model.php';
         $brandModel = new BrandModel();
-        $brands = $brandModel->getAll(); // Lấy danh sách thương hiệu từ model
+        $brands = $brandModel->getByStatus('all'); // Lấy danh sách thương hiệu từ model
         require_once './Models/Category_Model.php';
         $categoryModel = new CategoryModel();
-        $categories = $categoryModel->getAll(); // Lấy danh sách danh mục từ model
+        $categories = $categoryModel->getByStatus('all'); // Lấy danh sách danh mục từ model
         include './Views/AddProduct.php';
     }
     public function store() {

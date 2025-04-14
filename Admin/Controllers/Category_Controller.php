@@ -2,29 +2,40 @@
 class CategoryController {
     public function index() {
         require_once './Models/Category_Model.php';
-        $categoryModel = new CategoryModel();
-        $categories = $categoryModel->getAll(); // Lấy danh sách danh mục từ model
+        $categorymodel = new CategoryModel();
+    
+        // If 'status' is not set in the URL, redirect to the URL with 'status=all'
+        if (empty($_GET['status'])) {
+            header("Location: ./index.php?controller=category&action=index&status=all");
+            exit();
+        }
+    
+        // Get the status, defaulting to 'all' if not set
+        $status = $_GET['status'] ?? 'all'; 
+        $categories = $categorymodel->getByStatus($status); // Fetch  based on status
+    
         include './Views/ListCategories.php';
+    }
+    
+    public function toggleStatus() {
+        if (isset($_GET['id']) && isset($_GET['status'])) {
+            $id = $_GET['id'];
+            $status = $_GET['status'];
+            
+            require_once './Models/Category_Model.php';
+            $categorymodel = new CategoryModel();
+            
+            // Call a method to update the brand's status
+            if ($categorymodel->updateStatus($id, $status)) {
+                header("Location: ./index.php?controller=category&action=index");
+                exit();
+            } else {
+                echo "Error updating category status.";
+            }
+        }
     }
     public function add() {
         include './Views/AddCategory.php';
-    }
-
-    public function delete() {
-        $id = $_GET['id'] ?? null;
-    
-        if ($id) {
-            require_once './Models/Category_Model.php';
-            $CategoryModel = new CategoryModel();
-            if ($CategoryModel->delete($id)) {
-                $this->index(); // ✅ đúng
-                // header("Location: ./index.php?controller=category&action=index"); // Chuyển hướng về danh sách sản phẩm
-            } else {
-                echo "Lỗi khi xóa sản phẩm.";
-            }
-        }
-        
-        exit();
     }
 
     public function store() {

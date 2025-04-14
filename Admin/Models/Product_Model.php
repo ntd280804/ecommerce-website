@@ -40,17 +40,59 @@ class ProductModel {
     }
     
     // Gợi ý thêm:
-    public function getAll() {
-        $stmt = $this->conn->prepare("SELECT * FROM products");
+    public function updateStatus($id, $currentStatus) {
+        // Toggle the status based on the current status
+        $newStatus = ($currentStatus == 'Active') ? 'Inactive' : 'Active';
+    
+        $sql = "UPDATE products SET status = :status WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
+        
+        $stmt->bindParam(':status', $newStatus);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        
+        return $stmt->execute();
+    }
+    
+      
+
+    public function getByStatus($status) {
+        // Assuming you are using PDO to interact with the database
+        if ($status === 'all') {
+            $query = "SELECT * FROM products";
+        } else {
+            $query = "SELECT * FROM products WHERE status = :status";
+        }
+
+        $stmt = $this->conn->prepare($query);
+
+        if ($status !== 'all') {
+            $stmt->bindParam(':status', $status, PDO::PARAM_STR);
+        }
+
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getAvatarImages($arrstr,$height)
-{
-    $arr = explode(';', $arrstr);
-    return "<img src='$arr[0]' height='$height' alt='Product Image' />";
-}
-
+    {
+        $arr = explode(';', $arrstr);
+        return "<img src='$arr[0]' height='$height' alt='Product Image' />";
+    }
+    public function getBrandNameById($brand_id) {
+        $stmt = $this->conn->prepare("SELECT name FROM brands WHERE id = :id");
+        $stmt->bindParam(':id', $brand_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $brand = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $brand ? $brand['name'] : 'N/A';
+    }
+    
+    public function getCategoryNameById($category_id) {
+        $stmt = $this->conn->prepare("SELECT name FROM categories WHERE id = :id");
+        $stmt->bindParam(':id', $category_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $category = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $category ? $category['name'] : 'N/A';
+    }
+    
 }
 
