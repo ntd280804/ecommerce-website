@@ -46,6 +46,8 @@ switch ($controller) {
         break;
 
     default:
-        echo "Không tìm thấy controller.";
+        require_once 'Controllers/Home_Controller.php';
+        $home = new HomeController();
+        $home->Error404(); // Handle 404 error
         break;
 }
