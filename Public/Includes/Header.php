@@ -58,7 +58,7 @@
         </div>
         <nav class="humberger__menu__nav mobile-menu">
             <ul>
-                <li class="active"><a href="./index.html">Home</a></li>
+                <li class="active"><a href="./index.php?controller=home&action=index">Home</a></li>
                 <li><a href="./shop-grid.html">Shop</a></li>
                 <li><a href="#">Pages</a>
                     <ul class="header__menu__dropdown">
@@ -109,15 +109,7 @@
                                 <a href="#"><i class="fa fa-linkedin"></i></a>
                                 <a href="#"><i class="fa fa-pinterest-p"></i></a>
                             </div>
-                            <div class="header__top__right__language">
-                                <img src="./assets/img/language.png" alt="">
-                                <div>English</div>
-                                <span class="arrow_carrot-down"></span>
-                                <ul>
-                                    <li><a href="#">Spanis</a></li>
-                                    <li><a href="#">English</a></li>
-                                </ul>
-                            </div>
+                            
                             <div class="header__top__right__auth">
                                 <a href="#"><i class="fa fa-user"></i> Login</a>
                             </div>
@@ -130,24 +122,15 @@
             <div class="row">
                 <div class="col-lg-3">
                     <div class="header__logo">
-                        <a href="./index.html"><img src="./assets/img/logo.png" alt=""></a>
+                        <a href="./index.php?controller=home&action=index"><img src="./assets/img/logo.png" alt=""></a>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <nav class="header__menu">
                         <ul>
-                            <li class="active"><a href="./index.html">Home</a></li>
-                            <li><a href="./shop-grid.html">Shop</a></li>
-                            <li><a href="#">Pages</a>
-                                <ul class="header__menu__dropdown">
-                                    <li><a href="./shop-details.html">Shop Details</a></li>
-                                    <li><a href="./shoping-cart.html">Shoping Cart</a></li>
-                                    <li><a href="./checkout.html">Check Out</a></li>
-                                    <li><a href="./blog-details.html">Blog Details</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="./blog.html">Blog</a></li>
-                            <li><a href="./contact.html">Contact</a></li>
+                            <li class="active"><a href="./index.php?controller=home&action=index">Home</a></li>
+                            <li><a href="./index.php?controller=home&action=shopgrid">Shop</a></li>
+                            <li><a href="./index.php?controller">Shoping Cart</a></li>
                         </ul>
                     </nav>
                 </div>
@@ -204,10 +187,7 @@ else {
                     <div class="hero__search">
                         <div class="hero__search__form">
                             <form action="#">
-                                <div class="hero__search__categories">
-                                    All Categories
-                                    <span class="arrow_carrot-down"></span>
-                                </div>
+                                
                                 <input type="text" placeholder="What do yo u need?">
                                 <button type="submit" class="site-btn">SEARCH</button>
                             </form>
@@ -222,14 +202,18 @@ else {
                             </div>
                         </div>
                     </div>
-                    <div class="hero__item set-bg" data-setbg="./assets/img/hero/banner.jpg">
+                    <?php 
+                        if($isHomePage) {
+                            echo '<div class="hero__item set-bg" data-setbg="./assets/img/hero/banner.jpg">
                         <div class="hero__text">
                             <span>FRUIT FRESH</span>
                             <h2>Vegetable <br />100% Organic</h2>
                             <p>Free Pickup and Delivery Available</p>
                             <a href="#" class="primary-btn">SHOP NOW</a>
                         </div>
-                    </div>
+                    </div>';
+                        }
+                    ?>
                 </div>
             </div>
         </div>

@@ -13,4 +13,8 @@ class HomeController {
         // Điều hướng tới trang dashboard admin
         include './Views/ShopGrid.php';
     }
+    public function ShopCart() {
+        // Điều hướng tới trang dashboard admin
+        include './Views/ShopingCart.php';
+    }
 }
