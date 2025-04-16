@@ -57,7 +57,7 @@ class ProductController {
         $product->description = $_POST['description'];
         $product->stock = $_POST['stock'];
         $product->price = $_POST['price'];
-        $product->disscounted_price = $_POST['disscounted_price'];
+        $product->discounted_price = $_POST['discounted_price'];
         $product->category_id = $_POST['category_id'];
         $product->brand_id = $_POST['brand_id'];
         $product->countfiles = count($_FILES['images']['name']);
@@ -109,7 +109,7 @@ class ProductController {
         $product->description = $_POST['description'];
         $product->stock = $_POST['stock'];
         $product->price = $_POST['price'];
-        $product->disscounted_price = $_POST['disscounted_price'];
+        $product->discounted_price = $_POST['discounted_price'];
         $product->category_id = $_POST['category_id'];
         $product->brand_id = $_POST['brand_id'];
     

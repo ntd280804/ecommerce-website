@@ -11,7 +11,7 @@ require("Includes/Header.php");
                     <div class="breadcrumb__text">
                         <h2>Organi Shop</h2>
                         <div class="breadcrumb__option">
-                            <a href="./index.html">Home</a>
+                            <a href="./index.php">Home</a>
                             <span>Shop</span>
                         </div>
                     </div>
@@ -31,7 +31,8 @@ require("Includes/Header.php");
                             <h4>Danh mục</h4>
                             <ul>
                             <?php foreach ($categories as $category): ?>
-                            <li><a href="#"><?php echo htmlspecialchars($category['name']); ?></a></li>
+                                
+                            <li><a href="index.php?controller=product&action=index&category=<?php echo urlencode($category['id']); ?>"><?php echo htmlspecialchars($category['name']); ?></a></li>
                         <?php endforeach; ?>
                             </ul>
                         </div>
@@ -54,29 +55,35 @@ require("Includes/Header.php");
                             </div>
                             <div class="col-lg-4 col-md-4">
                                 <div class="filter__found">
-                                    <h6><span>16</span> Products found</h6>
+                                    <h6><span><?php echo count($products); ?></span> Sản phẩm được tìm thấy</h6>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <?php foreach ($products as $product): ?>
+                            <?php
+                                $images = $productmodel->getImagesById($product['id']);
+                            ?>
                             <div class="col-lg-4 col-md-6 col-sm-6">
                                 <div class="product__item">
-                                    <div class="product__item__pic set-bg" data-setbg="<?php echo explode(';', $product['images'])[0]; ?>">
+                                    <div class="product__item__pic" >
+                                    <?php echo $productmodel->getAvatarImages($images, 400); ?>
                                         <ul class="product__item__pic__hover">
                                             <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
                                         </ul>
                                     </div>
+
                                     <div class="product__item__text">
                                         <h6>
-                                            <a href="./index.php?controller=product&action=index&id=<?php echo $product['id']; ?>"><?php echo htmlspecialchars($product['name']); ?></a>
+                                            <a href="./index.php?controller=product&action=detail&id=<?php echo $product['id']; ?>"><?php echo htmlspecialchars($product['name']); ?></a>
                                         </h6>
                                         <h5><?php echo number_format($product['price'], 2); ?></h5>
                                     </div>
                                 </div>
                             </div>
                         <?php endforeach; ?>
+                        
                     </div>
 
                     <div class="product__pagination">

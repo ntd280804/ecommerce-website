@@ -113,16 +113,15 @@
                     <nav class="header__menu">
                         <ul>
                             <li class="active"><a href="./index.php?controller=home&action=index">Home</a></li>
-                            <li><a href="./index.php?controller=home&action=shopgrid">Shop</a></li>
-                            <li><a href="./index.php?controller=home&action=ShopCart">Shoping Cart</a></li>
+                            <li><a href="./index.php?controller=product&action=index">Shop</a></li>
+                            
                         </ul>
                     </nav>
                 </div>
                 <div class="col-lg-3">
                     <div class="header__cart">
                         <ul>
-                            <li><a href="#"><i class="fa fa-heart"></i> <span>1</span></a></li>
-                            <li><a href="#"><i class="fa fa-shopping-bag"></i> <span>3</span></a></li>
+                            <li><a href="./index.php?controller=home&action=ShopCart"><i class="fa fa-shopping-bag"></i> <span>3</span></a></li>
                         </ul>
                         <div class="header__cart__price">item: <span>$150.00</span></div>
                     </div>
@@ -134,22 +133,22 @@
         </div>
     </header>
     <!-- Header Section End -->
-<?php
-if($isHomePage) {
-    echo '<section class="hero">';
-}
-else {
-    echo '<section class="hero hero-normal">';
-}
-?>
-<?php
-require_once("../Config/Database.php"); 
-require_once ("./Models/Category_Model.php");
-$categorymodel = new CategoryModel();
-$categories = $categorymodel->getAll(); // Fetch  based on status
-?>
+    <?php
+    if($isHomePage) {
+        echo '<section class="hero">';
+    }
+    else {
+        echo '<section class="hero hero-normal">';
+    }
+    ?>
+    <?php
+    require_once("../Config/Database.php"); 
+    require_once ("./Models/Category_Model.php");
+    $categorymodel = new CategoryModel();
+    $categories = $categorymodel->getAll(); // Fetch  based on status
+    ?>
 
-<!-- Hero Section Begin -->
+    <!-- Hero Section Begin -->
     
         <div class="container">
             <div class="row">
@@ -161,7 +160,12 @@ $categories = $categorymodel->getAll(); // Fetch  based on status
                     </div>
                     <ul>
                         <?php foreach ($categories as $category): ?>
-                            <li><a href="#"><?php echo htmlspecialchars($category['name']); ?></a></li>
+                            <li>
+                                <a href="index.php?controller=product&action=index&category=<?php echo urlencode($category['id']); ?>">
+                                    <?php echo htmlspecialchars($category['name']); ?>
+                                </a>
+                            </li>
+
                         <?php endforeach; ?>
                     </ul>
                 </div>

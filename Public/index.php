@@ -13,6 +13,11 @@ switch ($controller) {
             $home = new ProductController();
             $home->$action();
             break;
+    case 'user':
+        require_once 'Controllers/User_Controller.php';
+        $home = new UserController();
+        $home->$action();
+        break;
     default:
         require_once 'Controllers/Home_Controller.php';
         $home = new HomeController();

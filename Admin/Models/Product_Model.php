@@ -9,7 +9,7 @@ class ProductModel {
     public $description;
     public $stock;
     public $price;
-    public $disscounted_price;
+    public $discounted_price;
     public $category_id;
     public $brand_id;
     public $countfiles;
@@ -20,8 +20,8 @@ class ProductModel {
 
     public function insert() {
 
-        $sql = "INSERT INTO products (name,slug, summary, description, stock, price, disscounted_price,images, category_id, brand_id)
-                VALUES (:name,:slug, :summary, :description, :stock, :price, :disscounted_price,:images, :category_id, :brand_id)";
+        $sql = "INSERT INTO products (name,slug, summary, description, stock, price, discounted_price,images, category_id, brand_id)
+                VALUES (:name,:slug, :summary, :description, :stock, :price, :discounted_price,:images, :category_id, :brand_id)";
         
         $stmt = $this->conn->prepare($sql);
 
@@ -31,7 +31,7 @@ class ProductModel {
         $stmt->bindParam(':description', $this->description);
         $stmt->bindParam(':stock', $this->stock);
         $stmt->bindParam(':price', $this->price);
-        $stmt->bindParam(':disscounted_price', $this->disscounted_price);
+        $stmt->bindParam(':discounted_price', $this->discounted_price);
         $stmt->bindParam(':images', $this->images);
         $stmt->bindParam(':category_id', $this->category_id);
         $stmt->bindParam(':brand_id', $this->brand_id);
@@ -131,7 +131,7 @@ class ProductModel {
             description = :description, 
             stock = :stock, 
             price = :price, 
-            disscounted_price = :disscounted_price, 
+            discounted_price = :discounted_price, 
             images = :images, 
             category_id = :category_id, 
             brand_id = :brand_id 
@@ -145,7 +145,7 @@ class ProductModel {
         $stmt->bindParam(':description', $this->description);
         $stmt->bindParam(':stock', $this->stock);
         $stmt->bindParam(':price', $this->price);
-        $stmt->bindParam(':disscounted_price', $this->disscounted_price);
+        $stmt->bindParam(':discounted_price', $this->discounted_price);
         $stmt->bindParam(':images', $this->images);
         $stmt->bindParam(':category_id', $this->category_id);
         $stmt->bindParam(':brand_id', $this->brand_id);

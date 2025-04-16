@@ -9,7 +9,7 @@ class ProductModel {
     public $description;
     public $stock;
     public $price;
-    public $disscounted_price;
+    public $discounted_price;
     public $category_id;
     public $brand_id;
     public $countfiles;
@@ -34,6 +34,34 @@ class ProductModel {
         }
         return $html;
     }
+    public function getProductReviews($product_id) {
+        $sql = "SELECT r.comment, u.name as user_name, r.created_at 
+                FROM reviews r 
+                JOIN users u ON r.user_id = u.id 
+                WHERE r.product_id = ? 
+                ORDER BY r.created_at DESC 
+                LIMIT 5";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$product_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    
+    public function getProductRating($product_id) {
+        $sql = "SELECT COUNT(*) as total_reviews, AVG(rating) as avg_rating 
+                FROM reviews WHERE product_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$product_id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    
+    public function getByCategory($category) {
+        $sql = "SELECT * FROM products WHERE status = 'active' AND category_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$category]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
     public function getImagesById($id) {
         // Truy vấn lấy hình ảnh của sản phẩm theo id
         $sql = "SELECT images FROM products WHERE id = :id";

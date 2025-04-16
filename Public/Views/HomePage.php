@@ -13,7 +13,7 @@ require("Includes/Header.php");
                     <div class="col-lg-3">
                         <div class="categories__item set-bg" data-setbg="<?php echo explode(';', $product['images'])[0]; ?>">
                             <h5>
-                                <a href="./index.php?controller=product&action=index&id=<?php echo $product['id']; ?>">
+                                <a href="./index.php?controller=product&action=detail&id=<?php echo $product['id']; ?>">
                                     <?php echo htmlspecialchars($product['name']); ?>
                                 </a>
                             </h5>

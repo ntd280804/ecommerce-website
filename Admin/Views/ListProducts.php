@@ -34,7 +34,7 @@
                         <th>Brand</th>
                         <th>Stock</th>
                         <th>Price</th>
-                        <th>Disscounted_Price</th>
+                        <th>discounted_price</th>
                         <th>Status</th>
                         <th>Operations</th>
                     </tr>
@@ -48,7 +48,7 @@
                         <th>Brand</th>
                         <th>Stock</th>
                         <th>Price</th>
-                        <th>Disscounted_Price</th>
+                        <th>discounted_price</th>
                         <th>Status</th>
                         <th>Operations</th>
                     </tr>
@@ -64,7 +64,7 @@
                             <td><?= htmlspecialchars($productModel->getBrandNameById($product['brand_id'])) ?></td>
                             <td><?= htmlspecialchars($product['stock']) ?></td>
                             <td><?= htmlspecialchars($product['price']) ?></td>
-                            <td><?= htmlspecialchars($product['disscounted_price']) ?></td>
+                            <td><?= htmlspecialchars($product['discounted_price']) ?></td>
                             <td><?= htmlspecialchars($product['status']) ?></td>
 
                             <td>
