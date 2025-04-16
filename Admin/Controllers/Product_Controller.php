@@ -1,7 +1,10 @@
 <?php
+require_once './Models/Brand_Model.php';
+require_once './Models/Category_Model.php';
+require_once './Models/Product_Model.php';
 class ProductController {
     public function index() {
-        require_once './Models/Product_Model.php';
+        
     
         // If 'status' is not set in the URL, redirect to the URL with 'status=all'
         if (empty($_GET['status'])) {
@@ -10,14 +13,11 @@ class ProductController {
         }
     
         // Get the status, defaulting to 'all' if not set
-        $productModel = new ProductModel();
+        $productmodel = new ProductModel();
 
         $status = $_GET['status'] ?? 'all'; 
-        $products = $productModel->getByStatus($status);
+        $products = $productmodel->getByStatus($status);
 
-        include './Views/ListProducts.php';
-
-    
         include './Views/ListProducts.php';
     }
     
@@ -25,8 +25,6 @@ class ProductController {
         if (isset($_GET['id']) && isset($_GET['status'])) {
             $id = $_GET['id'];
             $status = $_GET['status'];
-            
-            require_once './Models/Product_Model.php';
             $Productmodel = new ProductModel();
             
             // Call a method to update the brand's status
@@ -39,16 +37,15 @@ class ProductController {
         }
     }
     public function add() {
-        require_once './Models/Brand_Model.php';
-        $brandModel = new BrandModel();
-        $brands = $brandModel->getByStatus('all'); // Lấy danh sách thương hiệu từ model
-        require_once './Models/Category_Model.php';
-        $categoryModel = new CategoryModel();
-        $categories = $categoryModel->getByStatus('all'); // Lấy danh sách danh mục từ model
+
+        $brandmodel = new BrandModel();
+        $brands = $brandmodel->getByStatus('all'); // Lấy danh sách thương hiệu từ model
+        
+        $categorymodel = new CategoryModel();
+        $categories = $categorymodel->getByStatus('all'); // Lấy danh sách danh mục từ model
         include './Views/AddProduct.php';
     }
     public function store() {
-        require_once './Models/Product_Model.php';
         $product = new ProductModel;
     
         $product->name = $_POST['name'];
@@ -100,7 +97,6 @@ class ProductController {
         }
     }
     public function update() {
-        require_once './Models/Product_Model.php';
         $product = new ProductModel;
         $id = $_POST['id']; // Dữ liệu từ hidden input
         $product->name = $_POST['name'];
@@ -161,13 +157,10 @@ class ProductController {
     
     
     public function edit() {
-        require_once './Models/Brand_Model.php';
-        $brandModel = new BrandModel();
-        $brands = $brandModel->getByStatus('all'); // Lấy danh sách thương hiệu từ model
-        require_once './Models/Category_Model.php';
-        $categoryModel = new CategoryModel();
-        $categories = $categoryModel->getByStatus('all'); // Lấy danh sách danh mục từ model
-        require_once './Models/Product_Model.php';
+        $brandmodel = new BrandModel();
+        $brands = $brandmodel->getByStatus('all'); // Lấy danh sách thương hiệu từ model
+        $categorymodel = new CategoryModel();
+        $categories = $categorymodel->getByStatus('all'); // Lấy danh sách danh mục từ model
         $productmodel = new ProductModel();
     
         $id = $_GET['id']; // Lấy id từ URL

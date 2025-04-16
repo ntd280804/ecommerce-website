@@ -39,29 +39,16 @@
                         <th>Operations</th>
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr>
-                        <th>Id</th>
-                        <th>Images</th>
-                        <th>Name</th>
-                        <th>Category</th>
-                        <th>Brand</th>
-                        <th>Stock</th>
-                        <th>Price</th>
-                        <th>discounted_price</th>
-                        <th>Status</th>
-                        <th>Operations</th>
-                    </tr>
-                </tfoot>
+                
                 <tbody>
                     <?php if (!empty($products)) : ?>
                         <?php foreach ($products as $product) : ?>
                             <tr>
                             <td><?= htmlspecialchars($product['id']) ?></td>
-                            <td><?= $productModel->getAvatarImages($product['images'], '100px') ?></td>
+                            <td><?= $productmodel->getAvatarImages($product['images'], '100px') ?></td>
                             <td><?= htmlspecialchars($product['name']) ?></td>
-                            <td><?= htmlspecialchars($productModel->getCategoryNameById($product['category_id'])) ?></td>
-                            <td><?= htmlspecialchars($productModel->getBrandNameById($product['brand_id'])) ?></td>
+                            <td><?= htmlspecialchars($productmodel->getCategoryNameById($product['category_id'])) ?></td>
+                            <td><?= htmlspecialchars($productmodel->getBrandNameById($product['brand_id'])) ?></td>
                             <td><?= htmlspecialchars($product['stock']) ?></td>
                             <td><?= htmlspecialchars($product['price']) ?></td>
                             <td><?= htmlspecialchars($product['discounted_price']) ?></td>

@@ -1,12 +1,8 @@
-<?php
-require("Includes/Header.php"); 
-require_once("../Config/Database.php"); 
-?>
+<?php require("Includes/Header.php"); ?>
 
-<!-- DataTales Example -->
 <div class="card shadow mb-4">
     <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Danh sách sản phẩm</h6>
+        <h6 class="m-0 font-weight-bold text-primary">Danh sách đánh giá</h6>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -14,35 +10,39 @@ require_once("../Config/Database.php");
                 <thead>
                     <tr>
                         <th>Id</th>
-                        <th>Name</th>
-                        <th>Slug</th>
-                        <th>Status</th>
-                        <th>Operations</th>
+                        <th>User</th>
+                        <th>Product</th>
+                        <th>Comment</th>
+                        <th>Rating</th>
+                        <th>Created At</th>
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr>
-                        <th>Id</th>
-                        <th>Name</th>
-                        <th>Slug</th>
-                        <th>Status</th>
-                        <th>Operations</th>
-                    </tr>
-                </tfoot>
                 <tbody>
-                    <?php if (!empty($products)) : ?>
-                        <?php foreach ($products as $product) : ?>
+                    <?php if (!empty($reviews)) : ?>
+                        <?php foreach ($reviews as $review) : ?>
                             <tr>
-                                <td><?= htmlspecialchars($product['id']) ?></td>
-                                <td><?= htmlspecialchars($product['name']) ?></td>
-                                <td><?= htmlspecialchars($product['slug']) ?></td>
-                                <td><?= htmlspecialchars($product['status']) ?></td>
-                                <td>Del | Edit</td>
+                                <td><?= htmlspecialchars($review['id']) ?></td>
+                                <td><?= htmlspecialchars($review['user_name']) ?></td>
+                                <td><?= htmlspecialchars($review['product_name']) ?></td>
+                                <td style="text-align: left;">
+                                    <textarea readonly style="
+                                        width: 100%;
+                                        height: 80px;
+                                        resize: none;
+                                        border: 1px solid #ccc;
+                                        background: transparent;
+                                        box-sizing: border-box;
+                                        text-align: left;
+                                        overflow-y: auto;
+                                    "><?= htmlspecialchars($review['comment']) ?></textarea>
+                                </td>
+                                <td><?= htmlspecialchars($review['rating']) ?></td>
+                                <td><?= htmlspecialchars($review['created_at']) ?></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else : ?>
                         <tr>
-                            <td colspan="6" class="text-center">Không có dữ liệu</td>
+                            <td colspan="7" class="text-center">Không có dữ liệu</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
@@ -51,6 +51,4 @@ require_once("../Config/Database.php");
     </div>
 </div>
 
-<?php
-require("Includes/Footer.php"); 
-?>
+<?php require("Includes/Footer.php"); ?>

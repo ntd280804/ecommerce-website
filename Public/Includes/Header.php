@@ -24,6 +24,19 @@
 </head>
 
 <body>
+<?php
+require_once ("./Models/Cart_Model.php");
+$cartModel = new CartModel();
+        if (isset($_SESSION['user_id'])) {
+            $userId = $_SESSION['user_id'];
+            $totalAmount = $cartModel->getCartTotal($userId);
+            $totalQuantityAmount = $cartModel->getCartTotalQuantity($userId);
+        } 
+        else {
+            $totalAmount = 0;
+            $totalQuantityAmount = 0;
+        }
+?>
     <!-- Page Preloder -->
     <div id="preloder">
         <div class="loader"></div>
@@ -39,21 +52,24 @@
         </div>
         <div class="humberger__menu__cart">
             <ul>
-                <li><a href="#"><i class="fa fa-heart"></i> <span>1</span></a></li>
-                <li><a href="#"><i class="fa fa-shopping-bag"></i> <span>3</span></a></li>
+                
+                <li><a href="./index.php?controller=cart&action=index"><i class="fa fa-shopping-bag"></i> <span><?php echo htmlspecialchars($totalQuantityAmount); ?></span></a></li>
             </ul>
-            <div class="header__cart__price">item: <span>$150.00</span></div>
+            <div class="header__cart__price">item: <span><?php echo htmlspecialchars($totalAmount); ?></span></div>
         </div>
         <div class="humberger__menu__widget">
             <div class="header__top__right__auth">
-                <a href="#"><i class="fa fa-user"></i> Login</a>
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <a href="./index.php?controller=user&action=logout"><i class="fa fa-sign-out"></i> Logout (<?php echo $_SESSION['user_name']; ?>)</a>
+                <?php else: ?>
+                    <a href="./index.php?controller=user&action=login"><i class="fa fa-user"></i> Login</a>
+                <?php endif; ?>
             </div>
         </div>
         <nav class="humberger__menu__nav mobile-menu">
             <ul>
                 <li class="active"><a href="./index.php?controller=home&action=index">Home</a></li>
-                <li><a href="./shop-grid.html">Shop</a></li>
-                <li><a href="./shoping-cart.html">Shoping Cart</a></li>
+                <li><a href="./index.php?controller=product&action=index">Shop</a></li>
             </ul>
         </nav>
         <div id="mobile-menu-wrap"></div>
@@ -95,8 +111,13 @@
                             </div>
                             
                             <div class="header__top__right__auth">
-                                <a href="#"><i class="fa fa-user"></i> Login</a>
+                                <?php if (isset($_SESSION['user_id'])): ?>
+                                    <a href="./index.php?controller=user&action=logout"><i class="fa fa-sign-out"></i> Logout (<?php echo $_SESSION['user_name']; ?>)</a>
+                                <?php else: ?>
+                                    <a href="./index.php?controller=user&action=login"><i class="fa fa-user"></i> Login</a>
+                                <?php endif; ?>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -121,9 +142,9 @@
                 <div class="col-lg-3">
                     <div class="header__cart">
                         <ul>
-                            <li><a href="./index.php?controller=home&action=ShopCart"><i class="fa fa-shopping-bag"></i> <span>3</span></a></li>
+                            <li><a href="./index.php?controller=cart&action=index"><i class="fa fa-shopping-bag"></i> <span><?php echo htmlspecialchars($totalQuantityAmount); ?></span></a></li>
                         </ul>
-                        <div class="header__cart__price">item: <span>$150.00</span></div>
+                        <div class="header__cart__price">item: <span><?php echo htmlspecialchars($totalAmount); ?></span></div>
                     </div>
                 </div>
             </div>

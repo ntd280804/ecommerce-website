@@ -77,14 +77,18 @@ require("Includes/Header.php");
 
                     <div class="product__details__price">$<?= number_format($product['price'], 2) ?></div>
                     <p><?= nl2br(htmlspecialchars($product['summary'])) ?></p>
-                    <div class="product__details__quantity">
-                        <div class="quantity">
-                            <div class="pro-qty">
-                                <input type="text" value="1">
+                    <form action="./index.php?controller=cart&action=addcart" method="POST">
+                        <div class="product__details__quantity">
+                            <div class="quantity">
+                                <div class="pro-qty">
+                                    <input type="number" name="qty" value="1" min="1">
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <a href="#" class="primary-btn">ADD TO CART</a>
+                        <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
+                        <button type="submit" class="primary-btn">ADD TO CART</button>
+                    </form>
+
                     <ul>
                     <li><b>Category</b> <span><?= htmlspecialchars($productmodel->getCategoryNameById($product['category_id'])) ?></span></li>
                     

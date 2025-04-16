@@ -99,7 +99,6 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Các chức năng</h6>
                         <a class="collapse-item" href="./index.php?controller=review&action=index">Liệt kê</a>
-                        <a class="collapse-item" href="./index.php?controller=review&action=reply">Phản hồi</a>
                     </div>
                 </div>
             </li>

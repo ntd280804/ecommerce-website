@@ -21,30 +21,22 @@ require("Includes/Header.php");
                             <div class="text-center">
                                 <h1 class="h4 text-gray-900 mb-4">Chào mừng trở lại!</h1>
                             </div>
+                            <?php if (!empty($error_message)): ?>
+                                <p style="color:red;"><?php echo $error_message; ?></p>
+                            <?php endif; ?>
+
                             <form class="user" method="POST" action="./index.php?controller=user&action=handleLogin">
-
                                 <div class="form-group">
-                                    <input type="email" class="form-control form-control-user"
-                                        id="exampleInputEmail" aria-describedby="emailHelp"
-                                        placeholder="Địa chỉ email...">
+                                    <input type="email" name="email" class="form-control form-control-user"
+                                        placeholder="Địa chỉ email..." required>
                                 </div>
                                 <div class="form-group">
-                                    <input type="password" class="form-control form-control-user"
-                                        id="exampleInputPassword" placeholder="Mật khẩu">
+                                    <input type="password" name="password" class="form-control form-control-user"
+                                        placeholder="Mật khẩu" required>
                                 </div>
-                                <div class="form-group">
-                                    <div class="custom-control custom-checkbox small">
-                                        <input type="checkbox" class="custom-control-input" id="customCheck">
-                                        <label class="custom-control-label" for="customCheck">
-                                            Nhớ mật khẩu
-                                        </label>
-                                    </div>
-                                </div>
-                                <button type="submit" class="btn btn-primary btn-user btn-block">
-    Đăng nhập
-</button>
-
+                                <button type="submit" class="btn btn-primary btn-user btn-block">Đăng nhập</button>
                             </form>
+
                             <hr>
                             <div class="text-center">
                                 <a class="small" href="forgot-password.html">Quên mật khẩu?</a>

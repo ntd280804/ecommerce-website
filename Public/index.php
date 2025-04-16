@@ -1,26 +1,37 @@
 <?php
+session_start(); // Bắt đầu session ở đây
 $controller = $_GET['controller'] ?? 'home';
 $action = $_GET['action'] ?? 'index';
 
 switch ($controller) {
     case 'home':
         require_once 'Controllers/Home_Controller.php';
-        $home = new HomeController();
-        $home->$action();
+        $controller = new HomeController();
+        $controller->$action();
         break;
     case 'product':
             require_once 'Controllers/Product_Controller.php';
-            $home = new ProductController();
-            $home->$action();
+            $controller = new ProductController();
+            $controller->$action();
             break;
     case 'user':
         require_once 'Controllers/User_Controller.php';
-        $home = new UserController();
-        $home->$action();
+        $controller = new UserController();
+        $controller->$action();
+        break;
+    case 'cart':
+        require_once 'Controllers/Cart_Controller.php';
+        $controller = new CartController();
+        $controller->$action();
+        break;
+    case 'order':
+        require_once 'Controllers/Order_Controller.php';
+        $controller = new OrderController();
+        $controller->$action();
         break;
     default:
         require_once 'Controllers/Home_Controller.php';
-        $home = new HomeController();
-        $home->Error404(); // Handle 404 error
+        $controller = new HomeController();
+        $controller->Error404(); // Handle 404 error
         break;
 }

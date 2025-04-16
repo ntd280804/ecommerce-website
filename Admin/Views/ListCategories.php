@@ -34,15 +34,7 @@
                         <th>Operations</th>
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr>
-                        <th>Id</th>
-                        <th>Name</th>
-                        <th>Slug</th>
-                        <th>Status</th>
-                        <th>Operations</th>
-                    </tr>
-                </tfoot>
+                
                 <tbody>
                     <?php if (!empty($categories)) : ?>
                         <?php foreach ($categories as $category) : ?>

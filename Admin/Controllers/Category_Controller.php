@@ -1,7 +1,8 @@
 <?php
+require_once './Models/Category_Model.php';
 class CategoryController {
     public function index() {
-        require_once './Models/Category_Model.php';
+        
         $categorymodel = new CategoryModel();
     
         // If 'status' is not set in the URL, redirect to the URL with 'status=all'
@@ -22,7 +23,7 @@ class CategoryController {
             $id = $_GET['id'];
             $status = $_GET['status'];
             
-            require_once './Models/Category_Model.php';
+            
             $categorymodel = new CategoryModel();
             
             // Call a method to update the brand's status
@@ -39,7 +40,7 @@ class CategoryController {
     }
 
     public function store() {
-        require_once './Models/Category_Model.php';
+        
         $product = new CategoryModel;
     
         $product->name = $_POST['name'];
@@ -53,7 +54,7 @@ class CategoryController {
         }
     }
     public function update() {
-        require_once './Models/Category_Model.php';
+        
         $categorymodel = new CategoryModel;
     
         $id = $_POST['id']; // Dữ liệu từ hidden input
@@ -67,7 +68,7 @@ class CategoryController {
         }
     }
     public function edit() {
-        require_once './Models/Category_Model.php';
+        
         $categorymodel = new CategoryModel;
     
         $id = $_GET['id']; // Lấy id từ URL
@@ -77,3 +78,4 @@ class CategoryController {
     }
 }
 
+?>

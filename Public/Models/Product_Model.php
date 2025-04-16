@@ -103,5 +103,19 @@ class ProductModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     }
+    public function getTopRated() {
+        $sql = "SELECT p.*, COUNT(r.id) AS review_count
+                FROM products p
+                LEFT JOIN reviews r ON p.id = r.product_id
+                WHERE p.status = 'Active'
+                GROUP BY p.id
+                ORDER BY review_count DESC";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    
 }
 

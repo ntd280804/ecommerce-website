@@ -2,7 +2,6 @@
 $isHomePage = true; // Set this variable to true for the home page
 require("Includes/Header.php"); 
 ?>
-
     <!-- Categories Section Begin -->
     <section class="categories">
         <div class="container">
@@ -10,8 +9,13 @@ require("Includes/Header.php");
                 <div class="categories__slider owl-carousel">
                     
                     <?php foreach ($products as $product): ?>
+                        <?php
+                            $images = $productmodel->getImagesById($product['id']);
+                            ?>
                     <div class="col-lg-3">
-                        <div class="categories__item set-bg" data-setbg="<?php echo explode(';', $product['images'])[0]; ?>">
+
+                        <div class="categories__item set-bg">
+                        <?php echo $productmodel->getAvatarImages($images, 400); ?>
                             <h5>
                                 <a href="./index.php?controller=product&action=detail&id=<?php echo $product['id']; ?>">
                                     <?php echo htmlspecialchars($product['name']); ?>
@@ -58,7 +62,7 @@ require("Includes/Header.php");
                         foreach ($chunks as $group): ?>
                             <div class="latest-product__slider__item">
                                 <?php foreach ($group as $product): ?>
-                                    <a href="./index.php?controller=product&action=index&id=<?php echo $product['id']; ?>" class="latest-product__item">
+                                    <a href="./index.php?controller=product&action=detail&id=<?php echo $product['id']; ?>" class="latest-product__item">
                                         <div class="latest-product__item__pic">
                                             <img src="<?php echo explode(';', $product['images'])[0]; ?>" alt="">
                                         </div>

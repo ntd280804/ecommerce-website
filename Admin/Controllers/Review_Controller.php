@@ -1,7 +1,11 @@
 <?php
+require_once './Models/Review_Model.php';
+
 class ReviewController {
     public function index() {
-        // Điều hướng tới trang dashboard admin
-        include './Views/ListBrands.php';
+        $reviewmodel = new ReviewModel();
+        $reviews = $reviewmodel->getAllReviews();
+        include './Views/ListReviews.php';
     }
 }
+?>

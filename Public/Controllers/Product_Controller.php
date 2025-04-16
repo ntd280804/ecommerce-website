@@ -1,9 +1,9 @@
 <?php
+    require_once("../Config/Database.php"); 
+    require_once ("./Models/Product_Model.php");
 class ProductController {
     public function index() {
         // Điều hướng tới trang dashboard admin
-        require_once("../Config/Database.php"); 
-        require_once ("./Models/Product_Model.php");
         $productmodel = new ProductModel();
         if (isset($_GET['category'])) {
             $category = $_GET['category'];
@@ -19,9 +19,6 @@ class ProductController {
             // Maybe redirect or show an error
             include './Views/HomePage.php';
         }
-
-        require_once("../Config/Database.php");
-        require_once ("./Models/Product_Model.php");
         $productmodel = new ProductModel();
         $product = $productmodel->getById($id); // Fetch  based on status
         $images = $productmodel->getImagesById($product['id']);
@@ -31,3 +28,4 @@ class ProductController {
         include './Views/ProductDetail.php';
     }
 }
+?>
