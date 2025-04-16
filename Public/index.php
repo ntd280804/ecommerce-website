@@ -8,7 +8,11 @@ switch ($controller) {
         $home = new HomeController();
         $home->$action();
         break;
-
+    case 'product':
+            require_once 'Controllers/Product_Controller.php';
+            $home = new ProductController();
+            $home->$action();
+            break;
     default:
         require_once 'Controllers/Home_Controller.php';
         $home = new HomeController();

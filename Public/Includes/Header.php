@@ -7,7 +7,7 @@
     <meta name="keywords" content="Ogani, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Ogani | Template</title>
+    <title>OGANI</title>
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet">
@@ -30,7 +30,9 @@
     </div>
 
     <!-- Humberger Begin -->
-    <div class="humberger__menu__overlay"></div>
+    <div class="humberger__menu__overlay">
+
+    </div>
     <div class="humberger__menu__wrapper">
         <div class="humberger__menu__logo">
             <a href="#"><img src="./assets/img/logo.png" alt=""></a>
@@ -43,15 +45,6 @@
             <div class="header__cart__price">item: <span>$150.00</span></div>
         </div>
         <div class="humberger__menu__widget">
-            <div class="header__top__right__language">
-                <img src="./assets/img/language.png" alt="">
-                <div>English</div>
-                <span class="arrow_carrot-down"></span>
-                <ul>
-                    <li><a href="#">Spanis</a></li>
-                    <li><a href="#">English</a></li>
-                </ul>
-            </div>
             <div class="header__top__right__auth">
                 <a href="#"><i class="fa fa-user"></i> Login</a>
             </div>
@@ -60,16 +53,7 @@
             <ul>
                 <li class="active"><a href="./index.php?controller=home&action=index">Home</a></li>
                 <li><a href="./shop-grid.html">Shop</a></li>
-                <li><a href="#">Pages</a>
-                    <ul class="header__menu__dropdown">
-                        <li><a href="./shop-details.html">Shop Details</a></li>
-                        <li><a href="./shoping-cart.html">Shoping Cart</a></li>
-                        <li><a href="./checkout.html">Check Out</a></li>
-                        <li><a href="./blog-details.html">Blog Details</a></li>
-                    </ul>
-                </li>
-                <li><a href="./blog.html">Blog</a></li>
-                <li><a href="./contact.html">Contact</a></li>
+                <li><a href="./shoping-cart.html">Shoping Cart</a></li>
             </ul>
         </nav>
         <div id="mobile-menu-wrap"></div>
@@ -81,8 +65,8 @@
         </div>
         <div class="humberger__menu__contact">
             <ul>
-                <li><i class="fa fa-envelope"></i> hello@colorlib.com</li>
-                <li>Free Shipping for all Order of $99</li>
+                <li><i class="fa fa-envelope"></i> hello@NguyenTranDinh</li>
+                <li>Freeship nội thành</li>
             </ul>
         </div>
     </div>
@@ -96,8 +80,8 @@
                     <div class="col-lg-6 col-md-6">
                         <div class="header__top__left">
                             <ul>
-                                <li><i class="fa fa-envelope"></i> hello@colorlib.com</li>
-                                <li>Free Shipping for all Order of $99</li>
+                                <li><i class="fa fa-envelope"></i> hello@NguyenTranDinh</li>
+                                <li>Freeship nội thành</li>
                             </ul>
                         </div>
                     </div>
@@ -130,7 +114,7 @@
                         <ul>
                             <li class="active"><a href="./index.php?controller=home&action=index">Home</a></li>
                             <li><a href="./index.php?controller=home&action=shopgrid">Shop</a></li>
-                            <li><a href="./index.php?controller">Shoping Cart</a></li>
+                            <li><a href="./index.php?controller=home&action=ShopCart">Shoping Cart</a></li>
                         </ul>
                     </nav>
                 </div>
@@ -158,30 +142,29 @@ else {
     echo '<section class="hero hero-normal">';
 }
 ?>
-    <!-- Hero Section Begin -->
+<?php
+require_once("../Config/Database.php"); 
+require_once ("./Models/Category_Model.php");
+$categorymodel = new CategoryModel();
+$categories = $categorymodel->getAll(); // Fetch  based on status
+?>
+
+<!-- Hero Section Begin -->
     
         <div class="container">
             <div class="row">
                 <div class="col-lg-3">
-                    <div class="hero__categories">
-                        <div class="hero__categories__all">
-                            <i class="fa fa-bars"></i>
-                            <span>All departments</span>
-                        </div>
-                        <ul>
-                            <li><a href="#">Fresh Meat</a></li>
-                            <li><a href="#">Vegetables</a></li>
-                            <li><a href="#">Fruit & Nut Gifts</a></li>
-                            <li><a href="#">Fresh Berries</a></li>
-                            <li><a href="#">Ocean Foods</a></li>
-                            <li><a href="#">Butter & Eggs</a></li>
-                            <li><a href="#">Fastfood</a></li>
-                            <li><a href="#">Fresh Onion</a></li>
-                            <li><a href="#">Papayaya & Crisps</a></li>
-                            <li><a href="#">Oatmeal</a></li>
-                            <li><a href="#">Fresh Bananas</a></li>
-                        </ul>
+                <div class="hero__categories">
+                    <div class="hero__categories__all">
+                        <i class="fa fa-bars"></i>
+                        <span>Danh mục</span>
                     </div>
+                    <ul>
+                        <?php foreach ($categories as $category): ?>
+                            <li><a href="#"><?php echo htmlspecialchars($category['name']); ?></a></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
                 </div>
                 <div class="col-lg-9">
                     <div class="hero__search">
@@ -204,10 +187,10 @@ else {
                     </div>
                     <?php 
                         if($isHomePage) {
-                            echo '<div class="hero__item set-bg" data-setbg="./assets/img/hero/banner.jpg">
+                            echo '<div class="hero__item set-bg" data-setbg="./assets/img/hero/banner.png">
                         <div class="hero__text">
-                            <span>FRUIT FRESH</span>
-                            <h2>Vegetable <br />100% Organic</h2>
+                            <span>Đồ gia dụng giá rẻ</span>
+                            <h2>Gia dụng<br />100% Chính hãng</h2>
                             <p>Free Pickup and Delivery Available</p>
                             <a href="#" class="primary-btn">SHOP NOW</a>
                         </div>

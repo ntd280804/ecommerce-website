@@ -1,7 +1,13 @@
 <?php
 class HomeController {
     public function index() {
-        // Điều hướng tới trang dashboard admin
+    
+        require_once("../Config/Database.php"); 
+        require_once ("./Models/Product_Model.php");
+        $productmodel = new ProductModel();
+        $products = $productmodel->getAllActive(); // Fetch  based on status
+        $topratedproduct = $productmodel->getAllActive(); // Fetch  based on status
+        //$topratedproduct = $productmodel->getTopRated(); // Fetch  based on status
         include './Views/HomePage.php';
     }
     public function Error404() {
@@ -11,6 +17,10 @@ class HomeController {
     }
     public function shopgrid() {
         // Điều hướng tới trang dashboard admin
+        require_once("../Config/Database.php"); 
+        require_once ("./Models/Product_Model.php");
+        $productmodel = new ProductModel();
+        $products = $productmodel->getAllActive(); // Fetch  based on status
         include './Views/ShopGrid.php';
     }
     public function ShopCart() {

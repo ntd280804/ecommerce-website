@@ -8,31 +8,18 @@ require("Includes/Header.php");
         <div class="container">
             <div class="row">
                 <div class="categories__slider owl-carousel">
+                    
+                    <?php foreach ($products as $product): ?>
                     <div class="col-lg-3">
-                        <div class="categories__item set-bg" data-setbg="./assets/img/categories/cat-1.jpg">
-                            <h5><a href="#">Fresh Fruit</a></h5>
+                        <div class="categories__item set-bg" data-setbg="<?php echo explode(';', $product['images'])[0]; ?>">
+                            <h5>
+                                <a href="./index.php?controller=product&action=index&id=<?php echo $product['id']; ?>">
+                                    <?php echo htmlspecialchars($product['name']); ?>
+                                </a>
+                            </h5>
                         </div>
                     </div>
-                    <div class="col-lg-3">
-                        <div class="categories__item set-bg" data-setbg="./assets/img/categories/cat-2.jpg">
-                            <h5><a href="#">Dried Fruit</a></h5>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="categories__item set-bg" data-setbg="./assets/img/categories/cat-3.jpg">
-                            <h5><a href="#">Vegetables</a></h5>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="categories__item set-bg" data-setbg="./assets/img/categories/cat-4.jpg">
-                            <h5><a href="#">drink fruits</a></h5>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="categories__item set-bg" data-setbg="./assets/img/categories/cat-5.jpg">
-                            <h5><a href="#">drink fruits</a></h5>
-                        </div>
-                    </div>
+                <?php endforeach; ?>
                 </div>
             </div>
         </div>
@@ -45,12 +32,12 @@ require("Includes/Header.php");
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-6">
                     <div class="banner__pic">
-                        <img src="./assets/img/banner/banner-1.jpg" alt="">
+                        <img src="./assets/img/hero/banner.png" alt="">
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-6">
                     <div class="banner__pic">
-                        <img src="./assets/img/banner/banner-2.jpg" alt="">
+                    <img src="./assets/img/hero/banner.png" alt="">
                     </div>
                 </div>
             </div>
@@ -59,78 +46,38 @@ require("Includes/Header.php");
     <!-- Banner End -->
 
     <!-- Latest Product Section Begin -->
-    <section class="latest-product spad">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4 col-md-6">
-                    <div class="latest-product__text">
-                        <h4>Top Rated Products</h4>
-                        <div class="latest-product__slider owl-carousel">
-                            <div class="latest-prdouct__slider__item">
-                                <a href="#" class="latest-product__item">
-                                    <div class="latest-product__item__pic">
-                                        <img src="./assets/img/latest-product/lp-1.jpg" alt="">
-                                    </div>
-                                    <div class="latest-product__item__text">
-                                        <h6>Crab Pool Security</h6>
-                                        <span>$30.00</span>
-                                    </div>
-                                </a>
-                                <a href="#" class="latest-product__item">
-                                    <div class="latest-product__item__pic">
-                                        <img src="./assets/img/latest-product/lp-2.jpg" alt="">
-                                    </div>
-                                    <div class="latest-product__item__text">
-                                        <h6>Crab Pool Security</h6>
-                                        <span>$30.00</span>
-                                    </div>
-                                </a>
-                                <a href="#" class="latest-product__item">
-                                    <div class="latest-product__item__pic">
-                                        <img src="./assets/img/latest-product/lp-3.jpg" alt="">
-                                    </div>
-                                    <div class="latest-product__item__text">
-                                        <h6>Crab Pool Security</h6>
-                                        <span>$30.00</span>
-                                    </div>
-                                </a>
+<section class="latest-product spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="latest-product__text">
+                    <h4>Top Rated Products</h4>
+                    <div class="latest-product__slider owl-carousel">
+                        <?php 
+                        $chunks = array_chunk($topratedproduct, 3); // Mỗi slide chứa 3 sản phẩm
+                        foreach ($chunks as $group): ?>
+                            <div class="latest-product__slider__item">
+                                <?php foreach ($group as $product): ?>
+                                    <a href="./index.php?controller=product&action=index&id=<?php echo $product['id']; ?>" class="latest-product__item">
+                                        <div class="latest-product__item__pic">
+                                            <img src="<?php echo explode(';', $product['images'])[0]; ?>" alt="">
+                                        </div>
+                                        <div class="latest-product__item__text">
+                                            <h6><?php echo htmlspecialchars($product['name']); ?></h6>
+                                            <span><?php echo number_format($product['price'], 0, ',', '.'); ?> đ</span>
+                                        </div>
+                                    </a>
+                                <?php endforeach; ?>
                             </div>
-                            <div class="latest-prdouct__slider__item">
-                                <a href="#" class="latest-product__item">
-                                    <div class="latest-product__item__pic">
-                                        <img src="./assets/img/latest-product/lp-1.jpg" alt="">
-                                    </div>
-                                    <div class="latest-product__item__text">
-                                        <h6>Crab Pool Security</h6>
-                                        <span>$30.00</span>
-                                    </div>
-                                </a>
-                                <a href="#" class="latest-product__item">
-                                    <div class="latest-product__item__pic">
-                                        <img src="./assets/img/latest-product/lp-2.jpg" alt="">
-                                    </div>
-                                    <div class="latest-product__item__text">
-                                        <h6>Crab Pool Security</h6>
-                                        <span>$30.00</span>
-                                    </div>
-                                </a>
-                                <a href="#" class="latest-product__item">
-                                    <div class="latest-product__item__pic">
-                                        <img src="./assets/img/latest-product/lp-3.jpg" alt="">
-                                    </div>
-                                    <div class="latest-product__item__text">
-                                        <h6>Crab Pool Security</h6>
-                                        <span>$30.00</span>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-    <!-- Latest Product Section End -->
+    </div>
+</section>
+<!-- Latest Product Section End -->
+
 
     <?php
 require("Includes/Footer.php"); 

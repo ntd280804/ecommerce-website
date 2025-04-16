@@ -1059,6 +1059,7 @@ ol {
 	position: relative;
 }
 
+
 .breadcrumb__option a:after {
 	position: absolute;
 	right: -12px;
@@ -1068,6 +1069,8 @@ ol {
 	background: #ffffff;
 	content: "";
 }
+
+
 
 .breadcrumb__option span {
 	display: inline-block;
