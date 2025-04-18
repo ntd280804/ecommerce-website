@@ -1,6 +1,5 @@
 <?php
 $isHomePage = false; // Set this variable to true for the home page
-$isLoginPage = true; // Set this variable to true for the login page
 require("Includes/Header.php"); 
 ?>
 
@@ -39,10 +38,10 @@ require("Includes/Header.php");
 
                             <hr>
                             <div class="text-center">
-                                <a class="small" href="forgot-password.html">Quên mật khẩu?</a>
+                                <a class="small" href="./index.php?controller=user&action=forgotpassword">Quên mật khẩu?</a>
                             </div>
                             <div class="text-center">
-                                <a class="small" href="register.html">Tạo tài khoản!</a>
+                                <a class="small" href="./index.php?controller=user&action=register">Tạo tài khoản!</a>
                             </div>
                         </div>
                     </div>

@@ -15,7 +15,6 @@ require_once("../Config/Database.php");
                     <tr>
                         <th>Id</th>
                         <th>Name</th>
-                        <th>Slug</th>
                         <th>Status</th>
                         <th>Operations</th>
                     </tr>
@@ -24,20 +23,23 @@ require_once("../Config/Database.php");
                     <tr>
                         <th>Id</th>
                         <th>Name</th>
-                        <th>Slug</th>
                         <th>Status</th>
                         <th>Operations</th>
                     </tr>
                 </tfoot>
                 <tbody>
-                    <?php if (!empty($products)) : ?>
-                        <?php foreach ($products as $product) : ?>
+                    <?php if (!empty($orders)) : ?>
+                        <?php foreach ($orders as $order) : ?>
                             <tr>
-                                <td><?= htmlspecialchars($product['id']) ?></td>
-                                <td><?= htmlspecialchars($product['name']) ?></td>
-                                <td><?= htmlspecialchars($product['slug']) ?></td>
-                                <td><?= htmlspecialchars($product['status']) ?></td>
-                                <td>Del | Edit</td>
+                                <td><?= htmlspecialchars($order['id']) ?></td>
+                                <td><?= htmlspecialchars($order['user_id']) ?></td>
+                                <td><?= htmlspecialchars($order['status']) ?></td>
+                                <td>
+                                    <a class="btn btn-warning"
+                                    href="./index.php?controller=order&action=detail&id=<?= $order['id'] ?>"
+                                    >Detail</a>
+
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else : ?>

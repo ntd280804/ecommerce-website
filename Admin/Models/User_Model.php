@@ -75,4 +75,25 @@ class UserModel {
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();
     }
+    public function login($email, $password) {
+        $sql = "SELECT * FROM admins WHERE email = :email AND status = 'Active' LIMIT 1 ";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user['password'] == $password) {
+            return $user; // Đăng nhập thành công
+        }
+
+        return false; // Đăng nhập thất bại
+    }
+    public function isEmailExists($email) {
+        $sql = "SELECT id FROM admins WHERE email = :email";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+        return $stmt->fetch() !== false;
+    }
 }

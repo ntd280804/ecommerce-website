@@ -35,27 +35,12 @@ require("Includes/Header.php");
                             <div class="checkout__order">
                                 <h4>Your Order</h4>
                                 <div class="checkout__order__products">Products <span>Total</span></div>
-                                <ul>
-                                    <li>Vegetable’s Package <span>$75.99</span></li>
-                                    <li>Fresh Vegetable <span>$151.99</span></li>
-                                    <li>Organic Bananas <span>$53.99</span></li>
-                                </ul>
-                                <div class="checkout__order__total">Total <span>$750.99</span></div>
-                                
-                                <div class="checkout__input__checkbox">
-                                    <label for="payment">
-                                        Check Payment
-                                        <input type="checkbox" id="payment">
-                                        <span class="checkmark"></span>
-                                    </label>
-                                </div>
-                                <div class="checkout__input__checkbox">
-                                    <label for="paypal">
-                                        Paypal
-                                        <input type="checkbox" id="paypal">
-                                        <span class="checkmark"></span>
-                                    </label>
-                                </div>
+                                    <ul>
+                                        <?php foreach ($cartItems as $item): ?>
+                                        <li><?php echo $item['product_name']; ?><span><?php echo number_format($item['price'] * $item['qty'], 2); ?></span></li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <div class="checkout__order__total">Total <span><?php echo $totalAmount ?></span></div>
                                 <button type="submit" class="site-btn">PLACE ORDER</button>
                             </div>
                         </div>

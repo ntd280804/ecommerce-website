@@ -75,8 +75,8 @@ require_once("../Config/Database.php");
                             </div>
                             <div class="col-sm-4 mb-sm-0">
                             <input type="text" class="form-control form-control-user"
-                                id="disscounted_price" name="disscounted_price" aria-describedby="disscounted_price"
-                                placeholder="Nhập giá bán" value="<?= htmlspecialchars($product['disscounted_price']) ?>">
+                                id="discounted_price" name="discounted_price" aria-describedby="discounted_price"
+                                placeholder="Nhập giá bán" value="<?= htmlspecialchars($product['discounted_price']) ?>">
                             </div>
                         </div>
                         <div class="form-group">

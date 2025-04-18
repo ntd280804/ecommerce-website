@@ -1,6 +1,16 @@
 <?php
+session_start(); // Bắt đầu session
+
 $controller = $_GET['controller'] ?? 'home';
 $action = $_GET['action'] ?? 'index';
+
+// Nếu không phải trang login và chưa đăng nhập => chuyển hướng về login
+if ($controller !== 'user' && $action !== 'login') {
+    if (!isset($_SESSION['admin_name'])) {
+        header('Location: index.php?controller=user&action=login');
+        exit();
+    }
+}
 
 switch ($controller) {
     case 'home':
@@ -48,6 +58,6 @@ switch ($controller) {
     default:
         require_once 'Controllers/Home_Controller.php';
         $home = new HomeController();
-        $home->Error404(); // Handle 404 error
+        $home->Error404(); // 404 not found
         break;
 }

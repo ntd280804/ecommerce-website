@@ -96,12 +96,12 @@ require("Includes/Header.php");
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-12">
+        <div class="col-lg-12">
                 <div class="shoping__cart__btns">
                     <a href="./index.php" class="primary-btn cart-btn">CONTINUE SHOPPING</a>
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-12">
                 <div class="shoping__checkout">
                     <h5>Cart Total</h5>
                     <ul>

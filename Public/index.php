@@ -1,5 +1,6 @@
 <?php
-session_start(); // Bắt đầu session ở đây
+session_name("user_session");
+session_start();
 $controller = $_GET['controller'] ?? 'home';
 $action = $_GET['action'] ?? 'index';
 
@@ -27,6 +28,14 @@ switch ($controller) {
     case 'order':
         require_once 'Controllers/Order_Controller.php';
         $controller = new OrderController();
+        if($action == 'checkout') {
+            if (!isset($_SESSION['user_id'])) {
+                require_once 'Controllers/User_Controller.php';
+                $controller = new UserController();
+                $controller->Login();
+                exit();
+            }
+        }
         $controller->$action();
         break;
     default:

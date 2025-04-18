@@ -33,6 +33,11 @@ class CartModel {
         $stmt->bindParam(':product_id', $productId);
         $stmt->execute();
     }
+    public function clearCart($userId) {
+        $stmt = $this->conn->prepare("DELETE FROM cart WHERE user_id = ?");
+        $stmt->execute([$userId]);
+    }
+    
     public function addToCart($userId, $productId, $quantity){
     // Kiểm tra xem sản phẩm đã có trong giỏ chưa
     $sqlCheck = "SELECT id, qty FROM cart WHERE user_id = :user_id AND product_id = :product_id";
