@@ -22,28 +22,34 @@ class UserModel {
 
         return false; // Đăng nhập thất bại
     }
-    public function register($name, $email, $password, $phone, $address) {
-        try {
-            $sql = "INSERT INTO users (name, email, password, phone, address, status)
-                    VALUES (:name, :email, :password, :phone, :address, 'Active')";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->bindParam(':name', $name);
-            $stmt->bindParam(':email', $email);
-            $stmt->bindParam(':password', $password); // Lưu ý: Nên mã hóa mật khẩu bằng password_hash()
-            $stmt->bindParam(':phone', $phone);
-            $stmt->bindParam(':address', $address);
-            return $stmt->execute();
-        } catch (PDOException $e) {
-            // Log lỗi nếu cần
-            return false;
-        }
+    public function insert() {
+        $sql = "INSERT INTO users (name, email, password, phone, address, status) 
+                VALUES (:name, :email, :password, :phone, :address, :status)";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->bindParam(':name', $this->name);
+        $stmt->bindParam(':email', $this->email);
+        $stmt->bindParam(':password', $this->password);
+        $stmt->bindParam(':phone', $this->phone);
+        $stmt->bindParam(':address', $this->address);
+        $stmt->bindParam(':status', $this->status);
+
+        return $stmt->execute();
     }
     
-    public function isEmailExists($email) {
-        $sql = "SELECT id FROM users WHERE email = :email";
+    public function isEmailExists($email, $table = 'users') {
+        // Chỉ cho phép kiểm tra ở bảng 'users' hoặc 'admins' để tránh SQL injection
+        if (!in_array($table, ['users', 'admins'])) {
+            throw new Exception("Invalid table name.");
+        }
+    
+        $sql = "SELECT id FROM $table WHERE email = :email";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':email', $email);
         $stmt->execute();
         return $stmt->fetch() !== false;
     }
+    
+    
 }

@@ -32,52 +32,32 @@ class UserController {
         include './Views/Register.php';
     }
     public function handleRegister() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $name = $_POST['name'] ?? '';
-            $email = $_POST['email'] ?? '';
-            $password = $_POST['password'] ?? '';
-            $confirmPassword = $_POST['confirm_password'] ?? '';
-            $phone = $_POST['phone'] ?? '';
-            $address = $_POST['address'] ?? '';
+        // Create an instance of UserModel
+        $user = new UserModel();
     
-            // Validate basic inputs
-            if (empty($name) || empty($email) || empty($password) || empty($confirmPassword)) {
-                $error_message = "Vui lòng điền đầy đủ thông tin bắt buộc.";
-                include './Views/Register.php';
-                return;
-            }
+        // Get form data
+        $user->name = $_POST['name'];
+        $user->email = $_POST['email'];
+        $user->password = $_POST['password'];
+        $user->phone = $_POST['phone'];
+        $user->address = $_POST['address'];
+        $user->status = 'Active'; // Default status
     
-            if ($password !== $confirmPassword) {
-                $error_message = "Mật khẩu không khớp.";
-                include './Views/Register.php';
-                return;
-            }
+        // Check if the email already exists in 'users' table
+        if ($user->isEmailExists($user->email, 'users')) {
+            echo "Email already exists. Please use a different email.";
+            return;
+        }
     
-            $usermodel = new UserModel();
-    
-            if ($usermodel->isEmailExists($email)) {
-                $error_message = "Email đã tồn tại.";
-                include './Views/Register.php';
-                return;
-            }
-    
-            // Đăng ký người dùng
-            $result = $usermodel->register($name, $email, $password, $phone, $address);
-    
-            if ($result) {
-                header("Location: ./index.php?controller=user&action=login");
-                exit();
-            } else {
-                $error_message = "Có lỗi xảy ra khi tạo tài khoản.";
-                include './Views/Register.php';
-                return;
-            }
-        } else {
-            header("Location: ./index.php?controller=user&action=register");
+        // Insert the new user into the database
+        if ($user->insert()) {
+            // Redirect to the user list on success
+            header("Location: ./index.php?controller=user&action=login");
             exit();
+        } else {
+            echo "Error when adding the user.";
         }
     }
-    
     public function forgotpassword() {
         include './Views/Forgot-password.php';
     }

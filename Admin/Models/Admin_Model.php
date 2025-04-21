@@ -1,19 +1,20 @@
 <?php
 require_once("../Config/Database.php"); 
 
-class UserModel {
+class AdminModel {
     private $conn;
     public $name;
     public $email;
     public $password;
     public $phone;
     public $address;
-    public $status; // Assuming you have a status field in your users table
+    public $status; // Assuming you have a status field in your admins table
+    public $type; // Assuming you have a status field in your admins table
     public function __construct() {
         $this->conn = Database::connect(); // Dùng PDO từ class Database
     }
-    public function getAllUsers() {
-        $stmt = $this->conn->prepare("SELECT * FROM users");
+    public function getAllAdmins() {
+        $stmt = $this->conn->prepare("SELECT * FROM admins");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -21,7 +22,7 @@ class UserModel {
         // Toggle the status based on the current status
         $newStatus = ($currentStatus == 'Active') ? 'Inactive' : 'Active';
     
-        $sql = "UPDATE users SET status = :status WHERE id = :id";
+        $sql = "UPDATE admins SET status = :status WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
         
         $stmt->bindParam(':status', $newStatus);
@@ -32,9 +33,9 @@ class UserModel {
     public function getByStatus($status) {
         // Assuming you are using PDO to interact with the database
         if ($status === 'all') {
-            $query = "SELECT * FROM users";
+            $query = "SELECT * FROM admins";
         } else {
-            $query = "SELECT * FROM users WHERE status = :status";
+            $query = "SELECT * FROM admins WHERE status = :status";
         }
 
         $stmt = $this->conn->prepare($query);
@@ -47,31 +48,38 @@ class UserModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     public function insert() {
-        $sql = "INSERT INTO users (name, email, password, phone, address, status) 
-                VALUES (:name, :email, :password, :phone, :address, :status)";
-
+        $sql = "INSERT INTO admins (name, email, password, phone, address, status, type) 
+                VALUES (:name, :email, :password, :phone, :address, :status, :type)";
+    
         $stmt = $this->conn->prepare($sql);
-
+    
         $stmt->bindParam(':name', $this->name);
         $stmt->bindParam(':email', $this->email);
         $stmt->bindParam(':password', $this->password);
         $stmt->bindParam(':phone', $this->phone);
         $stmt->bindParam(':address', $this->address);
         $stmt->bindParam(':status', $this->status);
-
+        $stmt->bindParam(':type', $this->type);
+    
         return $stmt->execute();
-    }
+    }    
     public function getById($id) {
-        $sql = "SELECT * FROM users WHERE id = :id";
+        $sql = "SELECT * FROM admins WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
     public function update($id) {
-        $sql = "UPDATE users SET password = :password WHERE id = :id";
+        $sql = "UPDATE admins SET password = :password WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':password', $this->password);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+    public function delete($id) {
+        $sql = "DELETE FROM admins WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();
     }
@@ -81,17 +89,17 @@ class UserModel {
         $stmt->bindParam(':email', $email);
         $stmt->execute();
 
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        $admin = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($user['password'] == $password) {
-            return $user; // Đăng nhập thành công
+        if ($admin['password'] == $password) {
+            return $admin; // Đăng nhập thành công
         }
 
         return false; // Đăng nhập thất bại
     }
-    public function isEmailExists($email, $table = 'users') {
-        // Chỉ cho phép kiểm tra ở bảng 'users' hoặc 'admins' để tránh SQL injection
-        if (!in_array($table, ['users', 'admins'])) {
+    public function isEmailExists($email, $table = 'admins') {
+        // Chỉ cho phép kiểm tra ở bảng 'admins' hoặc 'admins' để tránh SQL injection
+        if (!in_array($table, ['admins', 'admins'])) {
             throw new Exception("Invalid table name.");
         }
     

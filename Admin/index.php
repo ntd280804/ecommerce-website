@@ -54,7 +54,11 @@ switch ($controller) {
         $user = new UserController();
         $user->$action();
         break;
-
+    case 'admin':
+        require_once 'Controllers/Admin_Controller.php';
+        $admin = new AdminController();
+        $admin->$action();
+        break;
     default:
         require_once 'Controllers/Home_Controller.php';
         $home = new HomeController();

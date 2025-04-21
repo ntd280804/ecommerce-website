@@ -20,8 +20,6 @@ class BrandModel {
         return $stmt->execute();
     }
     
-    
-    
     public function updateStatus($id, $currentStatus) {
         // Toggle the status based on the current status
         $newStatus = ($currentStatus == 'Active') ? 'Inactive' : 'Active';

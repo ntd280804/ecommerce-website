@@ -82,9 +82,6 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Các chức năng</h6>
                         <a class="collapse-item" href="./index.php?controller=order&action=index">Liệt kê</a>
-                        <a class="collapse-item" href="./index.php?controller=order&action=processing">Đang giao</a>
-                        <a class="collapse-item" href="./index.php?controller=order&action=complete">Hoàn thành</a>
-                        <a class="collapse-item" href="./index.php?controller=order&action=fail">Thất bại</a>
                     </div>
                 </div>
             </li>
@@ -114,6 +111,21 @@
                         <h6 class="collapse-header">Các chức năng</h6>
                         <a class="collapse-item" href="./index.php?controller=user&action=index">Liệt kê</a>
                         <a class="collapse-item" href="./index.php?controller=user&action=add">Thêm mới</a>
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSeven"
+                    aria-expanded="true" aria-controls="collapseSeven">
+                    <i class="fas fa-fw fa-wrench"></i>
+                    <span>Admins</span>
+                </a>
+                <div id="collapseSeven" class="collapse" aria-labelledby="headingUtilities"
+                    data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Các chức năng</h6>
+                        <a class="collapse-item" href="./index.php?controller=admin&action=index">Liệt kê</a>
+                        <a class="collapse-item" href="./index.php?controller=admin&action=add">Thêm mới</a>
                     </div>
                 </div>
             </li>

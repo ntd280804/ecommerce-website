@@ -23,7 +23,7 @@ require("Includes/Header.php");
                                 <p style="color:red;"><?php echo $error_message; ?></p>
                             <?php endif; ?>
 
-                            <form class="user" method="POST" action="./index.php?controller=user&action=handleRegister">
+                            <form class="user" method="POST" action="./index.php?controller=user&action=handleRegister" onsubmit="return checkPasswordMatch()">
                                 <div class="form-group">
                                     <input type="text" name="name" class="form-control form-control-user"
                                         placeholder="Tên" required>
@@ -34,11 +34,11 @@ require("Includes/Header.php");
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="password" name="password" class="form-control form-control-user"
+                                        <input type="password" name="password" id="password" class="form-control form-control-user"
                                             placeholder="Mật khẩu" required>
                                     </div>
                                     <div class="col-sm-6">
-                                        <input type="password" name="confirm_password" class="form-control form-control-user"
+                                        <input type="password" name="confirm_password" id="confirm_password" class="form-control form-control-user"
                                             placeholder="Nhập lại mật khẩu" required>
                                     </div>
                                 </div>
@@ -72,6 +72,19 @@ require("Includes/Header.php");
 </div>
 
 </div>
+
+<script>
+function checkPasswordMatch() {
+    var password = document.getElementById("password").value;
+    var confirmPassword = document.getElementById("confirm_password").value;
+    
+    if (password !== confirmPassword) {
+        alert("Mật khẩu và xác nhận mật khẩu không khớp!");
+        return false; // Prevent form submission
+    }
+    return true; // Allow form submission
+}
+</script>
 
 <?php
 require("Includes/Footer.php");

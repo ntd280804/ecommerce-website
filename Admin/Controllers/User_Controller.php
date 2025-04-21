@@ -31,8 +31,7 @@ class UserController {
             }
         }
     }
-    public function newpass()
-    {
+    public function newpass(){
         $usermodel = new UserModel();
     
         $id = $_GET['id']; // Lấy id từ URL
@@ -45,24 +44,31 @@ class UserController {
     public function store() {
         // Create an instance of UserModel
         $user = new UserModel();
-
+    
         // Get form data
         $user->name = $_POST['name'];
         $user->email = $_POST['mail'];
         $user->password = $_POST['pass'];
         $user->phone = $_POST['phone'];
         $user->address = $_POST['address'];
-        $user->status = 'Active'; // Set default status to Active
-
+        $user->status = 'Active'; // Default status
+    
+        // Check if the email already exists in 'users' table
+        if ($user->isEmailExists($user->email, 'users')) {
+            echo "Email already exists. Please use a different email.";
+            return;
+        }
+    
         // Insert the new user into the database
         if ($user->insert()) {
-            // Redirect to the user list
+            // Redirect to the user list on success
             header("Location: ./index.php?controller=user&action=index");
             exit();
         } else {
             echo "Error when adding the user.";
         }
     }
+    
     public function update() {
         $usermodel = new userModel;
     
@@ -79,7 +85,6 @@ class UserController {
     public function login() {
         include './Views/Login.php';
     }
-
     public function handleLogin() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $email = $_POST['email'] ?? '';
@@ -102,7 +107,6 @@ class UserController {
             exit();
         }
     }
-
     public function logout() {
         session_start(); // bắt buộc có dòng này để truy cập $_SESSION
         session_unset(); // xóa tất cả biến session
@@ -110,4 +114,5 @@ class UserController {
         header("Location: ./index.php?controller=home&action=index");
         exit();
     }
+
 }

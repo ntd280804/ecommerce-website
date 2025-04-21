@@ -52,8 +52,8 @@ $cartModel = new CartModel();
         </div>
         <div class="humberger__menu__cart">
             <ul>
-                
                 <li><a href="./index.php?controller=cart&action=index"><i class="fa fa-shopping-bag"></i> <span><?php echo htmlspecialchars($totalQuantityAmount); ?></span></a></li>
+                <li><a href="./index.php?controller=order&action=index"><i class="fa fa-cart-arrow-down"></i></a></li>
             </ul>
             <div class="header__cart__price">item: <span><?php echo htmlspecialchars($totalAmount); ?></span></div>
         </div>
@@ -143,6 +143,7 @@ $cartModel = new CartModel();
                     <div class="header__cart">
                         <ul>
                             <li><a href="./index.php?controller=cart&action=index"><i class="fa fa-shopping-bag"></i> <span><?php echo htmlspecialchars($totalQuantityAmount); ?></span></a></li>
+                            <li><a href="./index.php?controller=order&action=index"><i class="fa fa-cart-arrow-down"></i> </a></li>
                         </ul>
                         <div class="header__cart__price">item: <span><?php echo htmlspecialchars($totalAmount); ?></span></div>
                     </div>

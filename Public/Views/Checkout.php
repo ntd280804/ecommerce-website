@@ -28,19 +28,18 @@ require("Includes/Header.php");
             </div>
             <div class="checkout__form">
                 <h4>Billing Details</h4>
-                <form action="#">
+                <form action="./index.php?controller=order&action=placeorder" method="POST">
                     <div class="row">
-                        
                         <div class="col-lg-12 col-md-12">
                             <div class="checkout__order">
                                 <h4>Your Order</h4>
                                 <div class="checkout__order__products">Products <span>Total</span></div>
-                                    <ul>
-                                        <?php foreach ($cartItems as $item): ?>
-                                        <li><?php echo $item['product_name']; ?><span><?php echo number_format($item['price'] * $item['qty'], 2); ?></span></li>
-                                        <?php endforeach; ?>
-                                    </ul>
-                                <div class="checkout__order__total">Total <span><?php echo $totalAmount ?></span></div>
+                                <ul>
+                                    <?php foreach ($cartItems as $item): ?>
+                                    <li><?php echo $item['product_name']; ?><span><?php echo number_format($item['price'] * $item['qty'], 2); ?></span></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                                <div class="checkout__order__total">Total <span><?php echo number_format($totalAmount, 2); ?></span></div>
                                 <button type="submit" class="site-btn">PLACE ORDER</button>
                             </div>
                         </div>
@@ -50,6 +49,7 @@ require("Includes/Header.php");
         </div>
     </section>
     <!-- Checkout Section End -->
+
 
 <?php
 require("Includes/Footer.php"); 

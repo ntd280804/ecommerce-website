@@ -1,5 +1,6 @@
 <?php
     require_once './Models/Order_Model.php';
+    require_once './Models/Product_Model.php';
 class OrderController {
     public function index() {
         $ordermodel = new OrderModel();
@@ -15,4 +16,37 @@ class OrderController {
         $orders = $ordermodel->getByStatus($status); // Fetch brands based on status
         include './Views/ListOrders.php';
     }
+    public function detail() {
+        $ordermodel = new OrderModel();
+        $productModel = new ProductModel();
+        $id = $_GET['id'] ?? null;
+
+        if (!$id) {
+            echo "Order ID is required.";
+            return;
+        }
+
+        $order = $ordermodel->getOrderById($id);
+        $orderDetails = $ordermodel->getOrderDetail($id);
+
+        include './Views/OrderDetail.php';
+    }
+    public function toggleStatus() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $orderId = $_POST['order_id'] ?? null;
+            $status = $_POST['status'] ?? null;
+    
+            $validStatuses = ['Processing', 'Confirmed', 'Shipping', 'Delivered', 'Cancelled'];
+    
+            if ($orderId && in_array($status, $validStatuses)) {
+                $ordermodel = new OrderModel();
+                $ordermodel->updateStatus($orderId, $status);
+            }
+    
+            // Redirect lại trang chi tiết đơn hàng
+            header("Location: ./index.php?controller=order&action=detail&id=" . urlencode($orderId));
+            exit;
+        }
+    }
+    
 }
