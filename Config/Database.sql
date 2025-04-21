@@ -1,4 +1,5 @@
 CREATE DATABASE ecommerceshop;
+
 CREATE TABLE admins (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
@@ -11,6 +12,17 @@ CREATE TABLE admins (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+INSERT INTO admins (name, email, password, phone, address, status, type)
+VALUES (
+    'Admin Test',
+    'a@example.com',
+    'a', -- password: 123456
+    '0123456789',
+    '123 Đường ABC, Quận 1, TP.HCM',
+    'Active',
+    'Admin'
+);
+
 
 CREATE TABLE users (
     id INT PRIMARY KEY AUTO_INCREMENT,
