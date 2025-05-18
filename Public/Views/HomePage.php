@@ -57,22 +57,16 @@ require("Includes/Header.php");
                 <div class="latest-product__text">
                     <h4>Top Rated Products</h4>
                     <div class="latest-product__slider owl-carousel">
-                        <?php 
-                        $chunks = array_chunk($topratedproduct, 3); // Mỗi slide chứa 3 sản phẩm
-                        foreach ($chunks as $group): ?>
-                            <div class="latest-product__slider__item">
-                                <?php foreach ($group as $product): ?>
-                                    <a href="./index.php?controller=product&action=detail&id=<?php echo $product['id']; ?>" class="latest-product__item">
-                                        <div class="latest-product__item__pic">
-                                            <img src="<?php echo explode(';', $product['images'])[0]; ?>" alt="">
-                                        </div>
-                                        <div class="latest-product__item__text">
-                                            <h6><?php echo htmlspecialchars($product['name']); ?></h6>
-                                            <span><?php echo number_format($product['price'], 0, ',', '.'); ?> đ</span>
-                                        </div>
-                                    </a>
-                                <?php endforeach; ?>
-                            </div>
+                        <?php foreach ($topratedproduct as $product): ?>
+                            <a href="./index.php?controller=product&action=detail&id=<?php echo $product['id']; ?>" class="latest-product__item">
+                                <div class="latest-product__item__pic">
+                                    <img src="<?php echo explode(';', $product['images'])[0]; ?>" alt="">
+                                </div>
+                                <div class="latest-product__item__text">
+                                    <h6><?php echo htmlspecialchars($product['name']); ?></h6>
+                                    <span><?php echo number_format($product['price'], 0, ',', '.'); ?> đ</span>
+                                </div>
+                            </a>
                         <?php endforeach; ?>
                     </div>
                 </div>

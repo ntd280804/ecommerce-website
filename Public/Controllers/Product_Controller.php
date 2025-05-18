@@ -3,14 +3,21 @@
     require_once ("./Models/Product_Model.php");
 class ProductController {
     public function index() {
-        // Điều hướng tới trang dashboard admin
         $productmodel = new ProductModel();
-        if (isset($_GET['category'])) {
-            $category = $_GET['category'];
-            $products = $productmodel->getByCategory($category);
+        $category = $_GET['category'] ?? null;
+        $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+        $limit = 9; // Số sản phẩm mỗi trang
+        $offset = ($page - 1) * $limit;
+
+        if ($category) {
+            $products = $productmodel->getByCategoryWithPagination($category, $limit, $offset);
+            $totalProducts = $productmodel->countByCategory($category);
         } else {
-            $products = $productmodel->getAllActive(); // Lấy tất cả sản phẩm đang hoạt động
+            $products = $productmodel->getAllActiveWithPagination($limit, $offset);
+            $totalProducts = $productmodel->countAllActive();
         }
+
+        $totalPages = ceil($totalProducts / $limit);
         include './Views/ProductGrid.php';
     }
     public function detail() {

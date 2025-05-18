@@ -110,6 +110,31 @@ ol {
 /*---------------------
   Helper CSS
 -----------------------*/
+.latest-product__row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.latest-product__item {
+    flex: 0 0 calc(33.333% - 20px); /* 3 sản phẩm mỗi hàng */
+    text-align: center;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    transition: transform 0.3s ease;
+}
+
+.latest-product__item:hover {
+    transform: scale(1.05);
+}
+
+.latest-product__item__pic img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto 10px;
+}
 
 .section-title {
 	margin-bottom: 50px;
@@ -666,12 +691,6 @@ ol {
 	background: #000000;
 	opacity: 0.1;
 	content: "";
-}
-
-.hero__search__form form .hero__search__categories span {
-	position: absolute;
-	right: 14px;
-	top: 14px;
 }
 
 .hero__search__form form input {
@@ -1658,9 +1677,11 @@ ol {
 	margin-right: 0;
 }
 
+
 /*---------------------
   Shop Details
 -----------------------*/
+
 
 .product-details {
 	padding-top: 80px;

@@ -87,10 +87,13 @@ require("Includes/Header.php");
                     </div>
 
                     <div class="product__pagination">
-                        <a href="#">1</a>
-                        <a href="#">2</a>
-                        <a href="#">3</a>
-                        <a href="#"><i class="fa fa-long-arrow-right"></i></a>
+                    <div class="pagination">
+                        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                            <a href="index.php?controller=product&action=index&page=<?php echo $i; ?>" 
+                                class="<?php echo ($i == $page) ? 'active' : ''; ?>">
+                                <?php echo $i; ?>
+                            </a>
+                        <?php endfor; ?>
                     </div>
                 </div>
             </div>
