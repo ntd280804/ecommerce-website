@@ -35,7 +35,7 @@ class ProductModel {
         return $html;
     }
     public function getProductReviews($product_id) {
-        $sql = "SELECT r.comment, u.name as user_name, r.created_at 
+        $sql = "SELECT r.comment ,r.rating , u.name as user_name, r.created_at 
                 FROM reviews r 
                 JOIN users u ON r.user_id = u.id 
                 WHERE r.product_id = ? 
@@ -96,13 +96,20 @@ class ProductModel {
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-    public function getAllActive() {
-        $sql = "SELECT * FROM products where status='Active'";
+    public function getTopDiscounted($limit = 5) {
+        $sql = "SELECT *, ((price - discounted_price)/price)*100 AS discount_percent
+                FROM products 
+                WHERE status = 'active' 
+                ORDER BY discount_percent DESC 
+                LIMIT :limit";
+    
         $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-
     }
+    
+    
     public function getAllActiveWithPagination($limit, $offset, $sort = 'default') {
         $limit = (int)$limit;
         $offset = (int)$offset;
@@ -110,27 +117,32 @@ class ProductModel {
         // Xử lý sắp xếp
         $orderBy = "";
         if ($sort == 'asc') {
-            $orderBy = "ORDER BY price ASC";
+            $orderBy = "ORDER BY p.price ASC";
         } elseif ($sort == 'desc') {
-            $orderBy = "ORDER BY price DESC";
+            $orderBy = "ORDER BY p.price DESC";
+        } elseif ($sort == 'rating_asc') {
+            $orderBy = "ORDER BY avg_rating ASC";
+        } elseif ($sort == 'rating_desc') {
+            $orderBy = "ORDER BY avg_rating DESC";
         }
     
-        $sql = "SELECT * FROM products WHERE status = 'Active' $orderBy LIMIT :limit OFFSET :offset";
+        // Truy vấn lấy sản phẩm kèm avg_rating
+        $sql = "SELECT p.*, COALESCE(AVG(r.rating), 0) AS avg_rating
+                FROM products p
+                LEFT JOIN reviews r ON p.id = r.product_id
+                WHERE p.status = 'Active' 
+                GROUP BY p.id
+                $orderBy
+                LIMIT :limit OFFSET :offset";
+    
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
+    
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
-
-    public function countAllActive() {
-        $sql = "SELECT COUNT(*) AS total FROM products WHERE status = 'Active'";
-        $stmt = $this->conn->query($sql);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result['total'];
-    }
-
     public function getByCategoryWithPagination($category, $limit, $offset, $sort = 'default') {
         $limit = (int)$limit;
         $offset = (int)$offset;
@@ -138,12 +150,24 @@ class ProductModel {
         // Xử lý sắp xếp
         $orderBy = "";
         if ($sort == 'asc') {
-            $orderBy = "ORDER BY price ASC";
+            $orderBy = "ORDER BY p.price ASC";
         } elseif ($sort == 'desc') {
-            $orderBy = "ORDER BY price DESC";
+            $orderBy = "ORDER BY p.price DESC";
+        } elseif ($sort == 'rating_asc') {
+            $orderBy = "ORDER BY avg_rating ASC";
+        } elseif ($sort == 'rating_desc') {
+            $orderBy = "ORDER BY avg_rating DESC";
         }
     
-        $sql = "SELECT * FROM products WHERE category_id = :category AND status = 'Active' $orderBy LIMIT :limit OFFSET :offset";
+        // Truy vấn lấy sản phẩm theo danh mục kèm avg_rating
+        $sql = "SELECT p.*, COALESCE(AVG(r.rating), 0) AS avg_rating
+                FROM products p
+                LEFT JOIN reviews r ON p.id = r.product_id
+                WHERE p.category_id = :category AND p.status = 'Active'
+                GROUP BY p.id
+                $orderBy
+                LIMIT :limit OFFSET :offset";
+    
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':category', $category, PDO::PARAM_INT);
         $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
@@ -151,6 +175,7 @@ class ProductModel {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
     
     public function searchProductsWithPagination($keyword, $limit, $offset, $sort = 'default') {
         $keyword = strtolower($keyword);
@@ -161,23 +186,42 @@ class ProductModel {
         // Xử lý sắp xếp
         $orderBy = "";
         if ($sort == 'asc') {
-            $orderBy = "ORDER BY price ASC";
+            $orderBy = "ORDER BY p.price ASC";
         } elseif ($sort == 'desc') {
-            $orderBy = "ORDER BY price DESC";
+            $orderBy = "ORDER BY p.price DESC";
+        } elseif ($sort == 'rating_asc') {
+            $orderBy = "ORDER BY avg_rating ASC";
+        } elseif ($sort == 'rating_desc') {
+            $orderBy = "ORDER BY avg_rating DESC";
         }
     
-        $sql = "SELECT * FROM products 
-                WHERE LOWER(name) LIKE ? 
-                   OR LOWER(REPLACE(slug, '-', ' ')) LIKE ? 
-                   OR LOWER(description) LIKE ? 
-                   OR LOWER(summary) LIKE ? 
+        // Chèn trực tiếp limit và offset (đã ép kiểu int nên an toàn)
+        $sql = "SELECT p.*, COALESCE(AVG(r.rating), 0) AS avg_rating
+                FROM products p
+                LEFT JOIN reviews r ON p.id = r.product_id
+                WHERE LOWER(p.name) LIKE ? 
+                   OR LOWER(REPLACE(p.slug, '-', ' ')) LIKE ? 
+                   OR LOWER(p.description) LIKE ? 
+                   OR LOWER(p.summary) LIKE ? 
+                GROUP BY p.id
                 $orderBy
                 LIMIT $limit OFFSET $offset";
-        
+    
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$param, $param, $param, $param]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
+    
+    
+    public function countAllActive() {
+        $sql = "SELECT COUNT(*) AS total FROM products WHERE status = 'Active'";
+        $stmt = $this->conn->query($sql);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total'];
+    }
+
+    
     
     
     public function countSearchProducts($keyword) {
@@ -205,17 +249,21 @@ class ProductModel {
     }
 
     public function getTopRated() {
-        $sql = "SELECT p.*, COUNT(r.id) AS review_count
+        $sql = "SELECT p.*, 
+                       COUNT(r.id) AS review_count,
+                       COALESCE(AVG(r.rating), 0) AS avg_rating
                 FROM products p
                 LEFT JOIN reviews r ON p.id = r.product_id
                 WHERE p.status = 'Active'
                 GROUP BY p.id
-                ORDER BY review_count DESC";
-        
+                ORDER BY avg_rating DESC, review_count DESC
+                LIMIT 5";   // <-- giới hạn 5 sản phẩm đầu
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
+    
     
     
 }

@@ -17,16 +17,16 @@ require_once("../Config/Database.php");
                     <div class="text-center">
                         <h1 class="h4 text-gray-900 mb-4">Cập nhật mật khẩu</h1>
                     </div>
-                    <form class="user" method="post" action="./index.php?controller=user&action=update">
+                    <form class="user" method="post" action="./index.php?controller=user&action=update"onsubmit="return validateForm()">
 
                         <input type="hidden" name="id" value="<?php echo $user['id']; ?>">
                         <div class="form-group">
-                            <input type="text" class="form-control form-control-user"
+                            <input type="password" class="form-control form-control-user"
                                 id="password" name="password" aria-describedby="password"
                                 placeholder="Nhập password mới" >
                         </div>
                         <div class="form-group">
-                            <input type="text" class="form-control form-control-user"
+                            <input type="password" class="form-control form-control-user"
                                 id="repassword" name="repassword" aria-describedby="repassword"
                                 placeholder="Nhập lại password mới" >
                         </div>
@@ -40,7 +40,28 @@ require_once("../Config/Database.php");
         </div>
     </div>
 </div>
+<script>
+function validateForm() {
+    var password = document.getElementById("password").value;
+    var confirmPassword = document.getElementById("repassword").value;
 
+
+    // Kiểm tra mật khẩu: ít nhất 1 chữ in hoa, 1 ký tự đặc biệt, dài hơn 6 ký tự
+    var passwordRegex = /^(?=.*[A-Z])(?=.*[\W_]).{7,}$/;
+    if (!passwordRegex.test(password)) {
+        alert("Mật khẩu phải có ít nhất 1 chữ in hoa, 1 ký tự đặc biệt và dài hơn 6 ký tự!");
+        return false;
+    }
+
+    // Kiểm tra xác nhận mật khẩu
+    if (password !== confirmPassword) {
+        alert("Mật khẩu và xác nhận mật khẩu không khớp!");
+        return false;
+    }
+
+    return true; // Cho phép submit form
+}
+</script>
 </div>
 <?php
 require("Includes/Footer.php"); 

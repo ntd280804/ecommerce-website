@@ -1,5 +1,4 @@
 <?php
-session_start();
 $isHomePage = false;
 require("Includes/Header.php");
 
@@ -16,7 +15,7 @@ require("Includes/Header.php");
                         <h1 class="h4 text-gray-900">Chỉnh sửa thông tin tài khoản</h1>
                     </div>
 
-                    <form class="user" method="POST" action="./index.php?controller=user&action=handleupdateprofile">
+                    <form class="user" method="POST" action="./index.php?controller=user&action=handleupdateprofile"onsubmit="return validateForm()">
                         <div class="form-group">
                             <label for="id">ID</label>
                             <input type="text" id="id" class="form-control form-control-user" 
@@ -37,7 +36,11 @@ require("Includes/Header.php");
                             <input type="password" id="password" name="password" class="form-control form-control-user" 
                                    placeholder="Nhập mật khẩu mới (để trống nếu không thay đổi)">
                         </div>
-                        
+                        <div class="form-group">
+                            <label for="password">Mật khẩu</label>
+                            <input type="password" id="passwordagain" name="passwordagain" class="form-control form-control-user" 
+                                   placeholder="Nhập lại mật khẩu mới (để trống nếu không thay đổi)">
+                        </div>
                         <div class="form-group">
                             <label for="phone">Số điện thoại</label>
                             <input type="text" id="phone" name="phone" class="form-control form-control-user" 
@@ -59,6 +62,45 @@ require("Includes/Header.php");
         </div>
     </div>
 </div>
+<script>
+function validateForm() {
+    var password = document.getElementById("password").value;
+    var confirmPassword = document.getElementById("passwordagain").value;
+    var email = document.querySelector('input[name="email"]').value;
+    var phone = document.querySelector('input[name="phone"]').value;
+
+    // Kiểm tra nếu mật khẩu có ký tự thì kiểm tra regex
+    if (password.length > 0 || confirmPassword.length > 0) {
+        // Kiểm tra mật khẩu: ít nhất 1 chữ in hoa, 1 ký tự đặc biệt, dài hơn 6 ký tự
+        var passwordRegex = /^(?=.*[A-Z])(?=.*[\W_]).{7,}$/;
+        if (!passwordRegex.test(password)) {
+            alert("Mật khẩu phải có ít nhất 1 chữ in hoa, 1 ký tự đặc biệt và dài hơn 6 ký tự!");
+            return false;
+        }
+        if (password !== confirmPassword) {
+            alert("Mật khẩu và xác nhận mật khẩu không khớp!");
+            return false;
+        }
+    }
+
+    // Kiểm tra email có dạng tên@miền.đuôi (đuôi ít nhất 2 ký tự)
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+        alert("Email không hợp lệ!");
+        return false;
+    }
+
+    // Kiểm tra số điện thoại: chỉ chứa số, 9-15 ký tự, hoặc có thể bỏ trống
+    var phoneRegex = /^\d{9,15}$/;
+    if (phone.length > 0 && !phoneRegex.test(phone)) {
+        alert("Số điện thoại không hợp lệ! Chỉ được chứa từ 9 đến 15 chữ số.");
+        return false;
+    }
+
+    return true; // Cho phép submit form
+}
+</script>
+
 
 <?php
 require("Includes/Footer.php");

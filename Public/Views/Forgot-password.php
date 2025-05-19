@@ -38,20 +38,31 @@ require("Includes/Header.php");
                                 <button type="submit" class="btn btn-primary btn-user btn-block">Đặt lại mật khẩu</button>
                             </form>
                             <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                const form = document.querySelector('form.user');
-                                form.addEventListener('submit', function(e) {
-                                    const pass = form.password.value.trim();
-                                    const passAgain = form.passwordagain.value.trim();
-                                    if (pass !== passAgain) {
-                                        e.preventDefault(); // Ngăn submit form
-                                        alert('Mật khẩu nhập lại không khớp. Vui lòng kiểm tra lại.');
-                                        form.passwordagain.focus();
-                                        return false;
-                                    }
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const form = document.querySelector('form.user');
+                                    form.addEventListener('submit', function(e) {
+                                        const pass = form.password.value.trim();
+                                        const passAgain = form.passwordagain.value.trim();
+
+                                        const passRegex = /^(?=.*[A-Z])(?=.*[\W_]).{7,}$/;
+
+                                        if (!passRegex.test(pass)) {
+                                            e.preventDefault();
+                                            alert('Mật khẩu phải có ít nhất 1 chữ in hoa, 1 ký tự đặc biệt và dài hơn 6 ký tự!');
+                                            form.password.focus();
+                                            return false;
+                                        }
+
+                                        if (pass !== passAgain) {
+                                            e.preventDefault();
+                                            alert('Mật khẩu nhập lại không khớp. Vui lòng kiểm tra lại.');
+                                            form.passwordagain.focus();
+                                            return false;
+                                        }
+                                    });
                                 });
-                            });
-                            </script>
+                                </script>
+
 
                             <hr>
                             <div class="text-center">

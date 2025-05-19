@@ -8,13 +8,17 @@ require("Includes/Header.php");
     </div>
     <div class="card-body">
         <p><strong>Người dùng:</strong> <?= htmlspecialchars($order['user_name']) ?></p>
-        <p><strong>Tổng tiền:</strong> <?= htmlspecialchars($order['total']) ?> VNĐ</p>
+        
+        <p><strong>Tên người nhận:</strong> <?= htmlspecialchars($order['receiver_name']) ?></p>
+        <p><strong>Số điện thoại người nhận:</strong> <?= htmlspecialchars($order['receiver_phone']) ?></p>
+        <p><strong>Địa chỉ người nhận:</strong> <?= htmlspecialchars($order['receiver_address']) ?></p>
         <p>
             <strong>Trạng thái:</strong>
             <?= htmlspecialchars($order['status']) ?>
-
         </p>
-
+        <hr>
+        <p><strong>Phương thức thanh toán:</strong> <?= htmlspecialchars($order['payment_method']) ?></p>
+        <p><strong>Tổng tiền:</strong> <?= htmlspecialchars($order['total']) ?> VNĐ</p>
         <hr>
         <h6>Danh sách sản phẩm:</h6>
         <table class="table table-bordered">

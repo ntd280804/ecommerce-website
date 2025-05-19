@@ -94,6 +94,10 @@ CREATE TABLE orders (
     user_id INT,
     status ENUM('Processing', 'Confirmed', 'Shipping', 'Delivered', 'Cancelled') NOT NULL,
     total DECIMAL(10,2) NOT NULL,
+    payment_method VARCHAR(50) NOT NULL,      -- Phương thức thanh toán
+    receiver_phone VARCHAR(20) NOT NULL,       -- Số điện thoại người nhận
+    receiver_address VARCHAR(255) NOT NULL,    -- Địa chỉ người nhận
+    receiver_name VARCHAR(100) NOT NULL,       -- Tên người nhận
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)

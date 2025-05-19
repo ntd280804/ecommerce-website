@@ -153,5 +153,16 @@ class ProductModel {
 
         return $stmt->execute();
     }
+    public function countProductsUsingImage($imagePath) {
+        // Thay vì real_escape_string, dùng PDO chuẩn bị câu truy vấn và bind tham số
+        $sql = "SELECT COUNT(*) as total FROM products WHERE FIND_IN_SET(:imagePath, REPLACE(images, ';', ',')) > 0";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':imagePath', $imagePath, PDO::PARAM_STR);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)($row['total'] ?? 0);
+    }
+    
+    
 }
 

@@ -11,26 +11,27 @@
                         <ul>
                             <li>Địa chỉ: </li>
                             <li>Số điện thoại: 0123456789</li>
-                            <li>Email: hello@colorlib.com</li>
+                            <li>Email: hello@nguyentrandinh.com</li>
                         </ul>   
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 col-sm-6 offset-lg-1">
                     <div class="footer__widget">
-                        <h6>Useful Links</h6>
+                        <h6>Về chúng tôi</h6>
                         <ul>
-                            <li><a href="#">Về chúng tôi: </a></li>
-                            <li><a href="#">Về cửa hàng của chúng tôi: </a></li>
-                    
-                            <li><a href="#">Thông tin vận chuyển: </a></li>
-                            <li><a href="#">Chính sách riêng tư: </a></li>
-                            
+                        <li><a href="#">Giới thiệu cửa hàng </a></li>
+                        <li><a href="./index.php?controller=home&action=contact">Thông tin liên hệ </a></li>
                         </ul>
                         <ul>
-                            <li><a href="#">Chúng tôi là ai: </a></li>
-                            <li><a href="#">Dịch vụ của chúng tôi: </a></li>
-                           
-                            <li><a href="#">Thông tin liên lạc: </a></li>
+                            <li><a href="#">Dịch vụ của chúng tôi </a></li>
+                            <li><a href="#">Chính sách bảo mật</a></li>
+                            <li><a href="#">Điều khoản và điều kiện</a></li>
+                            <li><a href="#">Hướng dẫn mua hàng</a></li>
+                            <li><a href="#">Hướng dẫn thanh toán</a></li>
+                            <li><a href="#">Hướng dẫn giao hàng</a></li>
+                            <li><a href="#">Hướng dẫn đổi trả hàng</a></li>
+                            <li><a href="#">Hướng dẫn bảo hành</a></li>
+                            
                             
                         </ul>
                     </div>

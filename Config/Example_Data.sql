@@ -48,7 +48,7 @@ INSERT INTO brands (name, slug, status) VALUES
 
 # Bảng product
 INSERT INTO products (name, slug, description, summary, stock, price, discounted_price, images, category_id, brand_id, status) VALUES
-('Nồi cơm điện Panasonic 1L', 'noi-com-dien-panasonic-1l', 'Nồi cơm điện Panasonic 1L, tiết kiệm điện, dễ sử dụng.', 'Nồi cơm điện tiện dụng', 50, 850000, 800000, '../Uploads/img1.jpg', 1, 1, 'Active'),
+('Nồi cơm điện Panasonic 1L', 'noi-com-dien-panasonic-1l', 'Nồi cơm điện Panasonic 1L, tiết kiệm điện, dễ sử dụng.', 'Nồi cơm điện tiện dụng', 0, 850000, 650000, '../Uploads/img1.jpg', 1, 1, 'Active'),
 ('Tủ lạnh Samsung 300L', 'tu-lanh-samsung-300l', 'Tủ lạnh Samsung 300L, tiết kiệm điện, bảo quản thực phẩm lâu dài.', 'Tủ lạnh tiết kiệm năng lượng', 30, 7500000, 7000000, '../Uploads/img2.jpg', 2, 2, 'Active'),
 ('Máy giặt Electrolux 8kg', 'may-giat-electrolux-8kg', 'Máy giặt Electrolux 8kg, giặt sạch nhanh, tiết kiệm nước.', 'Máy giặt hiện đại', 40, 5000000, 4500000, '../Uploads/img3.jpg', 3, 4, 'Active'),
 ('Lò vi sóng Toshiba 20L', 'lo-vi-song-toshiba-20l', 'Lò vi sóng Toshiba 20L, dễ dàng hâm nóng và chế biến thức ăn.', 'Lò vi sóng tiện lợi', 60, 1200000, 1100000, '../Uploads/img4.jpg', 4, 5, 'Active'),

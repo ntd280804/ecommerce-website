@@ -29,9 +29,7 @@ class ProductController {
         $totalPages = ceil($totalProducts / $limit);
         
         include './Views/ProductGrid.php';
-    }
-    
-    
+    }    
     public function detail() {
         $id = $_GET['id'] ?? null;
         if (!$id) {

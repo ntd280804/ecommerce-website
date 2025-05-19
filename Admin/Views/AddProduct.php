@@ -43,22 +43,23 @@ require_once("../Config/Database.php");
                         </div>
                         <div class="form-group row">
                             <div class="col-sm-4 mb-sm-0">
-                                <input type="text" class="form-control form-control-user"
+                                <input type="number" min="0" step="1" class="form-control form-control-user"
                                     id="stock" name="stock" aria-describedby="stock"
-                                    placeholder="Nhập số lượng">
+                                    placeholder="Nhập số lượng" required>
                             </div>
                             
                             <div class="col-sm-4 mb-sm-0">
-                            <input type="text" class="form-control form-control-user"
-                                id="price" name="price" aria-describedby="price"
-                                placeholder="Nhập giá gốc">
+                                <input type="number" min="0" step="0.01" class="form-control form-control-user"
+                                    id="price" name="price" aria-describedby="price"
+                                    placeholder="Nhập giá gốc" required>
                             </div>
                             <div class="col-sm-4 mb-sm-0">
-                            <input type="text" class="form-control form-control-user"
-                                id="discounted_price" name="discounted_price" aria-describedby="discounted_price"
-                                placeholder="Nhập giá bán">
+                                <input type="number" min="0" step="0.01" class="form-control form-control-user"
+                                    id="discounted_price" name="discounted_price" aria-describedby="discounted_price"
+                                    placeholder="Nhập giá bán" required>
                             </div>
                         </div>
+
                         <div class="form-group">
                             <label class="form-label">Danh mục</label>
                             <select class="form-control" name="category_id">

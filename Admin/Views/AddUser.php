@@ -21,11 +21,11 @@ require_once("../Config/Database.php");
                             </div>
                             <div class="form-group position-relative">
                                 <input type="password" class="form-control form-control-user" id="pass" name="pass" placeholder="Nhập mật khẩu người dùng" required>
-                                <i class="fa fa-eye position-absolute" id="togglePass" style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+                                
                             </div>
                             <div class="form-group position-relative">
                                 <input type="password" class="form-control form-control-user" id="repass" name="repass" placeholder="Nhập lại mật khẩu" required>
-                                <i class="fa fa-eye position-absolute" id="toggleRepass" style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+                                
                             </div>
                             <div class="form-group">
                                 <input type="text" class="form-control form-control-user" id="phone" name="phone" placeholder="Nhập số điện thoại người dùng" required>
@@ -44,38 +44,41 @@ require_once("../Config/Database.php");
 
 <script>
 function validateForm() {
-    // Get the password and confirm password values
     var password = document.getElementById("pass").value;
     var confirmPassword = document.getElementById("repass").value;
+    var email = document.querySelector('input[name="mail"]').value;
+    var phone = document.querySelector('input[name="phone"]').value;
 
-    // Check if the passwords match
-    if (password !== confirmPassword) {
-        alert("Mật khẩu và mật khẩu xác nhận không khớp!");
-        return false; // Prevent form submission
+    // Kiểm tra mật khẩu: ít nhất 1 chữ in hoa, 1 ký tự đặc biệt, dài hơn 6 ký tự
+    var passwordRegex = /^(?=.*[A-Z])(?=.*[\W_]).{7,}$/;
+    if (!passwordRegex.test(password)) {
+        alert("Mật khẩu phải có ít nhất 1 chữ in hoa, 1 ký tự đặc biệt và dài hơn 6 ký tự!");
+        return false;
     }
 
-    // If passwords match, allow form submission
-    return true;
+    // Kiểm tra xác nhận mật khẩu
+    if (password !== confirmPassword) {
+        alert("Mật khẩu và xác nhận mật khẩu không khớp!");
+        return false;
+    }
+
+    // Kiểm tra email có dạng tên@miền.đuôi (đuôi ít nhất 2 ký tự)
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+        alert("Email không hợp lệ!");
+        return false;
+    }
+
+    // Kiểm tra số điện thoại: chỉ chứa số, 9-15 ký tự, hoặc có thể bỏ trống
+    var phoneRegex = /^\d{9,15}$/;
+    if (phone.length > 0 && !phoneRegex.test(phone)) {
+        alert("Số điện thoại không hợp lệ! Chỉ được chứa từ 9 đến 15 chữ số.");
+        return false;
+    }
+
+    return true; // Cho phép submit form
 }
 
-// Toggle password visibility
-document.getElementById('togglePass').addEventListener('click', function() {
-    var passField = document.getElementById('pass');
-    if (passField.type === 'password') {
-        passField.type = 'text';
-    } else {
-        passField.type = 'password';
-    }
-});
-
-document.getElementById('toggleRepass').addEventListener('click', function() {
-    var repassField = document.getElementById('repass');
-    if (repassField.type === 'password') {
-        repassField.type = 'text';
-    } else {
-        repassField.type = 'password';
-    }
-});
 </script>
 
 <?php

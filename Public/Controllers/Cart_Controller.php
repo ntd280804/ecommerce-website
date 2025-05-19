@@ -25,26 +25,26 @@ class CartController {
     }
 
     public function addcart(){
-    if (!isset($_SESSION['user_id'])) {
-        // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
-        header("Location: ./index.php?controller=user&action=login");
-        exit();
-    }
+        if (!isset($_SESSION['user_id'])) {
+            // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+            header("Location: ./index.php?controller=user&action=login");
+            exit();
+        }
 
-    if (isset($_POST['product_id']) && isset($_POST['qty'])) {
-        $productId = intval($_POST['product_id']);
-        $quantity = intval($_POST['qty']);
-        $userId = $_SESSION['user_id'];
+        if (isset($_POST['product_id']) && isset($_POST['qty'])) {
+            $productId = intval($_POST['product_id']);
+            $quantity = intval($_POST['qty']);
+            $userId = $_SESSION['user_id'];
 
-        $cartModel = new CartModel();
-        $cartModel->addToCart($userId, $productId, $quantity);
+            $cartModel = new CartModel();
+            $cartModel->addToCart($userId, $productId, $quantity);
 
-        // Chuyển hướng về trang giỏ hàng
-        header("Location: ./index.php?controller=cart&action=index");
-        exit();
-    } else {
-        echo "Thiếu dữ liệu sản phẩm!";
-    }
+            // Chuyển hướng về trang giỏ hàng
+            header("Location: ./index.php?controller=cart&action=index");
+            exit();
+        } else {
+            echo "Thiếu dữ liệu sản phẩm!";
+        }
     }
     public function updatecart()
 {

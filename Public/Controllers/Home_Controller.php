@@ -6,7 +6,7 @@ class HomeController {
     public function index() {
     
         $productmodel = new ProductModel();
-        $products = $productmodel->getAllActive(); // Fetch  based on status
+        $topdiscountedproduct = $productmodel->getTopDiscounted(5); // Fetch  based on status
         $topratedproduct = $productmodel->getTopRated(); // Fetch  based on status
         include './Views/HomePage.php'; // 👈 View gọi Header.php, bây giờ biến đã có
         
@@ -17,5 +17,9 @@ class HomeController {
         include './Views/HomePage.php';
         //include './Views/404.php';
     }
-
+    public function contact() {
+        // Điều hướng tới trang dashboard admin
+        include './Views/Contact.php';
+        //include './Views/404.php';
+    }
 }

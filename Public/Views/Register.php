@@ -23,7 +23,7 @@ require("Includes/Header.php");
                                 <p style="color:red;"><?php echo $error_message; ?></p>
                             <?php endif; ?>
 
-                            <form class="user" method="POST" action="./index.php?controller=user&action=handleRegister" onsubmit="return checkPasswordMatch()">
+                            <form class="user" method="POST" action="./index.php?controller=user&action=handleRegister" onsubmit="return validateForm()">
                                 <div class="form-group">
                                     <input type="text" name="name" class="form-control form-control-user"
                                         placeholder="Tên" required>
@@ -74,15 +74,41 @@ require("Includes/Header.php");
 </div>
 
 <script>
-function checkPasswordMatch() {
+function validateForm() {
     var password = document.getElementById("password").value;
     var confirmPassword = document.getElementById("confirm_password").value;
-    
+    var email = document.querySelector('input[name="email"]').value;
+    var phone = document.querySelector('input[name="phone"]').value;
+
+    // Kiểm tra mật khẩu: ít nhất 1 chữ in hoa, 1 ký tự đặc biệt, dài hơn 6 ký tự
+    var passwordRegex = /^(?=.*[A-Z])(?=.*[\W_]).{7,}$/;
+    if (!passwordRegex.test(password)) {
+        alert("Mật khẩu phải có ít nhất 1 chữ in hoa, 1 ký tự đặc biệt và dài hơn 6 ký tự!");
+        return false;
+    }
+
+    // Kiểm tra xác nhận mật khẩu
     if (password !== confirmPassword) {
         alert("Mật khẩu và xác nhận mật khẩu không khớp!");
-        return false; // Prevent form submission
+        return false;
     }
-    return true; // Allow form submission
+
+    // Kiểm tra email có dạng tên@miền.đuôi (đuôi ít nhất 2 ký tự)
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+
+    if (!emailRegex.test(email)) {
+        alert("Email không hợp lệ!");
+        return false;
+    }
+
+    // Kiểm tra số điện thoại: chỉ chứa số, 9-15 ký tự, hoặc có thể bỏ trống
+    var phoneRegex = /^\d{9,15}$/;
+    if (phone.length > 0 && !phoneRegex.test(phone)) {
+        alert("Số điện thoại không hợp lệ! Chỉ được chứa từ 9 đến 15 chữ số.");
+        return false;
+    }
+
+    return true; // Cho phép submit form
 }
 </script>
 

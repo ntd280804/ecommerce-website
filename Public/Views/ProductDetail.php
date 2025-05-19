@@ -59,7 +59,7 @@ require("Includes/Header.php");
                         $emptyStars = 5 - $fullStars - $halfStar;
                     ?>
 
-                    <div class="product__details__rating">
+                    <div class="product__details__rating" style="display: flex; align-items: center; gap: 8px;">
                         <?php for ($i = 0; $i < $fullStars; $i++): ?>
                             <i class="fa fa-star"></i>
                         <?php endfor; ?>
@@ -72,30 +72,39 @@ require("Includes/Header.php");
                             <i class="fa fa-star-o"></i>
                         <?php endfor; ?>
 
-                        <span>(<?= $total ?> reviews)</span>
+                        <span style="font-weight: bold; margin-left: 6px;"><?= $avg ?> / 5</span>
+                        <span>(<?= $total ?> đánh giá)</span>
                     </div>
+
 
                     <div class="product__details__price"><?= number_format($product['discounted_price'], 2) ?>VNĐ</div>
                     <p><?= nl2br(htmlspecialchars($product['summary'])) ?></p>
-                    <form action="./index.php?controller=cart&action=addcart" method="POST">
-                        <div class="product__details__quantity">
-                            <div class="quantity">
-                                <div class="pro-qty">
-                                    <input type="number" name="qty" value="1" min="1">
+                    <?php if ($product['stock'] > 0): ?>
+                        <form action="./index.php?controller=cart&action=addcart" method="POST">
+                            <div class="product__details__quantity">
+                                <div class="quantity">
+                                    <div class="pro-qty">
+                                        <input type="number" name="qty" value="1" min="1" max="<?= $product['stock'] ?>">
+                                    </div>
                                 </div>
                             </div>
+                            <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
+                            <button type="submit" class="primary-btn">Thêm vào giỏ hàng</button>
+                        </form>
+                    <?php else: ?>
+                        <div class="out-of-stock">
+                            <p style="color: red; font-weight: bold;">Hết hàng</p>
                         </div>
-                        <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
-                        <button type="submit" class="primary-btn">ADD TO CART</button>
-                    </form>
+                    <?php endif; ?>
+
 
                     <ul>
-                    <li><b>Category</b> <span><?= htmlspecialchars($productmodel->getCategoryNameById($product['category_id'])) ?></span></li>
+                    <li><b>Danh mục</b> <span><?= htmlspecialchars($productmodel->getCategoryNameById($product['category_id'])) ?></span></li>
                     
-                        <li><b>Availability</b> <span><?= $product['stock']?></span></li>
-                        <li><b>Shipping</b> <span>01 day shipping. <samp>Free pickup today</samp></span></li>
+                        <li><b>Tồn kho</b> <span><?= $product['stock']?></span></li>
+                        <li><b>Vận chuyển</b> <span>Giao hàng trong ngày.</span></li>
                         
-                        <li><b>Share on</b>
+                        <li><b>Chia sẽ trên</b>
                             <div class="share">
                                 <a href="#"><i class="fa fa-facebook"></i></a>
                                 <a href="#"><i class="fa fa-twitter"></i></a>
@@ -111,33 +120,57 @@ require("Includes/Header.php");
                     <ul class="nav nav-tabs" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link active" data-toggle="tab" href="#tabs-1" role="tab"
-                               aria-selected="true">Description</a>
+                               aria-selected="true">Mô tả</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#tabs-3" role="tab"
-                               aria-selected="false">Reviews <span>(<?= $total ?>)</span></a>
+                               aria-selected="false">Nhận xét <span>(<?= $total ?>)</span></a>
                         </li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="tabs-1" role="tabpanel">
                             <div class="product__details__tab__desc">
-                                <h6>Product Description</h6>
+                                <h6>Mô tả sản phẩm</h6>
                                 <p><?= nl2br(htmlspecialchars($product['description'])) ?></p>
                             </div>
                         </div>
                         <div class="tab-pane" id="tabs-3" role="tabpanel">
                         <div class="product__details__tab__desc">
-                            <h6>Customer Reviews</h6>
+                            <h6>Đánh giá khách hàng</h6>
                             <?php if (!empty($productReviews)) : ?>
                                 <?php foreach ($productReviews as $review) : ?>
                                     <div class="review">
-                                        <strong><?= htmlspecialchars($review['user_name']) ?></strong>
-                                        <span><?= date('F j, Y', strtotime($review['created_at'])) ?></span>
+                                        <div class="review-header" style="display: flex; align-items: center; gap: 15px;">
+                                            <strong><?= htmlspecialchars($review['user_name']) ?></strong>
+                                            <span><?= date('F j, Y', strtotime($review['created_at'])) ?></span>
+
+                                            <?php
+                                            $reviewRating = floatval($review['rating']);
+                                            $fullStars = floor($reviewRating);
+                                            $halfStar = ($reviewRating - $fullStars) >= 0.5 ? 1 : 0;
+                                            $emptyStars = 5 - $fullStars - $halfStar;
+                                            ?>
+
+                                            <div class="review-rating" style="color: #f8ce0b;">
+                                                <?php for ($i = 0; $i < $fullStars; $i++): ?>
+                                                    <i class="fa fa-star"></i>
+                                                <?php endfor; ?>
+
+                                                <?php if ($halfStar): ?>
+                                                    <i class="fa fa-star-half-o"></i>
+                                                <?php endif; ?>
+
+                                                <?php for ($i = 0; $i < $emptyStars; $i++): ?>
+                                                    <i class="fa fa-star-o"></i>
+                                                <?php endfor; ?>
+                                            </div>
+                                        </div>
                                         <p><?= nl2br(htmlspecialchars($review['comment'])) ?></p>
                                     </div>
+
                                 <?php endforeach; ?>
                             <?php else : ?>
-                                <p>No reviews yet. Be the first to review this product!</p>
+                                <p>Chưa có đánh giá, hãy là người đánh giá đầu tiên!</p>
                             <?php endif; ?>
                         </div>
 

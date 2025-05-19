@@ -13,17 +13,33 @@ class OrderModel {
         return $stmt->fetchColumn() > 0;
     }
     // Hàm tạo đơn hàng
-    public function createOrder($userId, $totalAmount, $cartItems) {
-        $stmt = $this->conn->prepare("INSERT INTO orders (user_id, total, status, created_at, updated_at) VALUES (?, ?, 'Processing', NOW(), NOW())");
-        $stmt->execute([$userId, $totalAmount]);
-
-
-        // Lấy ID của đơn hàng vừa tạo
+    public function createOrder($userId, $totalAmount, $cartItems, $receiver_name, $receiver_phone, $receiver_address, $payment_method) {
+        // Chuẩn bị câu truy vấn có thêm 4 cột mới
+        $stmt = $this->conn->prepare("
+            INSERT INTO orders 
+            (user_id, total, status, receiver_name, receiver_phone, receiver_address, payment_method, created_at, updated_at) 
+            VALUES (?, ?, 'Processing', ?, ?, ?, ?, NOW(), NOW())
+        ");
+    
+        $stmt->execute([
+            $userId,
+            $totalAmount,
+            $receiver_name,
+            $receiver_phone,
+            $receiver_address,
+            $payment_method
+        ]);
+    
+        // Lấy ID đơn hàng vừa tạo
         $orderId = $this->conn->lastInsertId();
-
+    
         // Thêm chi tiết đơn hàng
         foreach ($cartItems as $item) {
-            $stmt = $this->conn->prepare("INSERT INTO order_details (order_id, product_id, qty, price, total, created_at, updated_at) VALUES (?, ?, ?, ?, ?, NOW(), NOW())");
+            $stmt = $this->conn->prepare("
+                INSERT INTO order_details 
+                (order_id, product_id, qty, price, total, created_at, updated_at) 
+                VALUES (?, ?, ?, ?, ?, NOW(), NOW())
+            ");
             $stmt->execute([
                 $orderId,
                 $item['product_id'],
@@ -32,9 +48,10 @@ class OrderModel {
                 $item['discounted_price'] * $item['qty']
             ]);
         }
-
+    
         return $orderId;
     }
+    
     public function getOrderById($id) {
         $stmt = $this->conn->prepare("
             SELECT orders.*, users.name AS user_name

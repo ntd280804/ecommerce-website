@@ -98,7 +98,7 @@ class ProductController {
     }
     public function update() {
         $product = new ProductModel;
-        $id = $_POST['id']; // Dữ liệu từ hidden input
+        $id = $_POST['id'];
         $product->name = $_POST['name'];
         $product->slug = $_POST['slug'];
         $product->summary = $_POST['summary'];
@@ -109,51 +109,61 @@ class ProductController {
         $product->category_id = $_POST['category_id'];
         $product->brand_id = $_POST['brand_id'];
     
-        // Lấy danh sách các file hình ảnh cũ từ CSDL
+        // Lấy danh sách ảnh được gửi từ form
+        $imageList = isset($_POST['imageList']) ? explode(';', $_POST['imageList']) : [];
         $oldImages = $product->getImagesById($id);
-        $oldImages = explode(";", $oldImages); // Chia các đường dẫn file hình ảnh cũ
+        $oldImages = explode(";", $oldImages);
     
-        // Lưu các file mới
-        $product->countfiles = count($_FILES['images']['name']);
-        $product->images = '';
+        // Khởi tạo danh sách ảnh mới
         $newImages = [];
+        
+        // Duyệt qua danh sách ảnh cũ để giữ lại những ảnh không bị xóa
+        foreach ($oldImages as $oldImage) {
+            if (in_array($oldImage, $imageList)) {
+                $newImages[] = $oldImage;
+            } else {
+                if ($product->countProductsUsingImage($oldImage) <= 1) {
+                    if (file_exists($oldImage)) {
+                        unlink($oldImage);
+                    }
+                }
+            }
+        }
+        
     
-        for ($i = 0; $i < $product->countfiles; $i++) {
-            $filename = $_FILES['images']['name'][$i];
+        // Xử lý các ảnh mới được upload
+        if (!empty($_FILES['images']['name'][0])) {
+            $product->countfiles = count($_FILES['images']['name']);
+            
+            for ($i = 0; $i < $product->countfiles; $i++) {
+                $filename = $_FILES['images']['name'][$i];
+                $location = "../Uploads/" . $filename;
+                $extension = pathinfo($location, PATHINFO_EXTENSION);
+                $extension = strtolower($extension);
     
-            // Định vị lưu trữ
-            $location = "../Uploads/" . uniqid() . $filename;
-            $extension = pathinfo($location, PATHINFO_EXTENSION);
-            $extension = strtolower($extension);
+                // Các định dạng file hợp lệ
+                $valid_extensions = ["jpg", "jpeg", "png"];
     
-            // Các định dạng file hợp lệ
-            $valid_extensions = array("jpg", "jpeg", "png");
-    
-            if (in_array(strtolower($extension), $valid_extensions)) {
-                if (move_uploaded_file($_FILES['images']['tmp_name'][$i], $location)) {
-                    $product->images .= $location . ";";
-                    $newImages[] = $location; // Lưu đường dẫn hình ảnh mới vào mảng
+                if (in_array($extension, $valid_extensions)) {
+                    if (move_uploaded_file($_FILES['images']['tmp_name'][$i], $location)) {
+                        $newImages[] = $location;
+                    }
                 }
             }
         }
     
-        $product->images = substr($product->images, 0, -1); // Cắt dấu ";" cuối cùng
-    
-        // Xóa các file cũ không còn trong danh sách mới
-        $imagesToDelete = array_diff($oldImages, $newImages); // Các hình ảnh cũ không còn trong mảng mới
-        foreach ($imagesToDelete as $image) {
-            if (file_exists($image)) {
-                unlink($image); // Xóa file cũ
-            }
-        }
+        // Gán lại danh sách ảnh sau khi xử lý
+        $product->images = implode(";", $newImages);
     
         // Cập nhật cơ sở dữ liệu
         if ($product->update($id)) {
-            $this->index(); // Quay lại danh sách sản phẩm
+            $this->index();
         } else {
             echo "Lỗi khi cập nhật sản phẩm.";
         }
     }
+    
+    
     
     
     public function edit() {

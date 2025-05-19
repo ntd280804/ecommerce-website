@@ -42,29 +42,37 @@ class OrderController {
 
     public function placeorder() {
         if (!isset($_SESSION['user_id'])) {
-            // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
             header("Location: ./index.php?controller=user&action=login");
             exit();
         }
+    
         $ordermodel = new OrderModel();
         $cartModel = new CartModel();
-
-        if (isset($_SESSION['user_id'])) {
-            $userId = $_SESSION['user_id'];
-            $cartItems = $cartModel->getCartItems($userId);
-            $totalAmount = $cartModel->getCartTotal($userId);
-
-            // Tạo đơn hàng
-            $orderId = $ordermodel->createOrder($userId, $totalAmount, $cartItems);
-
-            // Xóa giỏ hàng sau khi đặt hàng thành công
-            if ($orderId) {
-                $cartModel->clearCart($userId);
-                header("Location: ./index.php?controller=home");
-                exit;
-            }
+    
+        $userId = $_SESSION['user_id'];
+        $cartItems = $cartModel->getCartItems($userId);
+        $totalAmount = $cartModel->getCartTotal($userId);
+    
+        // Lấy dữ liệu từ form POST
+        $receiver_name = isset($_POST['receiver_name']) ? trim($_POST['receiver_name']) : '';
+        $receiver_phone = isset($_POST['receiver_phone']) ? trim($_POST['receiver_phone']) : '';
+        $receiver_address = isset($_POST['receiver_address']) ? trim($_POST['receiver_address']) : '';
+        $payment_method = isset($_POST['payment_method']) ? trim($_POST['payment_method']) : '';
+    
+        // Bạn có thể thêm kiểm tra dữ liệu hợp lệ ở đây nếu muốn
+    
+        // Tạo đơn hàng, truyền thêm thông tin người nhận và thanh toán
+        $orderId = $ordermodel->createOrder($userId, $totalAmount, $cartItems, $receiver_name, $receiver_phone, $receiver_address, $payment_method);
+    
+        if ($orderId) {
+            $cartModel->clearCart($userId);
+            header("Location: ./index.php?controller=home");
+            exit;
+        } else {
+            // Xử lý khi tạo đơn hàng thất bại (nếu cần)
         }
     }
+    
     public function detail() {
         if (!isset($_SESSION['user_id'])) {
             // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
