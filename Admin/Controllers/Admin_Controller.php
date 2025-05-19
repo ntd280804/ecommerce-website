@@ -3,18 +3,37 @@
 class AdminController {
 
     public function index() {
+        // Kiểm tra quyền truy cập
+        if (!isset($_SESSION['admin_type']) || $_SESSION['admin_type'] != "Admin") {
+            // Chuyển hướng về trang đăng nhập nếu không phải Admin
+            header("Location: ./index.php?controller=home&action=Error404");
+            exit();
+        }
+    
+        // Tạo đối tượng AdminModel
         $adminmodel = new AdminModel();
+    
+        // Kiểm tra và thiết lập trạng thái mặc định
+        $status = $_GET['status'] ?? 'all';
+    
+        // Chuyển hướng nếu không có tham số status
         if (empty($_GET['status'])) {
             header("Location: ./index.php?controller=admin&action=index&status=all");
             exit();
         }
     
-        // Get the status, defaulting to 'all' if not set
-        $status = $_GET['status'] ?? 'all'; 
-        $admins = $adminmodel->getByStatus($status); // Fetch brands based on status
+        // Lấy danh sách admin theo trạng thái
+        $admins = $adminmodel->getByStatus($status);
+    
+        // Hiển thị trang danh sách admin
         include './Views/ListAdmins.php';
-    }
+    } 
     public function toggleStatus() {
+        if (!isset($_SESSION['admin_type']) || $_SESSION['admin_type'] != "Admin") {
+            // Chuyển hướng về trang đăng nhập nếu không phải Admin
+            header("Location: ./index.php?controller=home&action=index");
+            exit();
+        }
         if (isset($_GET['id']) && isset($_GET['status'])) {
             $id = $_GET['id'];
             $status = $_GET['status'];
@@ -32,6 +51,11 @@ class AdminController {
         }
     }
     public function newpass(){
+        if (!isset($_SESSION['admin_type']) || $_SESSION['admin_type'] != "Admin") {
+            // Chuyển hướng về trang đăng nhập nếu không phải Admin
+            header("Location: ./index.php?controller=home&action=index");
+            exit();
+        }
         $adminmodel = new AdminModel();
     
         $id = $_GET['id']; // Lấy id từ URL
@@ -39,9 +63,19 @@ class AdminController {
         include './Views/NewPass.php';
     }
     public function add() {
+        if (!isset($_SESSION['admin_type']) || $_SESSION['admin_type'] != "Admin") {
+            // Chuyển hướng về trang đăng nhập nếu không phải Admin
+            header("Location: ./index.php?controller=home&action=index");
+            exit();
+        }
         include './Views/AddAdmin.php';
     }
     public function store() {
+        if (!isset($_SESSION['admin_type']) || $_SESSION['admin_type'] != "Admin") {
+            // Chuyển hướng về trang đăng nhập nếu không phải Admin
+            header("Location: ./index.php?controller=home&action=index");
+            exit();
+        }
         // Create an instance of AdminModel
         $admin = new AdminModel();
     
@@ -70,6 +104,11 @@ class AdminController {
     }
     
     public function update() {
+        if (!isset($_SESSION['admin_type']) || $_SESSION['admin_type'] != "Admin") {
+            // Chuyển hướng về trang đăng nhập nếu không phải Admin
+            header("Location: ./index.php?controller=home&action=index");
+            exit();
+        }
         $adminmodel = new adminModel;
     
         $id = $_POST['id']; // Dữ liệu từ hidden input
@@ -83,6 +122,10 @@ class AdminController {
         }
     }
     public function login() {
+        if (isset($_SESSION['admin_id'])) {  // Giả sử 'user' là key lưu thông tin đăng nhập
+            header("Location: ./index.php?controller=home&action=index");
+            exit();
+        }
         include './Views/Login.php';
     }
     public function handleLogin() {
@@ -116,6 +159,11 @@ class AdminController {
         exit();
     }
     public function delete() {
+        if (!isset($_SESSION['admin_type']) || $_SESSION['admin_type'] != "Admin") {
+            // Chuyển hướng về trang đăng nhập nếu không phải Admin
+            header("Location: ./index.php?controller=home&action=index");
+            exit();
+        }
         if (isset($_GET['id'])) {
             $id = $_GET['id'];
             

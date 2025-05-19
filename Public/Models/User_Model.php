@@ -22,6 +22,14 @@ class UserModel {
 
         return false; // Đăng nhập thất bại
     }
+    public function updatePasswordByEmail($email, $hashedPassword) {
+        $sql = "UPDATE users SET password = :password WHERE email = :email AND status = 'Active'";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':password', $hashedPassword);
+        $stmt->bindParam(':email', $email);
+        return $stmt->execute();
+    }
+    
     public function insert() {
         $sql = "INSERT INTO users (name, email, password, phone, address, status) 
                 VALUES (:name, :email, :password, :phone, :address, :status)";
@@ -50,6 +58,33 @@ class UserModel {
         $stmt->execute();
         return $stmt->fetch() !== false;
     }
+    public function getUserById($id) {
+        $sql = "SELECT * FROM users WHERE id = :id AND status = 'Active' LIMIT 1";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    public function updateUser($id, $name, $email, $password, $phone, $address) {
+        $sql = "UPDATE users SET name = :name, email = :email, phone = :phone, address = :address";
+        if ($password) {
+            $sql .= ", password = :password";
+        }
+        $sql .= " WHERE id = :id AND status = 'Active'";
+    
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':name', $name);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':phone', $phone);
+        $stmt->bindParam(':address', $address);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        if ($password) {
+            $stmt->bindParam(':password', $password);
+        }
+    
+        return $stmt->execute();
+    }
+    
     
     
 }

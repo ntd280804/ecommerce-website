@@ -30,10 +30,10 @@ require("Includes/Header.php");
                     <table>
                         <thead>
                             <tr>
-                                <th class="shoping__product">Products</th>
-                                <th>Price</th>
-                                <th>Quantity</th>
-                                <th>Total</th>
+                                <th class="shoping__product">Sản phẩm</th>
+                                <th>Giá</th>
+                                <th>Số lương</th>
+                                <th>Tổng tiền</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -45,26 +45,46 @@ require("Includes/Header.php");
                                         <h5><?php echo $item['product_name']; ?></h5>
                                     </td>
                                     <td class="shoping__cart__price">
-                                        $<?php echo number_format($item['price'], 2); ?>
+                                        <?php echo number_format($item['discounted_price'], 2); ?>VNĐ
                                     </td>
                                     <script>
                                         document.addEventListener("DOMContentLoaded", function () {
-                                            // Lặp qua từng ô quantity
-                                            document.querySelectorAll('.pro-qty').forEach(function (qtyBox) {
-                                                const form = qtyBox.closest('form');
-                                                const input = qtyBox.querySelector('input');
+    // Lặp qua từng ô quantity
+    document.querySelectorAll('.pro-qty').forEach(function (qtyBox) {
+        const form = qtyBox.closest('form');
+        const input = qtyBox.querySelector('input');
 
-                                                // Thêm sự kiện click cho nút + và -
-                                                qtyBox.querySelectorAll('.qtybtn').forEach(function (btn) {
-                                                    btn.addEventListener('click', function () {
-                                                        // Delay 1 chút để value cập nhật xong rồi submit
-                                                        setTimeout(() => form.submit(), 100);
-                                                    });
-                                                });
-                                            });
-                                        });
+        // Thêm sự kiện click cho nút + và -
+        qtyBox.querySelectorAll('.qtybtn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                // Delay 1 chút để value cập nhật xong rồi xử lý
+                setTimeout(() => {
+                    let qty = parseInt(input.value);
+                    if (isNaN(qty) || qty < 1) {
+                        // Lấy product_id từ form để redirect xóa sản phẩm
+                        const productId = form.querySelector('input[name="product_id"]').value;
+                        window.location.href = `./index.php?controller=cart&action=deletecart&product_id=${productId}`;
+                    } else {
+                        form.submit();
+                    }
+                }, 100);
+            });
+        });
+
+        // Thêm sự kiện onchange cho input số lượng (gõ tay)
+        input.addEventListener('change', function () {
+            let qty = parseInt(input.value);
+            if (isNaN(qty) || qty < 1) {
+                const productId = form.querySelector('input[name="product_id"]').value;
+                window.location.href = `./index.php?controller=cart&action=deletecart&product_id=${productId}`;
+            } else {
+                form.submit();
+            }
+        });
+    });
+});
+
                                     </script>
-
                                     <td class="shoping__cart__quantity">
                                         <form action="./index.php?controller=cart&action=updatecart" method="POST">
                                             <div class="quantity">
@@ -79,7 +99,7 @@ require("Includes/Header.php");
 
 
                                     <td class="shoping__cart__total">
-                                        $<?php echo number_format($item['price'] * $item['qty'], 2); ?>
+                                        <?php echo number_format($item['discounted_price'] * $item['qty'], 2); ?>VNĐ
                                     </td>
                                     <td class="shoping__cart__item__close">
                                         <a href="./index.php?controller=cart&action=deletecart&product_id=<?php echo $item['product_id']; ?>">
@@ -105,7 +125,7 @@ require("Includes/Header.php");
                 <div class="shoping__checkout">
                     <h5>Cart Total</h5>
                     <ul>
-                        <li>Total <span>$<?php echo number_format($totalAmount, 2); ?></span></li>
+                        <li>Total <span><?php echo number_format($totalAmount, 2); ?>VNĐ</span></li>
                     </ul>
                     <a href="./index.php?controller=order&action=checkout" class="primary-btn">PROCEED TO CHECKOUT</a>
                 </div>

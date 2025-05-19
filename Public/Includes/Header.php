@@ -54,22 +54,26 @@ $cartModel = new CartModel();
             <ul>
                 <li><a href="./index.php?controller=cart&action=index"><i class="fa fa-shopping-bag"></i> <span><?php echo htmlspecialchars($totalQuantityAmount); ?></span></a></li>
                 <li><a href="./index.php?controller=order&action=index"><i class="fa fa-cart-arrow-down"></i></a></li>
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <li><a href="./index.php?controller=user&action=index"><i class="fa fa-user-circle"></i></a></li>
+                <?php else: ?>
+                <?php endif; ?>
             </ul>
-            <div class="header__cart__price">item: <span><?php echo htmlspecialchars($totalAmount); ?></span></div>
+            <div class="header__cart__price">Tổng tiền: <span><?php echo htmlspecialchars($totalAmount); ?>VNĐ</span></div>
         </div>
         <div class="humberger__menu__widget">
             <div class="header__top__right__auth">
                 <?php if (isset($_SESSION['user_id'])): ?>
-                    <a href="./index.php?controller=user&action=logout"><i class="fa fa-sign-out"></i> Logout (<?php echo $_SESSION['user_name']; ?>)</a>
+                    <a href="./index.php?controller=user&action=logout"><i class="fa fa-sign-out"></i> Đăng xuất (<?php echo $_SESSION['user_name']; ?>)</a>
                 <?php else: ?>
-                    <a href="./index.php?controller=user&action=login"><i class="fa fa-user"></i> Login</a>
+                    <a href="./index.php?controller=user&action=login"><i class="fa fa-user"></i> Đăng nhập</a>
                 <?php endif; ?>
             </div>
         </div>
         <nav class="humberger__menu__nav mobile-menu">
             <ul>
-                <li class="active"><a href="./index.php?controller=home&action=index">Home</a></li>
-                <li><a href="./index.php?controller=product&action=index">Shop</a></li>
+                <li class="active"><a href="./index.php?controller=home&action=index">Trang chủ</a></li>
+                <li><a href="./index.php?controller=product&action=index">Cửa hàng</a></li>
             </ul>
         </nav>
         <div id="mobile-menu-wrap"></div>
@@ -112,9 +116,9 @@ $cartModel = new CartModel();
                             
                             <div class="header__top__right__auth">
                                 <?php if (isset($_SESSION['user_id'])): ?>
-                                    <a href="./index.php?controller=user&action=logout"><i class="fa fa-sign-out"></i> Logout (<?php echo $_SESSION['user_name']; ?>)</a>
+                                    <a href="./index.php?controller=user&action=logout"><i class="fa fa-sign-out"></i> Đăng xuất (<?php echo $_SESSION['user_name']; ?>)</a>
                                 <?php else: ?>
-                                    <a href="./index.php?controller=user&action=login"><i class="fa fa-user"></i> Login</a>
+                                    <a href="./index.php?controller=user&action=login"><i class="fa fa-user"></i> Đăng nhập</a>
                                 <?php endif; ?>
                             </div>
 
@@ -133,8 +137,8 @@ $cartModel = new CartModel();
                 <div class="col-lg-6">
                     <nav class="header__menu">
                         <ul>
-                            <li class="active"><a href="./index.php?controller=home&action=index">Home</a></li>
-                            <li><a href="./index.php?controller=product&action=index">Shop</a></li>
+                            <li class="active"><a href="./index.php?controller=home&action=index">Trang chủ</a></li>
+                            <li><a href="./index.php?controller=product&action=index">Cửa hàng</a></li>
                             
                         </ul>
                     </nav>
@@ -144,8 +148,12 @@ $cartModel = new CartModel();
                         <ul>
                             <li><a href="./index.php?controller=cart&action=index"><i class="fa fa-shopping-bag"></i> <span><?php echo htmlspecialchars($totalQuantityAmount); ?></span></a></li>
                             <li><a href="./index.php?controller=order&action=index"><i class="fa fa-cart-arrow-down"></i> </a></li>
+                            <?php if (isset($_SESSION['user_id'])): ?>
+                                <li><a href="./index.php?controller=user&action=index"><i class="fa fa-user-circle"></i></a></li>
+                            <?php else: ?>
+                            <?php endif; ?>
                         </ul>
-                        <div class="header__cart__price">item: <span><?php echo htmlspecialchars($totalAmount); ?></span></div>
+                        <div class="header__cart__price">Tổng tiền: <span><?php echo htmlspecialchars($totalAmount); ?>VNĐ</span></div>
                     </div>
                 </div>
             </div>
@@ -195,11 +203,13 @@ $cartModel = new CartModel();
                 <div class="col-lg-9">
                     <div class="hero__search">
                         <div class="hero__search__form">
-                            <form action="#">
-                                
-                                <input type="text" placeholder="What do yo u need?">
-                                <button type="submit" class="site-btn">SEARCH</button>
-                            </form>
+                        <form action="/ecommerce-website/Public/index.php" method="get">
+                            <input type="hidden" name="controller" value="product">
+                            <input type="hidden" name="action" value="index">
+                            <input type="text" name="tukhoa" placeholder="Bạn cần tìm gì?">
+                            <button type="submit" class="site-btn">TÌM KIẾM</button>
+                        </form>
+
                         </div>
                         <div class="hero__search__phone">
                             <div class="hero__search__phone__icon">

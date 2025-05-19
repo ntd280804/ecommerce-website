@@ -75,7 +75,7 @@ require("Includes/Header.php");
                         <span>(<?= $total ?> reviews)</span>
                     </div>
 
-                    <div class="product__details__price">$<?= number_format($product['price'], 2) ?></div>
+                    <div class="product__details__price"><?= number_format($product['discounted_price'], 2) ?>VNĐ</div>
                     <p><?= nl2br(htmlspecialchars($product['summary'])) ?></p>
                     <form action="./index.php?controller=cart&action=addcart" method="POST">
                         <div class="product__details__quantity">

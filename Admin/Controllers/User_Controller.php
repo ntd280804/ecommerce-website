@@ -3,6 +3,11 @@
 class UserController {
 
     public function index() {
+        if (!isset($_SESSION['admin_type']) || $_SESSION['admin_type'] != "Admin") {
+            // Chuyển hướng về trang đăng nhập nếu không phải Admin
+            header("Location: ./index.php?controller=home&action=index");
+            exit();
+        }
         $usermodel = new UserModel();
         if (empty($_GET['status'])) {
             header("Location: ./index.php?controller=user&action=index&status=all");
@@ -15,6 +20,11 @@ class UserController {
         include './Views/ListUsers.php';
     }
     public function toggleStatus() {
+        if (!isset($_SESSION['admin_type']) || $_SESSION['admin_type'] != "Admin") {
+            // Chuyển hướng về trang đăng nhập nếu không phải Admin
+            header("Location: ./index.php?controller=home&action=index");
+            exit();
+        }
         if (isset($_GET['id']) && isset($_GET['status'])) {
             $id = $_GET['id'];
             $status = $_GET['status'];
@@ -32,6 +42,11 @@ class UserController {
         }
     }
     public function newpass(){
+        if (!isset($_SESSION['admin_type']) || $_SESSION['admin_type'] != "Admin") {
+            // Chuyển hướng về trang đăng nhập nếu không phải Admin
+            header("Location: ./index.php?controller=home&action=index");
+            exit();
+        }
         $usermodel = new UserModel();
     
         $id = $_GET['id']; // Lấy id từ URL
@@ -39,9 +54,19 @@ class UserController {
         include './Views/NewPass.php';
     }
     public function add() {
+        if (!isset($_SESSION['admin_type']) || $_SESSION['admin_type'] != "Admin") {
+            // Chuyển hướng về trang đăng nhập nếu không phải Admin
+            header("Location: ./index.php?controller=home&action=index");
+            exit();
+        }
         include './Views/AddUser.php';
     }
     public function store() {
+        if (!isset($_SESSION['admin_type']) || $_SESSION['admin_type'] != "Admin") {
+            // Chuyển hướng về trang đăng nhập nếu không phải Admin
+            header("Location: ./index.php?controller=home&action=index");
+            exit();
+        }
         // Create an instance of UserModel
         $user = new UserModel();
     
@@ -70,6 +95,11 @@ class UserController {
     }
     
     public function update() {
+        if (!isset($_SESSION['admin_type']) || $_SESSION['admin_type'] != "Admin") {
+            // Chuyển hướng về trang đăng nhập nếu không phải Admin
+            header("Location: ./index.php?controller=home&action=index");
+            exit();
+        }
         $usermodel = new userModel;
     
         $id = $_POST['id']; // Dữ liệu từ hidden input
@@ -83,6 +113,10 @@ class UserController {
         }
     }
     public function login() {
+        if (isset($_SESSION['admin_id'])) {  // Giả sử 'user' là key lưu thông tin đăng nhập
+            header("Location: ./index.php?controller=home&action=index");
+            exit();
+        }
         include './Views/Login.php';
     }
     public function handleLogin() {
@@ -96,10 +130,10 @@ class UserController {
             if ($user) {
                 $_SESSION['admin_id'] = $user['id'];
                 $_SESSION['admin_name'] = $user['name'];
+                $_SESSION['admin_type'] = $user['type'];
                 header("Location: ./index.php?controller=home&action=index");
                 exit();
             } else {
-                $error_message = "Email hoặc mật khẩu không đúng!";
                 header("Location: ./index.php?controller=user&action=login");
             }
         } else {

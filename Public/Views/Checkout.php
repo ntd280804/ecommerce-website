@@ -36,7 +36,7 @@ require("Includes/Header.php");
                                 <div class="checkout__order__products">Products <span>Total</span></div>
                                 <ul>
                                     <?php foreach ($cartItems as $item): ?>
-                                    <li><?php echo $item['product_name']; ?><span><?php echo number_format($item['price'] * $item['qty'], 2); ?></span></li>
+                                    <li><?php echo $item['product_name']; ?><span><?php echo number_format($item['discounted_price'] * $item['qty'], 2); ?></span></li>
                                     <?php endforeach; ?>
                                 </ul>
                                 <div class="checkout__order__total">Total <span><?php echo number_format($totalAmount, 2); ?></span></div>

@@ -14,15 +14,11 @@ require("Includes/Header.php");
             <div class="card-body p-0">
                 <!-- Nested Row within Card Body -->
                 <div class="row">
-                    <div class="col-lg-12 d-none d-lg-block bg-login-image"></div>
                     <div class="col-lg-12">
                         <div class="p-5">
                             <div class="text-center">
                                 <h1 class="h4 text-gray-900 mb-4">Chào mừng trở lại!</h1>
                             </div>
-                            <?php if (!empty($error_message)): ?>
-                                <p style="color:red;"><?php echo $error_message; ?></p>
-                            <?php endif; ?>
 
                             <form class="user" method="POST" action="./index.php?controller=user&action=handleLogin">
                                 <div class="form-group">
@@ -55,7 +51,6 @@ require("Includes/Header.php");
 
 </div>
 
-
-    <?php
+<?php
 require("Includes/Footer.php"); 
 ?>

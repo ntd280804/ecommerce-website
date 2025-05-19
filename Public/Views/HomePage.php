@@ -64,7 +64,7 @@ require("Includes/Header.php");
                                 </div>
                                 <div class="latest-product__item__text">
                                     <h6><?php echo htmlspecialchars($product['name']); ?></h6>
-                                    <span><?php echo number_format($product['price'], 0, ',', '.'); ?> đ</span>
+                                    <span><?php echo number_format($product['discounted_price'], 0, ',', '.'); ?> VNĐ</span>
                                 </div>
                             </a>
                         <?php endforeach; ?>

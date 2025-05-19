@@ -103,14 +103,26 @@ class ProductModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     }
-    public function getAllActiveWithPagination($limit, $offset) {
-        $sql = "SELECT * FROM products WHERE status = 'Active' LIMIT :limit OFFSET :offset";
+    public function getAllActiveWithPagination($limit, $offset, $sort = 'default') {
+        $limit = (int)$limit;
+        $offset = (int)$offset;
+    
+        // Xử lý sắp xếp
+        $orderBy = "";
+        if ($sort == 'asc') {
+            $orderBy = "ORDER BY price ASC";
+        } elseif ($sort == 'desc') {
+            $orderBy = "ORDER BY price DESC";
+        }
+    
+        $sql = "SELECT * FROM products WHERE status = 'Active' $orderBy LIMIT :limit OFFSET :offset";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
 
     public function countAllActive() {
         $sql = "SELECT COUNT(*) AS total FROM products WHERE status = 'Active'";
@@ -119,8 +131,19 @@ class ProductModel {
         return $result['total'];
     }
 
-    public function getByCategoryWithPagination($category, $limit, $offset) {
-        $sql = "SELECT * FROM products WHERE category_id = :category AND status = 'Active' LIMIT :limit OFFSET :offset";
+    public function getByCategoryWithPagination($category, $limit, $offset, $sort = 'default') {
+        $limit = (int)$limit;
+        $offset = (int)$offset;
+    
+        // Xử lý sắp xếp
+        $orderBy = "";
+        if ($sort == 'asc') {
+            $orderBy = "ORDER BY price ASC";
+        } elseif ($sort == 'desc') {
+            $orderBy = "ORDER BY price DESC";
+        }
+    
+        $sql = "SELECT * FROM products WHERE category_id = :category AND status = 'Active' $orderBy LIMIT :limit OFFSET :offset";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':category', $category, PDO::PARAM_INT);
         $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
@@ -128,7 +151,50 @@ class ProductModel {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
+    
+    public function searchProductsWithPagination($keyword, $limit, $offset, $sort = 'default') {
+        $keyword = strtolower($keyword);
+        $param = '%' . $keyword . '%';
+        $limit = (int)$limit;
+        $offset = (int)$offset;
+    
+        // Xử lý sắp xếp
+        $orderBy = "";
+        if ($sort == 'asc') {
+            $orderBy = "ORDER BY price ASC";
+        } elseif ($sort == 'desc') {
+            $orderBy = "ORDER BY price DESC";
+        }
+    
+        $sql = "SELECT * FROM products 
+                WHERE LOWER(name) LIKE ? 
+                   OR LOWER(REPLACE(slug, '-', ' ')) LIKE ? 
+                   OR LOWER(description) LIKE ? 
+                   OR LOWER(summary) LIKE ? 
+                $orderBy
+                LIMIT $limit OFFSET $offset";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$param, $param, $param, $param]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    
+    public function countSearchProducts($keyword) {
+        $keyword = strtolower($keyword);
+        $param = '%' . $keyword . '%';
+    
+        $sql = "SELECT COUNT(*) FROM products 
+                WHERE LOWER(name) LIKE ? 
+                   OR LOWER(REPLACE(slug, '-', ' ')) LIKE ? 
+                   OR LOWER(description) LIKE ? 
+                   OR LOWER(summary) LIKE ?";
+    
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$param, $param, $param, $param]);
+        return $stmt->fetchColumn();
+    }
+    
     public function countByCategory($category) {
         $sql = "SELECT COUNT(*) AS total FROM products WHERE category_id = :category AND status = 'Active'";
         $stmt = $this->conn->prepare($sql);

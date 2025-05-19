@@ -24,8 +24,8 @@ class OrderModel {
                 $orderId,
                 $item['product_id'],
                 $item['qty'],
-                $item['price'],
-                $item['price'] * $item['qty']
+                $item['discounted_price'],
+                $item['discounted_price'] * $item['qty']
             ]);
         }
 

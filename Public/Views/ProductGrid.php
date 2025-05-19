@@ -45,17 +45,33 @@ require("Includes/Header.php");
                     <div class="filter__item">
                         <div class="row">
                             <div class="col-lg-4 col-md-5">
-                                <div class="filter__sort">
-                                    <span>Sort By</span>
-                                    <select>
-                                        <option value="0">Default</option>
-                                        
-                                    </select>
-                                </div>
+                            <div class="filter__sort">
+                                <span>Sort By</span>
+                                <?php
+                                $currentSort = $_GET['sort'] ?? 'default';
+                                ?>
+
+                                <select name="sort" onchange="updateSort(this.value);">
+                                    <option value="default" <?= $currentSort == 'default' ? 'selected' : '' ?>>Default</option>
+                                    <option value="asc" <?= $currentSort == 'asc' ? 'selected' : '' ?>>Giá từ thấp đến cao</option>
+                                    <option value="desc" <?= $currentSort == 'desc' ? 'selected' : '' ?>>Giá từ cao đến thấp</option>
+                                </select>
+                            </div>
+
+                            <script>
+                            function updateSort(sort) {
+                                const params = new URLSearchParams(window.location.search);
+                                params.set('sort', sort);
+                                window.location.href = window.location.pathname + '?' + params.toString();
+                            }
+                            </script>
+
+
+
                             </div>
                             <div class="col-lg-4 col-md-4">
                                 <div class="filter__found">
-                                    <h6><span><?php echo count($products); ?></span> Sản phẩm được tìm thấy</h6>
+                                    <h6><span><?php echo $totalProducts; ?></span> Sản phẩm được tìm thấy</h6>
                                 </div>
                             </div>
                         </div>
@@ -78,7 +94,7 @@ require("Includes/Header.php");
                                         <h6>
                                             <a href="./index.php?controller=product&action=detail&id=<?php echo $product['id']; ?>"><?php echo htmlspecialchars($product['name']); ?></a>
                                         </h6>
-                                        <h5><?php echo number_format($product['price'], 2); ?></h5>
+                                        <h5><?php echo number_format($product['discounted_price'], 2); ?>VNĐ</h5>
                                     </div>
                                 </div>
                             </div>
