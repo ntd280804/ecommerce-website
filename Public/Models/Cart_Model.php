@@ -24,8 +24,6 @@ class CartModel {
     }
     public function removeFromCart($userId, $productId)
     {
-        
-
         // Xóa sản phẩm khỏi giỏ hàng của người dùng
         $sql = "DELETE FROM cart WHERE user_id = :user_id AND product_id = :product_id";
         $stmt = $this->conn->prepare($sql);
@@ -38,35 +36,36 @@ class CartModel {
         $stmt->execute([$userId]);
     }
     
-    public function addToCart($userId, $productId, $quantity){
-    // Kiểm tra xem sản phẩm đã có trong giỏ chưa
-    $sqlCheck = "SELECT id, qty FROM cart WHERE user_id = :user_id AND product_id = :product_id";
-    $stmtCheck = $this->conn->prepare($sqlCheck);
-    $stmtCheck->execute([
-        'user_id' => $userId,
-        'product_id' => $productId
-    ]);
-    $existing = $stmtCheck->fetch(PDO::FETCH_ASSOC);
-
-    if ($existing) {
-        // Nếu đã có thì cập nhật số lượng
-        $newQty = $existing['qty'] + $quantity;
-        $sqlUpdate = "UPDATE cart SET qty = :qty WHERE id = :id";
-        $stmtUpdate = $this->conn->prepare($sqlUpdate);
-        $stmtUpdate->execute([
-            'qty' => $newQty,
-            'id' => $existing['id']
-        ]);
-    } else {
-        // Nếu chưa có thì thêm mới
-        $sqlInsert = "INSERT INTO cart (user_id, product_id, qty) VALUES (:user_id, :product_id, :qty)";
-        $stmtInsert = $this->conn->prepare($sqlInsert);
-        $stmtInsert->execute([
+    public function addToCart($userId, $productId, $quantity)
+    {
+        // Kiểm tra xem sản phẩm đã có trong giỏ chưa
+        $sqlCheck = "SELECT id, qty FROM cart WHERE user_id = :user_id AND product_id = :product_id";
+        $stmtCheck = $this->conn->prepare($sqlCheck);
+        $stmtCheck->execute([
             'user_id' => $userId,
-            'product_id' => $productId,
-            'qty' => $quantity
+            'product_id' => $productId
         ]);
-    }
+        $existing = $stmtCheck->fetch(PDO::FETCH_ASSOC);
+
+        if ($existing) {
+            // Nếu đã có thì cập nhật số lượng
+            $newQty = $existing['qty'] + $quantity;
+            $sqlUpdate = "UPDATE cart SET qty = :qty WHERE id = :id";
+            $stmtUpdate = $this->conn->prepare($sqlUpdate);
+            $stmtUpdate->execute([
+                'qty' => $newQty,
+                'id' => $existing['id']
+            ]);
+        } else {
+            // Nếu chưa có thì thêm mới
+            $sqlInsert = "INSERT INTO cart (user_id, product_id, qty) VALUES (:user_id, :product_id, :qty)";
+            $stmtInsert = $this->conn->prepare($sqlInsert);
+            $stmtInsert->execute([
+                'user_id' => $userId,
+                'product_id' => $productId,
+                'qty' => $quantity
+            ]);
+        }
     }
 
     public function getCartTotalQuantity($userId) {

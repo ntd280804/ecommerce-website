@@ -4,6 +4,11 @@ require_once ("./Models/Cart_Model.php");
 
 class CartController {
     public function index() {
+        if (!isset($_SESSION['user_id'])) {
+            // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+            header("Location: ./index.php?controller=user&action=login");
+            exit();
+        }
         $cartModel = new CartModel();
 
         $cartItems = []; // ✅ Đảm bảo biến này luôn được khởi tạo

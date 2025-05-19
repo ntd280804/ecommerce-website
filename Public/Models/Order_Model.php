@@ -7,7 +7,11 @@ class OrderModel {
     public function __construct() {
         $this->conn = Database::connect(); // Dùng PDO từ class Database
     }
-
+    public function hasReviewedOrder($userId, $orderId) {
+        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM reviews WHERE user_id = ? AND order_id = ?");
+        $stmt->execute([$userId, $orderId]);
+        return $stmt->fetchColumn() > 0;
+    }
     // Hàm tạo đơn hàng
     public function createOrder($userId, $totalAmount, $cartItems) {
         $stmt = $this->conn->prepare("INSERT INTO orders (user_id, total, status, created_at, updated_at) VALUES (?, ?, 'Processing', NOW(), NOW())");
@@ -53,16 +57,32 @@ class OrderModel {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function getProductIdsByOrderId($orderId) {
+        $stmt = $this->conn->prepare("
+            SELECT product_id 
+            FROM order_details 
+            WHERE order_id = ?
+        ");
+        $stmt->execute([$orderId]);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+    
     public function getOrdersByUserId($userId) {
         $stmt = $this->conn->prepare("
-            SELECT orders.*, users.name AS user_name
+            SELECT 
+                orders.*, 
+                users.name AS user_name,
+                EXISTS (
+                    SELECT 1 FROM reviews WHERE user_id = :userId AND order_id = orders.id
+                ) AS has_reviewed
             FROM orders
             JOIN users ON orders.user_id = users.id
             WHERE orders.user_id = :userId
         ");
-        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT); // Truyền vào userId thay vì orderId
+        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC); // Lấy tất cả đơn hàng của người dùng
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
 }
 

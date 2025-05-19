@@ -101,5 +101,14 @@ class UserModel {
         $stmt->execute();
         return $stmt->fetch() !== false;
     }
+    public function getUserNameById($userId) {
+        $stmt = $this->conn->prepare("
+            SELECT name 
+            FROM users 
+            WHERE id = ?
+        ");
+        $stmt->execute([$userId]);
+        return $stmt->fetchColumn();
+    }
     
 }

@@ -26,7 +26,12 @@ require("Includes/Header.php");
                         <td><?= htmlspecialchars($order['status']) ?></td>
                         <td>
                             <a href="index.php?controller=order&action=detail&id=<?= htmlspecialchars($order['id']) ?>" class="btn btn-info">Chi tiết</a>
+                            
+                            <?php if ($order['status'] === 'Delivered' && !$order['has_reviewed']): ?>
+                                <a href="index.php?controller=review&action=create&order_id=<?= htmlspecialchars($order['id']) ?>" class="btn btn-success">Đánh giá</a>
+                            <?php endif; ?>
                         </td>
+
                     </tr>
                 <?php endforeach; ?>
             </tbody>

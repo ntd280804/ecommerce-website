@@ -16,4 +16,16 @@ class ReviewModel {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function getReviewsByOrderId($orderId) {
+        $stmt = $this->conn->prepare("
+            SELECT r.*, p.name AS product_name, u.name AS user_name 
+            FROM reviews r
+            JOIN products p ON r.product_id = p.id
+            JOIN users u ON r.user_id = u.id
+            WHERE r.order_id = ?
+        ");
+        $stmt->execute([$orderId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
 }

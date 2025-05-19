@@ -43,6 +43,7 @@ require_once("../Config/Database.php");
                         <th>Operations</th>
                     </tr>
                 </thead>
+
                 <tfoot>
                     <tr>
                         <th>Id</th>
@@ -57,7 +58,7 @@ require_once("../Config/Database.php");
                         <?php foreach ($orders as $order) : ?>
                             <tr>
                                 <td><?= htmlspecialchars($order['id']) ?></td>
-                                <td><?= htmlspecialchars($order['user_id']) ?></td>
+                                <td><?= htmlspecialchars($usermodel->getUserNameById($order['user_id'])) ?></td>
                                 <td><?= htmlspecialchars($order['total']) ?></td>
                                 <td><?= htmlspecialchars($order['status']) ?></td>
                                 <td>

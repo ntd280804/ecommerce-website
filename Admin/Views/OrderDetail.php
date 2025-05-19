@@ -66,6 +66,34 @@
                 <?php endif; ?>
             </tbody>
         </table>
+        <hr>
+        <h6>Đánh giá sản phẩm:</h6>
+
+        <?php if (!empty($reviews)) : ?>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Đánh giá</th>
+                        <th>Nội dung</th>
+                        <th>Ngày đánh giá</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($reviews as $review) : ?>
+                        <tr>
+                            <td><?= htmlspecialchars($review['product_name']) ?></td>
+                            <td><?= str_repeat('⭐', (int)$review['rating']) ?></td>
+                            <td><?= htmlspecialchars($review['comment']) ?></td>
+                            <td><?= date('d-m-Y H:i', strtotime($review['created_at'])) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else : ?>
+            <p>Chưa có đánh giá nào cho đơn hàng này.</p>
+        <?php endif; ?>
+
     </div>
 </div>
 
