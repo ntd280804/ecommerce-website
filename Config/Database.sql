@@ -73,22 +73,6 @@ CREATE TABLE products (
     FOREIGN KEY (brand_id) REFERENCES brands(id)
 );
 
-CREATE TABLE reviews (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    product_id INT NOT NULL,
-    order_id INT NOT NULL,
-    comment TEXT,
-    rating INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (product_id) REFERENCES products(id),
-    FOREIGN KEY (order_id) REFERENCES orders(id),
-    UNIQUE KEY unique_review_per_order_product_user (user_id, product_id, order_id)
-);
-
-
 CREATE TABLE orders (
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT,
@@ -125,4 +109,19 @@ CREATE TABLE cart (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+CREATE TABLE reviews (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    product_id INT NOT NULL,
+    order_id INT NOT NULL,
+    comment TEXT,
+    rating INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (product_id) REFERENCES products(id),
+    FOREIGN KEY (order_id) REFERENCES orders(id),
+    UNIQUE KEY unique_review_per_order_product_user (user_id, product_id, order_id)
 );

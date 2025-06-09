@@ -85,12 +85,12 @@ require("Includes/Header.php");
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-6">
                     <div class="banner__pic">
-                        <img src="./assets/img/hero/banner.png" alt="">
+                        <img src="./assets/img/hero/banner.jpg" alt="">
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-6">
                     <div class="banner__pic">
-                    <img src="./assets/img/hero/banner.png" alt="">
+                    <img src="./assets/img/hero/banner1.jpg" alt="">
                     </div>
                 </div>
             </div>
