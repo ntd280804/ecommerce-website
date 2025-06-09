@@ -223,7 +223,7 @@ $cartModel = new CartModel();
                     </div>
                     <?php 
                         if($isHomePage) {
-                            echo '<div class="hero__item set-bg" data-setbg="./assets/img/hero/banner2.jfif">
+                            echo '<div class="hero__item set-bg" data-setbg="./assets/img/hero/banner2.jpg">
                         <div class="hero__text">
                             <span>Đồ gia dụng giá rẻ</span>
                             <h2>Gia dụng<br />100% Chính hãng</h2>
