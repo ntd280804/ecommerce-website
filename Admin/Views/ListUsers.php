@@ -29,6 +29,7 @@ require_once("../Config/Database.php");
                         <th>ID</th>
                         <th>Tên</th>
                         <th>Email</th>
+                        <th>Vai trò</th>
                         <th>Số điện thoại</th>
                         <th>Địa chỉ</th>
                         <th>Trạng thái</th>
@@ -42,6 +43,7 @@ require_once("../Config/Database.php");
                         <th>ID</th>
                         <th>Tên</th>
                         <th>Email</th>
+                        <th>Vai trò</th>
                         <th>Số điện thoại</th>
                         <th>Địa chỉ</th>
                         <th>Trạng thái</th>
@@ -57,12 +59,23 @@ require_once("../Config/Database.php");
                                 <td><?= htmlspecialchars($user['id']) ?></td>
                                 <td><?= htmlspecialchars($user['name']) ?></td>
                                 <td><?= htmlspecialchars($user['email']) ?></td>
+                                <td><?= htmlspecialchars($user['role']) ?></td>
                                 <td><?= htmlspecialchars($user['phone']) ?></td>
                                 <td><?= htmlspecialchars($user['address']) ?></td>
                                 <td><?= htmlspecialchars($user['status']) ?></td>
                                 <td><?= htmlspecialchars($user['created_at']) ?></td>
                                 <td><?= htmlspecialchars($user['updated_at']) ?></td>
                                 <td>
+                                    <form method="post" action="./index.php?controller=user&action=updateRole" style="display:inline-block; min-width:130px;">
+                                        <input type="hidden" name="id" value="<?= $user['id'] ?>">
+                                        <select name="role" class="form-control" onchange="this.form.submit()" style="font-size:14px; height:35px;">
+                                            <option value="Default" <?= $user['role'] == 'Default' ? 'selected' : '' ?>>Default</option>
+                                            <option value="Vip1" <?= $user['role'] == 'Vip1' ? 'selected' : '' ?>>Vip1</option>
+                                            <option value="Vip2" <?= $user['role'] == 'Vip2' ? 'selected' : '' ?>>Vip2</option>
+                                        </select>
+                                    </form>
+
+
                                     <a class="btn btn-warning"
                                     href="./index.php?controller=user&action=newpass&id=<?= $user['id'] ?>"
                                     onclick="return confirm('Bạn có chắc muốn cập nhật mật khẩu cho người dùng này?');">New Password</a>

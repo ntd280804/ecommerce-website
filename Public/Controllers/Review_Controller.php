@@ -11,10 +11,9 @@ class ReviewController {
 
     public function create() {
         if (!isset($_SESSION['user_id'])) {
-            // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
-            header("Location: ./index.php?controller=user&action=login");
-            exit();
-        }
+    header("Location: .//dang-nhap.html");
+    exit();
+}
         $reviewModel = new ReviewModel();
         $orderModel = new OrderModel();
     
@@ -50,7 +49,9 @@ class ReviewController {
             }
     
             // Điều hướng về trang chi tiết đơn hàng
-            header("Location: ./index.php?controller=order&action=detail&id=$orderId");
+            header("Location: ./don-hang/$orderId.html");
+exit;
+
             exit;
         }
     

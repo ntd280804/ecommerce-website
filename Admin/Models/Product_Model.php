@@ -7,9 +7,9 @@ class ProductModel {
     public $slug;
     public $summary;
     public $description;
-    public $stock;
     public $price;
-    public $discounted_price;
+    public $price_vip1;
+    public $price_vip2;
     public $category_id;
     public $brand_id;
     public $countfiles;
@@ -20,8 +20,9 @@ class ProductModel {
 
     public function insert() {
 
-        $sql = "INSERT INTO products (name,slug, summary, description, stock, price, discounted_price,images, category_id, brand_id)
-                VALUES (:name,:slug, :summary, :description, :stock, :price, :discounted_price,:images, :category_id, :brand_id)";
+        $sql = "INSERT INTO products (name, slug, summary, description, price, price_vip1, price_vip2, images, category_id, brand_id)
+        VALUES (:name, :slug, :summary, :description, :price, :price_vip1, :price_vip2, :images, :category_id, :brand_id)";
+
         
         $stmt = $this->conn->prepare($sql);
 
@@ -29,9 +30,10 @@ class ProductModel {
         $stmt->bindParam(':slug', $this->slug);
         $stmt->bindParam(':summary', $this->summary);
         $stmt->bindParam(':description', $this->description);
-        $stmt->bindParam(':stock', $this->stock);
         $stmt->bindParam(':price', $this->price);
-        $stmt->bindParam(':discounted_price', $this->discounted_price);
+        $stmt->bindParam(':price_vip1', $this->price_vip1);
+        $stmt->bindParam(':price_vip2', $this->price_vip2);
+
         $stmt->bindParam(':images', $this->images);
         $stmt->bindParam(':category_id', $this->category_id);
         $stmt->bindParam(':brand_id', $this->brand_id);
@@ -125,27 +127,27 @@ class ProductModel {
     }
     public function update($id) {
         $sql = "UPDATE products 
-        SET name = :name, 
-            slug = :slug, 
-            summary = :summary, 
-            description = :description, 
-            stock = :stock, 
-            price = :price, 
-            discounted_price = :discounted_price, 
-            images = :images, 
-            category_id = :category_id, 
-            brand_id = :brand_id 
-        WHERE id = :id";
+                SET name = :name, 
+                    slug = :slug, 
+                    summary = :summary, 
+                    description = :description,
+                    price = :price, 
+                    price_vip1 = :price_vip1,
+                    price_vip2 = :price_vip2,
+                    images = :images, 
+                    category_id = :category_id, 
+                    brand_id = :brand_id 
+                WHERE id = :id";
+
 
         $stmt = $this->conn->prepare($sql);
-
         $stmt->bindParam(':name', $this->name);
         $stmt->bindParam(':slug', $this->slug);
         $stmt->bindParam(':summary', $this->summary);
         $stmt->bindParam(':description', $this->description);
-        $stmt->bindParam(':stock', $this->stock);
         $stmt->bindParam(':price', $this->price);
-        $stmt->bindParam(':discounted_price', $this->discounted_price);
+        $stmt->bindParam(':price_vip1', $this->price_vip1);
+        $stmt->bindParam(':price_vip2', $this->price_vip2);
         $stmt->bindParam(':images', $this->images);
         $stmt->bindParam(':category_id', $this->category_id);
         $stmt->bindParam(':brand_id', $this->brand_id);
@@ -153,6 +155,38 @@ class ProductModel {
 
         return $stmt->execute();
     }
+    public function generateStaticFromFriendlyURL($friendlyUrl, $outputPath) {
+    // 1. Dùng cURL để gọi URL như trình duyệt thật
+    $ch = curl_init($friendlyUrl);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // theo dõi redirect nếu có
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+    $html = curl_exec($ch);
+
+    if ($html === false) {
+        echo "❌ Không thể lấy nội dung từ $friendlyUrl. Lỗi: " . curl_error($ch) . "\n";
+        curl_close($ch);
+        return false;
+    }
+
+    curl_close($ch);
+
+    // 2. Tạo thư mục nếu chưa có
+    $folder = dirname($outputPath);
+    if (!is_dir($folder)) {
+        mkdir($folder, 0777, true);
+    }
+
+    // 3. Ghi file tĩnh
+    if (file_put_contents($outputPath, $html) !== false) {
+        echo "✅ Đã tạo static: $outputPath\n";
+        return true;
+    } else {
+        echo "❌ Ghi file thất bại: $outputPath\n";
+        return false;
+    }
+}
+
     public function countProductsUsingImage($imagePath) {
         // Thay vì real_escape_string, dùng PDO chuẩn bị câu truy vấn và bind tham số
         $sql = "SELECT COUNT(*) as total FROM products WHERE FIND_IN_SET(:imagePath, REPLACE(images, ';', ',')) > 0";

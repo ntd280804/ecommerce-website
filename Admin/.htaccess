@@ -1,0 +1,4 @@
+RewriteEngine On
+
+# Redirect truy cập root về Public
+RewriteRule ^$ Public/ [L]

@@ -32,9 +32,10 @@
                         <th>Name</th>
                         <th>Category</th>
                         <th>Brand</th>
-                        <th>Stock</th>
+                        
                         <th>Price</th>
-                        <th>discounted_price</th>
+                        <th>Price VIP 1</th>
+                        <th>Price VIP 2</th>
                         <th>Status</th>
                         <th>Operations</th>
                     </tr>
@@ -49,9 +50,10 @@
                             <td><?= htmlspecialchars($product['name']) ?></td>
                             <td><?= htmlspecialchars($productmodel->getCategoryNameById($product['category_id'])) ?></td>
                             <td><?= htmlspecialchars($productmodel->getBrandNameById($product['brand_id'])) ?></td>
-                            <td><?= htmlspecialchars($product['stock']) ?></td>
+                            
                             <td><?= htmlspecialchars($product['price']) ?></td>
-                            <td><?= htmlspecialchars($product['discounted_price']) ?></td>
+                            <td><?= htmlspecialchars($product['price_vip1']) ?></td>
+                            <td><?= htmlspecialchars($product['price_vip2']) ?></td>
                             <td><?= htmlspecialchars($product['status']) ?></td>
 
                             <td>

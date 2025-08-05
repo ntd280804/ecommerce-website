@@ -13,16 +13,17 @@ class OrderModel {
         return $stmt->fetchColumn() > 0;
     }
     // Hàm tạo đơn hàng
-    public function createOrder($userId, $totalAmount, $cartItems, $receiver_name, $receiver_phone, $receiver_address, $payment_method) {
+    public function createOrder($userId,$userRole, $totalAmount, $cartItems, $receiver_name, $receiver_phone, $receiver_address, $payment_method) {
         // Chuẩn bị câu truy vấn có thêm 4 cột mới
         $stmt = $this->conn->prepare("
             INSERT INTO orders 
-            (user_id, total, status, receiver_name, receiver_phone, receiver_address, payment_method, created_at, updated_at) 
-            VALUES (?, ?, 'Processing', ?, ?, ?, ?, NOW(), NOW())
+            (user_id,user_role, total, status, receiver_name, receiver_phone, receiver_address, payment_method, created_at, updated_at) 
+            VALUES (?,?, ?, 'Processing', ?, ?, ?, ?, NOW(), NOW())
         ");
     
         $stmt->execute([
             $userId,
+            $userRole,
             $totalAmount,
             $receiver_name,
             $receiver_phone,
@@ -44,8 +45,8 @@ class OrderModel {
                 $orderId,
                 $item['product_id'],
                 $item['qty'],
-                $item['discounted_price'],
-                $item['discounted_price'] * $item['qty']
+                $item['price'],
+                $item['price'] * $item['qty']
             ]);
         }
     

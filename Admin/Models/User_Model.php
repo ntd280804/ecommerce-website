@@ -5,6 +5,7 @@ class UserModel {
     private $conn;
     public $name;
     public $email;
+    public $role;
     public $password;
     public $phone;
     public $address;
@@ -47,8 +48,8 @@ class UserModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     public function insert() {
-        $sql = "INSERT INTO users (name, email, password, phone, address, status) 
-                VALUES (:name, :email, :password, :phone, :address, :status)";
+        $sql = "INSERT INTO users (name, email, password, phone, address, status, role) 
+        VALUES (:name, :email, :password, :phone, :address, :status, :role)";
 
         $stmt = $this->conn->prepare($sql);
 
@@ -58,9 +59,18 @@ class UserModel {
         $stmt->bindParam(':phone', $this->phone);
         $stmt->bindParam(':address', $this->address);
         $stmt->bindParam(':status', $this->status);
+        $stmt->bindParam(':role', $this->role);
 
         return $stmt->execute();
     }
+    public function updateRole($id, $role) {
+    $sql = "UPDATE users SET role = :role WHERE id = :id";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bindParam(':role', $role);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    return $stmt->execute();
+}
+
     public function getById($id) {
         $sql = "SELECT * FROM users WHERE id = :id";
         $stmt = $this->conn->prepare($sql);

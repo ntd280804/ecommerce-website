@@ -9,7 +9,7 @@ class UserController {
             $user = $userModel->getUserById($_SESSION['user_id']);
             include './Views/Profile.php';
         } else {
-            header("Location: ./index.php?controller=user&action=login");
+            header("Location: .//dang-nhap.html");
         }
     }
     public function editprofile()
@@ -19,7 +19,7 @@ class UserController {
             $user = $userModel->getUserById($_SESSION['user_id']);
             include './Views/EditProfile.php';
         } else {
-            header("Location: ./index.php?controller=user&action=login");
+            header("Location: .//dang-nhap.html");
         }
         
     }
@@ -29,7 +29,7 @@ class UserController {
     public function handleupdateprofile()
     {
         if (!isset($_SESSION['user_id'])) {
-            header("Location: ./index.php?controller=user&action=login");
+            header("Location: .//dang-nhap.html");
             exit;
         }
     
@@ -45,32 +45,44 @@ class UserController {
         $result = $userModel->updateUser($id, $name, $email, $password, $phone, $address);
     
         if ($result) {
-            header("Location: ./index.php?controller=user&action=index");
+            header("Location: ./trang-chu.html");
         } else {
             echo "Cập nhật thất bại.";
         }
     }
     public function handleLogin() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $email = $_POST['email'] ?? '';
-            $password = $_POST['password'] ?? '';
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $email = $_POST['email'] ?? '';
+        $password = $_POST['password'] ?? '';
 
-            $usermodel = new UserModel();
-            $user = $usermodel->login($email, $password);
+        $usermodel = new UserModel();
+        $user = $usermodel->login($email, $password);
 
-            if ($user) {
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['user_name'] = $user['name'];
-                header("Location: ./index.php?controller=home&action=index");
-                exit();
-            } else {
-                header("Location: ./index.php?controller=user&action=login");
-            }
-        } else {
-            include './Views/Login.php';
+        if ($user) {
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_name'] = $user['name'];
+            $_SESSION['user_role'] = $user['role'];
+
+            // ✅ Lấy giỏ hàng và lưu vào SESSION
+            require_once './Models/Cart_Model.php';
+            $cartModel = new CartModel();
+            $totalAmount = $cartModel->getCartTotal($user['id'], $user['role']);
+            $totalQuantityAmount = $cartModel->getCartTotalQuantity($user['id'], $user['role']);
+
+            $_SESSION['totalAmount'] = $totalAmount;
+            $_SESSION['totalQuantityAmount'] = $totalQuantityAmount;
+
+            header("Location: ./trang-chu.html");
             exit();
+        } else {
+            header("Location: .//dang-nhap.html");
         }
+    } else {
+        include './Views/Login.php';
+        exit();
     }
+}
+
     public function handleForgot_password() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $email = $_POST['email'] ?? '';
@@ -97,7 +109,7 @@ class UserController {
             // Cập nhật mật khẩu mới cho user
             if ($usermodel->updatePasswordByEmail($email, $password)) {
                 // Redirect về login với thông báo thành công hoặc hiển thị message
-                header("Location: ./index.php?controller=user&action=login");
+                header("Location: .//dang-nhap.html");
                 exit();
             } else {
                 $error_message = "Có lỗi xảy ra khi cập nhật mật khẩu.";
@@ -133,7 +145,7 @@ class UserController {
         // Insert the new user into the database
         if ($user->insert()) {
             // Redirect to the user list on success
-            header("Location: ./index.php?controller=user&action=login");
+            header("Location: .//dang-nhap.html");
             exit();
         } else {
             echo "Error when adding the user.";
@@ -147,7 +159,7 @@ class UserController {
         session_start(); // bắt buộc có dòng này để truy cập $_SESSION
         session_unset(); // xóa tất cả biến session
         session_destroy(); // huỷ session
-        header("Location: ./index.php?controller=home&action=index");
+        header("Location: ./trang-chu.html");
         exit();
     }
 }

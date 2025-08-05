@@ -26,7 +26,7 @@ class OrderModel {
     }
     public function getOrderById($id) {
         $stmt = $this->conn->prepare("
-            SELECT orders.*, users.name AS user_name
+            SELECT orders.*, users.name AS user_name, user_role
             FROM orders
             JOIN users ON orders.user_id = users.id
             WHERE orders.id = :id
@@ -57,7 +57,7 @@ class OrderModel {
             $stmt->bindParam(':id', $orderId, PDO::PARAM_INT);
             $stmt->execute();
         
-            // Nếu trạng thái là 'Delivered', giảm số lượng tồn kho
+            // Nếu trạng thái là Delivered
             if ($status === 'Delivered') {
                 // Lấy danh sách sản phẩm trong đơn hàng
                 $stmt = $this->conn->prepare("
@@ -69,36 +69,6 @@ class OrderModel {
                 $stmt->execute();
                 $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-                // Giảm tồn kho của từng sản phẩm
-                foreach ($products as $product) {
-                    // Kiểm tra số lượng tồn kho
-                    $checkStock = $this->conn->prepare("
-                        SELECT stock 
-                        FROM products 
-                        WHERE id = :productId
-                    ");
-                    $checkStock->bindParam(':productId', $product['product_id'], PDO::PARAM_INT);
-                    $checkStock->execute();
-                    $stock = $checkStock->fetchColumn();
-    
-                    if ($stock === false) {
-                        throw new Exception("Product ID không tồn tại: " . $product['product_id']);
-                    }
-    
-                    if ($stock < $product['qty']) {
-                        throw new Exception("Không đủ tồn kho cho sản phẩm ID: " . $product['product_id']);
-                    }
-    
-                    // Giảm tồn kho
-                    $stmt = $this->conn->prepare("
-                        UPDATE products 
-                        SET stock = stock - :quantity 
-                        WHERE id = :productId
-                    ");
-                    $stmt->bindParam(':quantity', $product['qty'], PDO::PARAM_INT);
-                    $stmt->bindParam(':productId', $product['product_id'], PDO::PARAM_INT);
-                    $stmt->execute();
-                }
             }
         
             // Commit transaction

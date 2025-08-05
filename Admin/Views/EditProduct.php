@@ -57,18 +57,19 @@ require_once("../Config/Database.php");
 
                             <div class="form-group row">
                                 <div class="col-sm-4">
-                                    <label>Số lượng</label>
-                                    <input type="number" min="0" class="form-control" id="stock" name="stock" value="<?= htmlspecialchars($product['stock']) ?>" required>
-                                </div>
-                                <div class="col-sm-4">
                                     <label>Giá gốc</label>
-                                    <input type="number" min="0" step="0.01" class="form-control" id="price" name="price" value="<?= htmlspecialchars($product['price']) ?>" required>
+                                    <input type="number" min="0" step="0.01" class="form-control" name="price" value="<?= htmlspecialchars($product['price']) ?>" required>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Giá bán</label>
-                                    <input type="number" min="0" step="0.01" class="form-control" id="discounted_price" name="discounted_price" value="<?= htmlspecialchars($product['discounted_price']) ?>" required>
+                                    <label>Giá VIP 1</label>
+                                    <input type="number" min="0" step="0.01" class="form-control" name="price_vip1" value="<?= htmlspecialchars($product['price_vip1']) ?>">
+                                </div>
+                                <div class="col-sm-4">
+                                    <label>Giá VIP 2</label>
+                                    <input type="number" min="0" step="0.01" class="form-control" name="price_vip2" value="<?= htmlspecialchars($product['price_vip2']) ?>">
                                 </div>
                             </div>
+
 
                             <div class="form-group">
                                 <label>Danh mục</label>

@@ -1,6 +1,21 @@
 <?php
 session_name("user_session");
 session_start();
+
+// --- Đồng bộ role từ DB nếu đã đăng nhập ---
+if (isset($_SESSION['user_id'])) {
+    require_once("../Config/Database.php");  // Đảm bảo đúng path
+    $conn = Database::connect();
+    $stmt = $conn->prepare("SELECT role FROM users WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $newRole = $stmt->fetchColumn();
+
+    if ($newRole && $newRole !== ($_SESSION['user_role'] ?? '')) {
+        $_SESSION['user_role'] = $newRole; // Cập nhật session nếu role đổi
+    }
+}
+
+
 $controller = $_GET['controller'] ?? 'home';
 $action = $_GET['action'] ?? 'index';
 

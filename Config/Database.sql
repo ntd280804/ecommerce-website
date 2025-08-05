@@ -28,6 +28,7 @@ CREATE TABLE users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
+    role ENUM('Default', 'Vip1', 'Vip2') NOT NULL DEFAULT 'Default',
     password VARCHAR(255) NOT NULL,
     phone VARCHAR(20),
     address TEXT,
@@ -60,9 +61,9 @@ CREATE TABLE products (
     slug VARCHAR(255) UNIQUE NOT NULL,
     description TEXT,
     summary TEXT,
-    stock INT NOT NULL,
     price DECIMAL(10,2) NOT NULL,
-    discounted_price DECIMAL(10,2),
+    price_vip1 DECIMAL(10,2) DEFAULT NULL,
+    price_vip2 DECIMAL(10,2) DEFAULT NULL,
     images TEXT,
     category_id INT,
     brand_id INT,
@@ -76,6 +77,7 @@ CREATE TABLE products (
 CREATE TABLE orders (
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT,
+    user_role ENUM('Default', 'Vip1', 'Vip2') NOT NULL DEFAULT 'Default',
     status ENUM('Processing', 'Confirmed', 'Shipping', 'Delivered', 'Cancelled') NOT NULL,
     total DECIMAL(10,2) NOT NULL,
     payment_method VARCHAR(50) NOT NULL,      -- Phương thức thanh toán
@@ -103,6 +105,7 @@ CREATE TABLE order_details (
 CREATE TABLE cart (
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,
+    user_role ENUM('Default', 'Vip1', 'Vip2') NOT NULL DEFAULT 'Default',
     product_id INT NOT NULL,
     qty INT NOT NULL DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

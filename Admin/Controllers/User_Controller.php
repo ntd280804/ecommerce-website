@@ -74,6 +74,7 @@ class UserController {
         $user->name = $_POST['name'];
         $user->email = $_POST['mail'];
         $user->password = $_POST['pass'];
+        $user->role = $_POST['role'];
         $user->phone = $_POST['phone'];
         $user->address = $_POST['address'];
         $user->status = 'Active'; // Default status
@@ -93,7 +94,24 @@ class UserController {
             echo "Error when adding the user.";
         }
     }
-    
+    public function updateRole() {
+    if (!isset($_SESSION['admin_type']) || $_SESSION['admin_type'] != "Admin") {
+        header("Location: ./index.php?controller=home&action=index");
+        exit();
+    }
+
+    $id = $_POST['id'];
+    $role = $_POST['role'];
+
+    $usermodel = new UserModel();
+    if ($usermodel->updateRole($id, $role)) {
+        header("Location: ./index.php?controller=user&action=index&status=all");
+        exit();
+    } else {
+        echo "Lỗi khi cập nhật vai trò.";
+    }
+}
+
     public function update() {
         if (!isset($_SESSION['admin_type']) || $_SESSION['admin_type'] != "Admin") {
             // Chuyển hướng về trang đăng nhập nếu không phải Admin

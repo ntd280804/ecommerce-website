@@ -1,3 +1,4 @@
+
 <?php
 class Database {
     private static $pdo = null;
@@ -15,3 +16,4 @@ class Database {
         return self::$pdo;
     }
 }
+

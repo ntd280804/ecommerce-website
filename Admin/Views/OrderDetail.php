@@ -6,7 +6,7 @@
     </div>
     <div class="card-body">
     <p><strong>Người dùng:</strong> <?= htmlspecialchars($order['user_name']) ?></p>
-        
+        <p><strong>Vai trò:</strong> <?= htmlspecialchars($order['user_role']) ?></p>
         <p><strong>Tên người nhận:</strong> <?= htmlspecialchars($order['receiver_name']) ?></p>
         <p><strong>Số điện thoại người nhận:</strong> <?= htmlspecialchars($order['receiver_phone']) ?></p>
         <p><strong>Địa chỉ người nhận:</strong> <?= htmlspecialchars($order['receiver_address']) ?></p>
@@ -48,22 +48,20 @@
             </thead>
             <tbody>
                 <?php if (!empty($orderDetails)) : ?>
-                    <?php
-                    
-                        ?>
                     <?php foreach ($orderDetails as $item) : ?>
                         <?php
-                        $productImagePath = $productModel->getImagesById($item['product_id']);
-                        $productAvatar = $productModel->getAvatarImages($productImagePath, 100)
+                            $productImagePath = $productModel->getImagesById($item['product_id']);
+                            $productAvatar = $productModel->getAvatarImages($productImagePath, 100);
+                            
+
+                            $total = $item['price'] * $item['qty'];
                         ?>
                         <tr>
-                            <td>
-                                <?= $productAvatar ?>
-                            </td>
+                            <td><?= $productAvatar ?></td>
                             <td><?= htmlspecialchars($item['product_name']) ?></td>
                             <td><?= htmlspecialchars($item['qty']) ?></td>
-                            <td><?= htmlspecialchars($item['price']) ?></td>
-                            <td><?= htmlspecialchars($item['qty'] * $item['price']) ?></td>
+                            <td><?= number_format($item['price'], 0, ',', '.') ?> VNĐ</td>
+                            <td><?= number_format($total, 0, ',', '.') ?> VNĐ</td>
                         </tr>
                     <?php endforeach; ?>
                 <?php else : ?>
@@ -71,7 +69,8 @@
                         <td colspan="5" class="text-center">Không có sản phẩm nào.</td>
                     </tr>
                 <?php endif; ?>
-            </tbody>
+                </tbody>
+
         </table>
         <hr>
         <h6>Đánh giá sản phẩm:</h6>

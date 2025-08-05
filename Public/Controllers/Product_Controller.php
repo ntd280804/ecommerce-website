@@ -3,7 +3,7 @@
     require_once ("./Models/Product_Model.php");
 class ProductController {
     public function index() {
-        $productmodel = new ProductModel();
+        $ProductModel = new ProductModel();
         
         $tukhoa = $_GET['tukhoa'] ?? '';
         $category = $_GET['category'] ?? null;
@@ -14,16 +14,16 @@ class ProductController {
     
         if (!empty($tukhoa)) {
             // Tìm kiếm sản phẩm có phân trang và sắp xếp
-            $products = $productmodel->searchProductsWithPagination($tukhoa, $limit, $offset, $sort);
-            $totalProducts = $productmodel->countSearchProducts($tukhoa);
+            $products = $ProductModel->searchProductsWithPagination($tukhoa, $limit, $offset, $sort);
+            $totalProducts = $ProductModel->countSearchProducts($tukhoa);
         } elseif ($category) {
             // Lọc theo danh mục có phân trang và sắp xếp
-            $products = $productmodel->getByCategoryWithPagination($category, $limit, $offset, $sort);
-            $totalProducts = $productmodel->countByCategory($category);
+            $products = $ProductModel->getByCategoryWithPagination($category, $limit, $offset, $sort);
+            $totalProducts = $ProductModel->countByCategory($category);
         } else {
             // Lấy tất cả sản phẩm có phân trang và sắp xếp
-            $products = $productmodel->getAllActiveWithPagination($limit, $offset, $sort);
-            $totalProducts = $productmodel->countAllActive();
+            $products = $ProductModel->getAllActiveWithPagination($limit, $offset, $sort);
+            $totalProducts = $ProductModel->countAllActive();
         }
     
         $totalPages = ceil($totalProducts / $limit);
@@ -31,25 +31,30 @@ class ProductController {
         include './Views/ProductGrid.php';
     }    
     public function detail() {
-        $id = $_GET['id'] ?? null;
-        if (!$id) {
+        $slug = $_GET['slug'] ?? null;
+        if (!$slug) {
             // Maybe redirect or show an error
             include './Views/HomePage.php';
         }
-        $productmodel = new ProductModel();
-        $product = $productmodel->getById($id); // Fetch  based on status
-        $images = $productmodel->getImagesById($product['id']);
-        $ratingData = $productmodel->getProductRating($product['id']);
-        $productReviews = $productmodel->getProductReviews($product['id']);
         
+        $ProductModel = new ProductModel();
+        $product = $ProductModel->getByslug($slug);
+        if (!$product) {
+        include './Views/HomePage.php';
+        return;
+    } // Fetch  based on status
+        $images = $ProductModel->getImagesByslug($product['slug']);
+        $ratingData = $ProductModel->getProductRating($product['slug']);
+        $productReviews = $ProductModel->getProductReviews($product['slug']);
+        //$ProductModel->generateStaticProduct($product['slug'], __DIR__ . '/../san-pham/' . $product['slug'] . '.html');
         include './Views/ProductDetail.php';
     }
     public function search() {
         $tukhoa = $_GET['tukhoa'] ?? '';
-        $productmodel = new ProductModel();
+        $ProductModel = new ProductModel();
     
         if (!empty($tukhoa)) {
-            $products = $productmodel->searchProducts($tukhoa);
+            $products = $ProductModel->searchProducts($tukhoa);
         } else {
             $products = [];
         }

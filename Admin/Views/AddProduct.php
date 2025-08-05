@@ -43,22 +43,19 @@ require_once("../Config/Database.php");
                         </div>
                         <div class="form-group row">
                             <div class="col-sm-4 mb-sm-0">
-                                <input type="number" min="0" step="1" class="form-control form-control-user"
-                                    id="stock" name="stock" aria-describedby="stock"
-                                    placeholder="Nhập số lượng" required>
-                            </div>
-                            
-                            <div class="col-sm-4 mb-sm-0">
                                 <input type="number" min="0" step="0.01" class="form-control form-control-user"
-                                    id="price" name="price" aria-describedby="price"
-                                    placeholder="Nhập giá gốc" required>
+                                    name="price" placeholder="Giá gốc" required>
                             </div>
                             <div class="col-sm-4 mb-sm-0">
                                 <input type="number" min="0" step="0.01" class="form-control form-control-user"
-                                    id="discounted_price" name="discounted_price" aria-describedby="discounted_price"
-                                    placeholder="Nhập giá bán" required>
+                                    name="price_vip1" placeholder="Giá VIP 1">
+                            </div>
+                            <div class="col-sm-4 mb-sm-0">
+                                <input type="number" min="0" step="0.01" class="form-control form-control-user"
+                                    name="price_vip2" placeholder="Giá VIP 2">
                             </div>
                         </div>
+
 
                         <div class="form-group">
                             <label class="form-label">Danh mục</label>

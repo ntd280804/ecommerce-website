@@ -19,6 +19,17 @@ require_once("../Config/Database.php");
                             <div class="form-group">
                                 <input type="email" class="form-control form-control-user" id="mail" name="mail" placeholder="Nhập email người dùng" required>
                             </div>
+                           <div class="form-group">
+                            <select class="form-control" name="role" id="role" required>
+                                <option>Chọn vai trò</option>
+                                <option value="Default">Default</option>
+                                <option value="Vip1">Vip1</option>
+                                <option value="Vip2">Vip2</option>
+                            </select>
+                        </div>
+
+
+
                             <div class="form-group position-relative">
                                 <input type="password" class="form-control form-control-user" id="pass" name="pass" placeholder="Nhập mật khẩu người dùng" required>
                                 

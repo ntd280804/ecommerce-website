@@ -52,9 +52,10 @@ class ProductController {
         $product->slug = $_POST['slug'];
         $product->summary = $_POST['summary'];
         $product->description = $_POST['description'];
-        $product->stock = $_POST['stock'];
         $product->price = $_POST['price'];
-        $product->discounted_price = $_POST['discounted_price'];
+        $product->price_vip1 = $_POST['price_vip1'];
+        $product->price_vip2 = $_POST['price_vip2'];
+
         $product->category_id = $_POST['category_id'];
         $product->brand_id = $_POST['brand_id'];
         $product->countfiles = count($_FILES['images']['name']);
@@ -90,6 +91,11 @@ class ProductController {
 
         // echo substr($images, 0, -1); exit;
         if ($product->insert()) {
+            $slug = $product->slug; // Hoặc $_POST['slug'] sau khi lưu DB
+            $friendlyUrl = "http://localhost/Public/san-pham/$slug.html";
+            $outputPath = __DIR__ . "/../../Public/san-pham/$slug.html"; // đường dẫn vật lý lưu file
+
+            $product->generateStaticFromFriendlyURL($friendlyUrl, $outputPath);
             $this->index(); //
             // header("Location: ./index.php?controller=product&action=index"); // Chuyển hướng về danh sách sản phẩm
         } else {
@@ -97,6 +103,7 @@ class ProductController {
         }
     }
     public function update() {
+
         $product = new ProductModel;
         $id = $_POST['id'];
         $product->name = $_POST['name'];
@@ -105,7 +112,8 @@ class ProductController {
         $product->description = $_POST['description'];
         $product->stock = $_POST['stock'];
         $product->price = $_POST['price'];
-        $product->discounted_price = $_POST['discounted_price'];
+        $product->price_vip1 = $_POST['price_vip1'];
+        $product->price_vip2 = $_POST['price_vip2'];
         $product->category_id = $_POST['category_id'];
         $product->brand_id = $_POST['brand_id'];
     
@@ -157,6 +165,11 @@ class ProductController {
     
         // Cập nhật cơ sở dữ liệu
         if ($product->update($id)) {
+            $slug = $product->slug; // Hoặc $_POST['slug'] sau khi lưu DB
+            $friendlyUrl = "http://localhost/Public/san-pham/$slug.html";
+            $outputPath = __DIR__ . "/../../Public/san-pham/$slug.html"; // đường dẫn vật lý lưu file
+
+            $product->generateStaticFromFriendlyURL($friendlyUrl, $outputPath);
             $this->index();
         } else {
             echo "Lỗi khi cập nhật sản phẩm.";

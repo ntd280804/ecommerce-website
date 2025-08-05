@@ -1,4 +1,6 @@
 <?php
+require_once(__DIR__ . '/../../Config/Database.php'); // Thêm dòng này
+
 class CartModel {
     private $conn;
 
@@ -6,17 +8,25 @@ class CartModel {
         $this->conn = Database::connect(); // Assuming PDO connection
     }
 
-    public function getCartItems($userId) {
-        // Correctly join the cart table with products and fetch product details
-        $sql = "SELECT c.id AS cart_id,c.product_id, c.qty, p.name AS product_name, p.price, p.discounted_price, p.images, p.slug AS product_slug
+    public function getCartItems($userId, $userRole) {
+        $priceColumn = match(strtolower($userRole)) {
+            'vip1' => 'price_vip1',
+            'vip2' => 'price_vip2',
+            default => 'price'
+        };
+
+        $sql = "SELECT c.id AS cart_id, c.product_id, c.qty, 
+                    p.name AS product_name, p.$priceColumn AS price, 
+                    p.images, p.slug AS product_slug
                 FROM cart c
                 JOIN products p ON c.product_id = p.id
-                WHERE c.user_id = :user_id AND p.status = 'Active'";  // Ensuring only active products are shown
+                WHERE c.user_id = :user_id AND p.status = 'Active'";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute(['user_id' => $userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
     public function getAvatarImages($arrstr,$height)
     {
         $arr = explode(';', $arrstr);
@@ -93,25 +103,25 @@ class CartModel {
         ]);
     }
     
-    public function getCartTotal($userId) {
-        // Calculate the total price considering the product's price and quantity
-        $sql = "SELECT SUM(
-                        CASE
-                            WHEN p.discounted_price IS NOT NULL THEN p.discounted_price * c.qty
-                            ELSE p.price * c.qty
-                        END
-                    ) AS total
-                FROM cart c
-                JOIN products p ON c.product_id = p.id
-                WHERE c.user_id = :user_id AND p.status = 'Active'";
-    
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute(['user_id' => $userId]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-        // Return total or 0 if no result
-        return isset($result['total']) ? (float)$result['total'] : 0; // Ensure total is 0 if no result
-    }
+    public function getCartTotal($userId, $userRole) {
+    $priceColumn = match(strtolower($userRole)) {
+        'vip1' => 'price_vip1',
+        'vip2' => 'price_vip2',
+        default => 'price'
+    };
+
+    $sql = "SELECT SUM(p.$priceColumn * c.qty) AS total
+            FROM cart c
+            JOIN products p ON c.product_id = p.id
+            WHERE c.user_id = :user_id AND p.status = 'Active'";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute(['user_id' => $userId]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return isset($result['total']) ? (float)$result['total'] : 0;
+}
+
+
     
 }
 ?>

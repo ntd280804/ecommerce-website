@@ -5,9 +5,9 @@
 class HomeController {
     public function index() {
     
-        $productmodel = new ProductModel();
-        $topdiscountedproduct = $productmodel->getTopDiscounted(5); // Fetch  based on status
-        $topratedproduct = $productmodel->getTopRated(); // Fetch  based on status
+        $ProductModel = new ProductModel();
+        $topdiscountedproduct = $ProductModel->getTopDiscounted(5); // Fetch  based on status
+        $topratedproduct = $ProductModel->getTopRated(); // Fetch  based on status
         include './Views/HomePage.php'; // 👈 View gọi Header.php, bây giờ biến đã có
         
         
