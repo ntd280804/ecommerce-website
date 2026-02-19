@@ -23,8 +23,7 @@ require_once("../Config/Database.php");
                             <select class="form-control" name="role" id="role" required>
                                 <option>Chọn vai trò</option>
                                 <option value="Default">Default</option>
-                                <option value="Vip1">Vip1</option>
-                                <option value="Vip2">Vip2</option>
+                                <option value="Admin">Admin</option>
                             </select>
                         </div>
 

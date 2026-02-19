@@ -20,7 +20,7 @@ class UserModel {
     }
     public function updateStatus($id, $currentStatus) {
         // Toggle the status based on the current status
-        $newStatus = ($currentStatus == 'Active') ? 'Inactive' : 'Active';
+        $newStatus = ($currentStatus == 'active') ? 'inactive' : 'active';
     
         $sql = "UPDATE users SET status = :status WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
@@ -86,22 +86,22 @@ class UserModel {
         return $stmt->execute();
     }
     public function login($email, $password) {
-        $sql = "SELECT * FROM admins WHERE email = :email AND status = 'Active' LIMIT 1 ";
+        $sql = "SELECT * FROM users WHERE email = :email AND status = 'active' AND role IN ('admin', 'staff') LIMIT 1 ";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':email', $email);
         $stmt->execute();
 
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($user['password'] == $password) {
+        if ($user && $user['password'] == $password) {
             return $user; // Đăng nhập thành công
         }
 
         return false; // Đăng nhập thất bại
     }
     public function isEmailExists($email, $table = 'users') {
-        // Chỉ cho phép kiểm tra ở bảng 'users' hoặc 'admins' để tránh SQL injection
-        if (!in_array($table, ['users', 'admins'])) {
+        // Chỉ cho phép kiểm tra ở bảng 'users' để tránh SQL injection
+        if ($table !== 'users') {
             throw new Exception("Invalid table name.");
         }
     

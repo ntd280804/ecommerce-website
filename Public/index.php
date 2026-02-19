@@ -2,16 +2,16 @@
 session_name("user_session");
 session_start();
 
-// --- Đồng bộ role từ DB nếu đã đăng nhập ---
+// --- Sync role from DB if logged in ---
 if (isset($_SESSION['user_id'])) {
-    require_once("../Config/Database.php");  // Đảm bảo đúng path
+    require_once("../Config/Database.php");  // Ensure correct path
     $conn = Database::connect();
     $stmt = $conn->prepare("SELECT role FROM users WHERE id = ?");
     $stmt->execute([$_SESSION['user_id']]);
     $newRole = $stmt->fetchColumn();
 
     if ($newRole && $newRole !== ($_SESSION['user_role'] ?? '')) {
-        $_SESSION['user_role'] = $newRole; // Cập nhật session nếu role đổi
+        $_SESSION['user_role'] = $newRole; // Update session if role changed
     }
 }
 
@@ -43,11 +43,6 @@ switch ($controller) {
     case 'order':
         require_once 'Controllers/Order_Controller.php';
         $controller = new OrderController();
-        $controller->$action();
-        break;
-    case 'review':
-        require_once 'Controllers/Review_Controller.php';
-        $controller = new ReviewController();
         $controller->$action();
         break;
     default:

@@ -44,9 +44,7 @@ class ProductController {
         return;
     } // Fetch  based on status
         $images = $ProductModel->getImagesByslug($product['slug']);
-        $ratingData = $ProductModel->getProductRating($product['slug']);
-        $productReviews = $ProductModel->getProductReviews($product['slug']);
-        //$ProductModel->generateStaticProduct($product['slug'], __DIR__ . '/../san-pham/' . $product['slug'] . '.html');
+        //$ProductModel->generateStaticProduct($product['slug'], __DIR__ . '/../product/' . $product['slug'] . '.html');
         include './Views/ProductDetail.php';
     }
     public function search() {

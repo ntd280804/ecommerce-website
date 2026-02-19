@@ -1,5 +1,4 @@
 <?php
-require_once './Models/Brand_Model.php';
 require_once './Models/Category_Model.php';
 require_once './Models/Product_Model.php';
 class ProductController {
@@ -27,7 +26,7 @@ class ProductController {
             $status = $_GET['status'];
             $Productmodel = new ProductModel();
             
-            // Call a method to update the brand's status
+            // Call a method to update the product's status
             if ($Productmodel->updateStatus($id, $status)) {
                 header("Location: ./index.php?controller=product&action=index");
                 exit();
@@ -38,84 +37,116 @@ class ProductController {
     }
     public function add() {
 
-        $brandmodel = new BrandModel();
-        $brands = $brandmodel->getByStatus('all'); // Lấy danh sách thương hiệu từ model
-        
         $categorymodel = new CategoryModel();
         $categories = $categorymodel->getByStatus('all'); // Lấy danh sách danh mục từ model
         include './Views/AddProduct.php';
     }
     public function store() {
+        require_once './Models/ProductVariant_Model.php';
+        require_once '../Config/Database.php';
+        
         $product = new ProductModel;
+        $variantModel = new ProductVariantModel();
+        $this->conn = Database::connect();
     
         $product->name = $_POST['name'];
         $product->slug = $_POST['slug'];
         $product->summary = $_POST['summary'];
         $product->description = $_POST['description'];
-        $product->price = $_POST['price'];
-        $product->price_vip1 = $_POST['price_vip1'];
-        $product->price_vip2 = $_POST['price_vip2'];
-
         $product->category_id = $_POST['category_id'];
-        $product->brand_id = $_POST['brand_id'];
-        $product->countfiles = count($_FILES['images']['name']);
+        $product->status = 'active';
         
+        // Handle product main images (optional now)
         $product->images = '';
-        for ($i = 0; $i < $product->countfiles; $i++) {
-            $filename = $_FILES['images']['name'][$i];
-
-            ## Location
-            $location = "../Uploads/" . uniqid() . $filename;
-            //pathinfo ( string $path [, int $options = PATHINFO_DIRNAME | PATHINFO_BASENAME | PATHINFO_EXTENSION | PATHINFO_FILENAME ] ) : mixed
-            $extension = pathinfo($location, PATHINFO_EXTENSION);
-            $extension = strtolower($extension);
-
-            ## File upload allowed extensions
-            $valid_extensions = array("jpg", "jpeg", "png");
-
-            $response = 0;
-            ## Check file extension
-            if (in_array(strtolower($extension), $valid_extensions)) {
-
-                // them vao CSDL - them thah cong moi upload anh len
-                ## Upload file
-                //$_FILES['file']['tmp_name']: $_FILES['file']['tmp_name'] - The temporary filename of the file in which the uploaded file was stored on the server.
-                if (move_uploaded_file($_FILES['images']['tmp_name'][$i], $location)) {
-
-                    $product->images .= $location . ";";
+        if (!empty($_FILES['images']['name'][0])) {
+            $product->countfiles = count($_FILES['images']['name']);
+            
+            for ($i = 0; $i < $product->countfiles; $i++) {
+                $filename = $_FILES['images']['name'][$i];
+                $location = "../Uploads/" . uniqid() . $filename;
+                $extension = pathinfo($location, PATHINFO_EXTENSION);
+                $extension = strtolower($extension);
+                
+                $valid_extensions = array("jpg", "jpeg", "png");
+                
+                if (in_array(strtolower($extension), $valid_extensions)) {
+                    if (move_uploaded_file($_FILES['images']['tmp_name'][$i], $location)) {
+                        $product->images .= $location . ";";
+                    }
                 }
             }
-
+            $product->images = substr($product->images, 0, -1);
         }
-        $product->images = substr($product->images, 0, -1);
 
-        // echo substr($images, 0, -1); exit;
+        // Insert product first
         if ($product->insert()) {
-            $slug = $product->slug; // Hoặc $_POST['slug'] sau khi lưu DB
-            $friendlyUrl = "http://localhost/Public/san-pham/$slug.html";
-            $outputPath = __DIR__ . "/../../Public/san-pham/$slug.html"; // đường dẫn vật lý lưu file
-
-            $product->generateStaticFromFriendlyURL($friendlyUrl, $outputPath);
-            $this->index(); //
-            // header("Location: ./index.php?controller=product&action=index"); // Chuyển hướng về danh sách sản phẩm
+            $db = Database::connect();
+            $productId = $db->lastInsertId();
+            
+            // Handle variants
+            $variantNames = $_POST['variant_name'];
+            $variantSkus = $_POST['variant_sku'];
+            $variantPrices = $_POST['variant_price'];
+            $variantStocks = $_POST['variant_stock'];
+            
+            $successCount = 0;
+            
+            foreach ($variantNames as $index => $name) {
+                $variantData = [
+                    'product_id' => $productId,
+                    'name' => $name,
+                    'sku' => $variantSkus[$index],
+                    'price' => $variantPrices[$index],
+                    'stock_quantity' => $variantStocks[$index] ?? 0
+                ];
+                
+                // Handle variant image
+                if (!empty($_FILES['variant_images']['name'][$index])) {
+                    $variantImage = $_FILES['variant_images']['name'][$index];
+                    $imageLocation = "../Uploads/" . uniqid() . $variantImage;
+                    $imageExtension = pathinfo($imageLocation, PATHINFO_EXTENSION);
+                    $imageExtension = strtolower($imageExtension);
+                    
+                    if (in_array($imageExtension, ["jpg", "jpeg", "png"])) {
+                        if (move_uploaded_file($_FILES['variant_images']['tmp_name'][$index], $imageLocation)) {
+                            $variantData['image_url'] = $imageLocation;
+                        }
+                    }
+                }
+                
+                if ($variantModel->create($variantData)) {
+                    $successCount++;
+                }
+            }
+            
+            if ($successCount > 0) {
+                // Generate static page
+                $slug = $product->slug;
+                $friendlyUrl = "http://localhost/Public/product/$slug.html";
+                $outputPath = __DIR__ . "/../../Public/product/$slug.html";
+                $product->generateStaticFromFriendlyURL($friendlyUrl, $outputPath);
+                
+                $_SESSION['success_message'] = "Đã thêm sản phẩm và $successCount phân loại thành công!";
+                header("Location: ./index.php?controller=product&action=index");
+                exit();
+            } else {
+                echo "Lỗi khi thêm phân loại sản phẩm.";
+            }
         } else {
             echo "Lỗi khi thêm sản phẩm.";
         }
     }
     public function update() {
-
+        require_once './Models/ProductVariant_Model.php';
+        
         $product = new ProductModel;
+        $variantModel = new ProductVariantModel();
         $id = $_POST['id'];
         $product->name = $_POST['name'];
         $product->slug = $_POST['slug'];
         $product->summary = $_POST['summary'];
         $product->description = $_POST['description'];
-        $product->stock = $_POST['stock'];
-        $product->price = $_POST['price'];
-        $product->price_vip1 = $_POST['price_vip1'];
-        $product->price_vip2 = $_POST['price_vip2'];
         $product->category_id = $_POST['category_id'];
-        $product->brand_id = $_POST['brand_id'];
     
         // Lấy danh sách ảnh được gửi từ form
         $imageList = isset($_POST['imageList']) ? explode(';', $_POST['imageList']) : [];
@@ -145,7 +176,7 @@ class ProductController {
             
             for ($i = 0; $i < $product->countfiles; $i++) {
                 $filename = $_FILES['images']['name'][$i];
-                $location = "../Uploads/" . $filename;
+                $location = "../Uploads/" . uniqid() . $filename;
                 $extension = pathinfo($location, PATHINFO_EXTENSION);
                 $extension = strtolower($extension);
     
@@ -165,9 +196,56 @@ class ProductController {
     
         // Cập nhật cơ sở dữ liệu
         if ($product->update($id)) {
+            // Handle variants update
+            if (isset($_POST['variant_name'])) {
+                // Get existing variants
+                $existingVariants = $variantModel->getByProductId($id);
+                $existingVariantIds = array_column($existingVariants, 'id');
+                
+                $variantNames = $_POST['variant_name'];
+                $variantSkus = $_POST['variant_sku'] ?? [];
+                $variantPrices = $_POST['variant_price'];
+                $variantStocks = $_POST['variant_stock'] ?? [];
+                
+                // Update or create variants
+                foreach ($variantNames as $index => $name) {
+                    $variantData = [
+                        'name' => $name,
+                        'sku' => $variantSkus[$index] ?? '',
+                        'price' => $variantPrices[$index],
+                        'stock_quantity' => $variantStocks[$index] ?? 0
+                    ];
+                    
+                    // Handle variant image
+                    if (!empty($_FILES['variant_images']['name'][$index])) {
+                        $variantImage = $_FILES['variant_images']['name'][$index];
+                        $imageLocation = "../Uploads/" . uniqid() . $variantImage;
+                        $imageExtension = pathinfo($imageLocation, PATHINFO_EXTENSION);
+                        $imageExtension = strtolower($imageExtension);
+                        
+                        if (in_array($imageExtension, ["jpg", "jpeg", "png"])) {
+                            if (move_uploaded_file($_FILES['variant_images']['tmp_name'][$index], $imageLocation)) {
+                                $variantData['image_url'] = $imageLocation;
+                            }
+                        }
+                    }
+                    
+                    // Check if this is an existing variant
+                    $variantId = $_POST['variant_id'][$index] ?? null;
+                    if ($variantId && in_array($variantId, $existingVariantIds)) {
+                        // Update existing variant
+                        $variantModel->update($variantId, $variantData);
+                    } else {
+                        // Create new variant
+                        $variantData['product_id'] = $id;
+                        $variantModel->create($variantData);
+                    }
+                }
+            }
+            
             $slug = $product->slug; // Hoặc $_POST['slug'] sau khi lưu DB
-            $friendlyUrl = "http://localhost/Public/san-pham/$slug.html";
-            $outputPath = __DIR__ . "/../../Public/san-pham/$slug.html"; // đường dẫn vật lý lưu file
+            $friendlyUrl = "http://localhost/Public/product/$slug.html";
+            $outputPath = __DIR__ . "/../../Public/product/$slug.html"; // đường dẫn vật lý lưu file
 
             $product->generateStaticFromFriendlyURL($friendlyUrl, $outputPath);
             $this->index();
@@ -180,8 +258,6 @@ class ProductController {
     
     
     public function edit() {
-        $brandmodel = new BrandModel();
-        $brands = $brandmodel->getByStatus('all'); // Lấy danh sách thương hiệu từ model
         $categorymodel = new CategoryModel();
         $categories = $categorymodel->getByStatus('all'); // Lấy danh sách danh mục từ model
         $productmodel = new ProductModel();
@@ -189,8 +265,51 @@ class ProductController {
         $id = $_GET['id']; // Lấy id từ URL
         $product = $productmodel->getById($id); // Gọi hàm lấy dữ liệu trong model
     
-        include './Views/EditProduct.php'; // Truyền biến $brand sang View
+        include './Views/EditProduct.php'; // Truyền biến $product sang View
     }
     
-    
+    public function bulkAction() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action']) && isset($_POST['selected_ids'])) {
+            $action = $_POST['bulk_action'];
+            $selectedIds = $_POST['selected_ids'];
+            $productModel = new ProductModel();
+            
+            $successCount = 0;
+            $errorCount = 0;
+            
+            foreach ($selectedIds as $id) {
+                switch ($action) {
+                    case 'activate':
+                        if ($productModel->updateStatus($id, 'inactive')) {
+                            $successCount++;
+                        } else {
+                            $errorCount++;
+                        }
+                        break;
+                        
+                    case 'inactive':
+                        if ($productModel->updateStatus($id, 'active')) {
+                            $successCount++;
+                        } else {
+                            $errorCount++;
+                        }
+                        break;
+                        
+                    case 'delete':
+                        if ($productModel->delete($id)) {
+                            $successCount++;
+                        } else {
+                            $errorCount++;
+                        }
+                        break;
+                }
+            }
+            
+            // Set session message
+            $_SESSION['bulk_message'] = "Đã xử lý thành công $successCount sản phẩm. " . ($errorCount > 0 ? "Lỗi: $errorCount sản phẩm." : "");
+            
+            header("Location: ./index.php?controller=product&action=index");
+            exit();
+        }
+    }
 }

@@ -9,11 +9,11 @@ require_once("../Config/Database.php");
     </li>
     <li class="nav-item">
         <a class="nav-link <?php echo ($_GET['status'] == 'active') ? 'active' : ''; ?>" 
-           href="./index.php?controller=admin&action=index&status=active">Active</a>
+           href="./index.php?controller=admin&action=index&status=active">active</a>
     </li>
     <li class="nav-item">
         <a class="nav-link <?php echo ($_GET['status'] == 'inactive') ? 'active' : ''; ?>" 
-           href="./index.php?controller=admin&action=index&status=inactive">Inactive</a>
+           href="./index.php?controller=admin&action=index&status=inactive">inactive</a>
     </li>
 </ul>
 <!-- DataTales Example -->
@@ -71,7 +71,7 @@ require_once("../Config/Database.php");
                                     onclick="return confirm('Bạn có chắc muốn cập nhật mật khẩu cho người dùng này?');">New Password</a> -->
                                     
                                     
-                                    <?php if ($admin['status'] == 'Active') : ?>
+                                    <?php if ($admin['status'] == 'active') : ?>
                                         
                                         <a class="btn btn-danger"
                                         href="./index.php?controller=admin&action=toggleStatus&id=<?= $admin['id'] ?>&status=<?= $admin['status'] ?>"

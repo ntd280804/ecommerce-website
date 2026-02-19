@@ -2,7 +2,4 @@ RewriteEngine On
 
 # Redirect từ root vào trang chủ trong thư mục Public
 RewriteCond %{REQUEST_URI} ^/?$
-RewriteRule ^$ /Public/trang-chu.html [R=301,L]
-
-# Redirect nếu người dùng gõ nhầm /trang-chu.html
-RewriteRule ^trang-chu\.html$ /Public/trang-chu.html [R=301,L]
+RewriteRule ^$ Public/ [R=301,L]

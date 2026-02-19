@@ -16,7 +16,7 @@ class UserController {
     
         // Get the status, defaulting to 'all' if not set
         $status = $_GET['status'] ?? 'all'; 
-        $users = $usermodel->getByStatus($status); // Fetch brands based on status
+        $users = $usermodel->getByStatus($status);
         include './Views/ListUsers.php';
     }
     public function toggleStatus() {
@@ -32,12 +32,12 @@ class UserController {
             
             $usermodel = new UserModel();
             
-            // Call a method to update the brand's status
+            // Call a method to update the user's status
             if ($usermodel->updateStatus($id, $status)) {
                 header("Location: ./index.php?controller=user&action=index");
                 exit();
             } else {
-                echo "Error updating brand status.";
+                echo "Error updating user status.";
             }
         }
     }
@@ -77,7 +77,7 @@ class UserController {
         $user->role = $_POST['role'];
         $user->phone = $_POST['phone'];
         $user->address = $_POST['address'];
-        $user->status = 'Active'; // Default status
+        $user->status = 'active'; // Default status
     
         // Check if the email already exists in 'users' table
         if ($user->isEmailExists($user->email, 'users')) {
@@ -148,7 +148,8 @@ class UserController {
             if ($user) {
                 $_SESSION['admin_id'] = $user['id'];
                 $_SESSION['admin_name'] = $user['name'];
-                $_SESSION['admin_type'] = $user['type'];
+                $_SESSION['admin_role'] = $user['role'];
+                $_SESSION['admin_email'] = $user['email'];
                 header("Location: ./index.php?controller=home&action=index");
                 exit();
             } else {

@@ -20,10 +20,8 @@ class CategoryModel {
         $stmt->bindParam(':slug', $this->slug);
         return $stmt->execute();
     }
-    public function updateStatus($id, $currentStatus) {
-        // Toggle the status based on the current status
-        $newStatus = ($currentStatus == 'Active') ? 'Inactive' : 'Active';
-    
+    public function updateStatus($id, $newStatus) {
+        // Set the status to the provided value (no toggling)
         $sql = "UPDATE categories SET status = :status WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
         

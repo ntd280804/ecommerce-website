@@ -9,11 +9,11 @@ require_once("../Config/Database.php");
     </li>
     <li class="nav-item">
         <a class="nav-link <?php echo ($_GET['status'] == 'active') ? 'active' : ''; ?>" 
-           href="./index.php?controller=user&action=index&status=active">Active</a>
+           href="./index.php?controller=user&action=index&status=active">active</a>
     </li>
     <li class="nav-item">
         <a class="nav-link <?php echo ($_GET['status'] == 'inactive') ? 'active' : ''; ?>" 
-           href="./index.php?controller=user&action=index&status=inactive">Inactive</a>
+           href="./index.php?controller=user&action=index&status=inactive">inactive</a>
     </li>
 </ul>
 <!-- DataTales Example -->
@@ -70,8 +70,7 @@ require_once("../Config/Database.php");
                                         <input type="hidden" name="id" value="<?= $user['id'] ?>">
                                         <select name="role" class="form-control" onchange="this.form.submit()" style="font-size:14px; height:35px;">
                                             <option value="Default" <?= $user['role'] == 'Default' ? 'selected' : '' ?>>Default</option>
-                                            <option value="Vip1" <?= $user['role'] == 'Vip1' ? 'selected' : '' ?>>Vip1</option>
-                                            <option value="Vip2" <?= $user['role'] == 'Vip2' ? 'selected' : '' ?>>Vip2</option>
+                                            <option value="Admin" <?= $user['role'] == 'Admin' ? 'selected' : '' ?>>Admin</option>
                                         </select>
                                     </form>
 
@@ -81,7 +80,7 @@ require_once("../Config/Database.php");
                                     onclick="return confirm('Bạn có chắc muốn cập nhật mật khẩu cho người dùng này?');">New Password</a>
                                     
                                     
-                                    <?php if ($user['status'] == 'Active') : ?>
+                                    <?php if ($user['status'] == 'active') : ?>
                                         
                                         <a class="btn btn-danger"
                                         href="./index.php?controller=user&action=toggleStatus&id=<?= $user['id'] ?>&status=<?= $user['status'] ?>"

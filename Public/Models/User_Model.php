@@ -9,21 +9,21 @@ class UserModel {
         $this->conn = Database::connect(); // Dùng PDO từ class Database
     }
     public function login($email, $password) {
-        $sql = "SELECT * FROM users WHERE email = :email AND status = 'Active' LIMIT 1 ";
+        $sql = "SELECT * FROM users WHERE email = :email AND status = 'active' AND role = 'user' LIMIT 1 ";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':email', $email);
         $stmt->execute();
 
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($user['password'] == $password) {
+        if ($user && $user['password'] == $password) {
             return $user; // Đăng nhập thành công
         }
 
         return false; // Đăng nhập thất bại
     }
     public function updatePasswordByEmail($email, $hashedPassword) {
-        $sql = "UPDATE users SET password = :password WHERE email = :email AND status = 'Active'";
+        $sql = "UPDATE users SET password = :password WHERE email = :email AND status = 'active'";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':password', $hashedPassword);
         $stmt->bindParam(':email', $email);
@@ -31,24 +31,21 @@ class UserModel {
     }
     
     public function insert() {
-        $sql = "INSERT INTO users (name, email, password, phone, address, status) 
-                VALUES (:name, :email, :password, :phone, :address, :status)";
+        $sql = "INSERT INTO users (email, full_name, password, role) 
+                VALUES (:email, :full_name, :password, 'user')";
 
         $stmt = $this->conn->prepare($sql);
 
-        $stmt->bindParam(':name', $this->name);
         $stmt->bindParam(':email', $this->email);
+        $stmt->bindParam(':full_name', $this->full_name);
         $stmt->bindParam(':password', $this->password);
-        $stmt->bindParam(':phone', $this->phone);
-        $stmt->bindParam(':address', $this->address);
-        $stmt->bindParam(':status', $this->status);
 
         return $stmt->execute();
     }
     
     public function isEmailExists($email, $table = 'users') {
-        // Chỉ cho phép kiểm tra ở bảng 'users' hoặc 'admins' để tránh SQL injection
-        if (!in_array($table, ['users', 'admins'])) {
+        // Chỉ cho phép kiểm tra ở bảng 'users' để tránh SQL injection
+        if ($table !== 'users') {
             throw new Exception("Invalid table name.");
         }
     
@@ -59,7 +56,7 @@ class UserModel {
         return $stmt->fetch() !== false;
     }
     public function getUserById($id) {
-        $sql = "SELECT * FROM users WHERE id = :id AND status = 'Active' LIMIT 1";
+        $sql = "SELECT * FROM users WHERE id = :id AND status = 'active' LIMIT 1";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
@@ -70,7 +67,7 @@ class UserModel {
         if ($password) {
             $sql .= ", password = :password";
         }
-        $sql .= " WHERE id = :id AND status = 'Active'";
+        $sql .= " WHERE id = :id AND status = 'active'";
     
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':name', $name);

@@ -13,16 +13,16 @@ if ($controller !== 'user' && $action !== 'login') {
 }
 
 switch ($controller) {
+    case 'user':
+        require_once 'Controllers/User_Controller.php';
+        $user = new UserController();
+        $user->$action();
+        break;
+        
     case 'home':
         require_once 'Controllers/Home_Controller.php';
         $home = new HomeController();
         $home->$action();
-        break;
-
-    case 'brand':
-        require_once 'Controllers/Brand_Controller.php';
-        $brand = new BrandController();
-        $brand->$action();
         break;
 
     case 'category':
@@ -43,11 +43,6 @@ switch ($controller) {
         $order->$action();
         break;
 
-    case 'review':
-        require_once 'Controllers/Review_Controller.php';
-        $review = new ReviewController();
-        $review->$action();
-        break;
 
     case 'user':
         require_once 'Controllers/User_Controller.php';

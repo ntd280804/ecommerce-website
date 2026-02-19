@@ -26,7 +26,7 @@ class CategoryController {
             
             $categorymodel = new CategoryModel();
             
-            // Call a method to update the brand's status
+            // Call a method to update the category's status
             if ($categorymodel->updateStatus($id, $status)) {
                 header("Location: ./index.php?controller=category&action=index");
                 exit();
@@ -48,7 +48,6 @@ class CategoryController {
     
         if ($product->insert()) {
             $this->index(); // ✅ đúng
-            // header("Location: ./index.php?controller=brand&action=index"); // Chuyển hướng về danh sách sản phẩm
         } else {
             echo "Lỗi khi thêm sản phẩm.";
         }
@@ -74,7 +73,7 @@ class CategoryController {
         $id = $_GET['id']; // Lấy id từ URL
         $category = $categorymodel->getById($id); // Gọi hàm lấy dữ liệu trong model
     
-        include './Views/EditCategory.php'; // Truyền biến $brand sang View
+        include './Views/EditCategory.php'; // Truyền biến $danh mục sang View
     }
 }
 

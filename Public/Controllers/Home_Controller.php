@@ -6,19 +6,19 @@ class HomeController {
     public function index() {
     
         $ProductModel = new ProductModel();
-        $topdiscountedproduct = $ProductModel->getTopDiscounted(5); // Fetch  based on status
-        $topratedproduct = $ProductModel->getTopRated(); // Fetch  based on status
-        include './Views/HomePage.php'; // 👈 View gọi Header.php, bây giờ biến đã có
+        $topdiscountedproduct = $ProductModel->getTopDiscounted(5); // Fetch top discounted products
+        $topratedproduct = $ProductModel->getTopRated(); // Fetch top rated products
+        include './Views/HomePage.php'; // View includes Header.php with available variables
         
         
     }
     public function Error404() {
-        // Điều hướng tới trang dashboard admin
+        // Redirect to home page
         include './Views/HomePage.php';
         //include './Views/404.php';
     }
     public function contact() {
-        // Điều hướng tới trang dashboard admin
+        // Redirect to contact page
         include './Views/Contact.php';
         //include './Views/404.php';
     }

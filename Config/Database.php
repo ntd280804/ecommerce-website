@@ -1,9 +1,8 @@
-
 <?php
 class Database {
     private static $pdo = null;
 
-    public static function connect($username = "root", $password = "", $host = "localhost", $dbname = "ecommerceshop") {
+    public static function connect($username = "root", $password = "root123", $host = "db", $dbname = "pokemon_store") {
         if (self::$pdo === null) {
             try {
                 $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8";

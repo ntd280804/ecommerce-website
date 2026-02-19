@@ -1,82 +1,82 @@
-
 RewriteEngine On
-RewriteBase /Public/
+RewriteBase /
 
-# Nếu là file hoặc folder thật thì bỏ qua (trả trực tiếp file html nếu tồn tại)
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^ - [L]
+# Skip if the request is for a real file or directory
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 
-
-# Trang chủ
+# Homepage
 RewriteRule ^$ index.php?controller=home&action=index [L,QSA]
-RewriteRule ^trang-chu\.html$ index.php?controller=home&action=index [L,QSA]
+RewriteRule ^home\.html$ index.php?controller=home&action=index [L,QSA]
 
-# Tất cả sản phẩm
-RewriteRule ^tat-ca-san-pham\.html$ index.php?controller=product&action=index [L,QSA]
-# Tất cả sản phẩm + sort (không phân trang)
-RewriteRule ^tat-ca-san-pham/sort-([a-zA-Z0-9-_]+)\.html$ index.php?controller=product&action=index&sort=$1 [L,QSA]
+# All products
+RewriteRule ^products\.html$ index.php?controller=product&action=index [L,QSA]
+# All products + sort (no pagination)
+RewriteRule ^products/sort-([a-zA-Z0-9-_]+)\.html$ index.php?controller=product&action=index&sort=$1 [L,QSA]
 
-# Tất cả sản phẩm - có phân trang
-RewriteRule ^tat-ca-san-pham/trang-([0-9]+)\.html$ index.php?controller=product&action=index&page=$1 [L,QSA]
-# Tất cả sản phẩm - có phân trang + sort
-RewriteRule ^tat-ca-san-pham/trang-([0-9]+)/sort-([a-zA-Z0-9-_]+)\.html$ index.php?controller=product&action=index&page=$1&sort=$2 [L,QSA]
+# All products - with pagination
+RewriteRule ^products/page-([0-9]+)\.html$ index.php?controller=product&action=index&page=$1 [L,QSA]
+# All products - pagination + sort
+RewriteRule ^products/page-([0-9]+)/sort-([a-zA-Z0-9-_]+)\.html$ index.php?controller=product&action=index&page=$1&sort=$2 [L,QSA]
 
-# Lọc theo danh mục (ví dụ: /tat-ca-san-pham/danh-muc/noi-com.html)
-RewriteRule ^tat-ca-san-pham/danh-muc/([a-zA-Z0-9-_]+)\.html$ index.php?controller=product&action=index&category=$1 [L,QSA]
-# Lọc theo danh mục + sort (không phân trang)
-RewriteRule ^tat-ca-san-pham/danh-muc/([a-zA-Z0-9-_]+)/sort-([a-zA-Z0-9-_]+)\.html$ index.php?controller=product&action=index&category=$1&sort=$2 [L,QSA]
+# Filter by category (e.g., /products/category/electronics.html)
+RewriteRule ^products/category/([a-zA-Z0-9-_]+)\.html$ index.php?controller=product&action=index&category=$1 [L,QSA]
+# Filter by category + sort (no pagination)
+RewriteRule ^products/category/([a-zA-Z0-9-_]+)/sort-([a-zA-Z0-9-_]+)\.html$ index.php?controller=product&action=index&category=$1&sort=$2 [L,QSA]
 
-# Lọc theo danh mục + phân trang
-RewriteRule ^tat-ca-san-pham/danh-muc/([a-zA-Z0-9-_]+)/trang-([0-9]+)\.html$ index.php?controller=product&action=index&category=$1&page=$2 [L,QSA]
-# Lọc theo danh mục + phân trang + sort
-RewriteRule ^tat-ca-san-pham/danh-muc/([a-zA-Z0-9-_]+)/trang-([0-9]+)/sort-([a-zA-Z0-9-_]+)\.html$ index.php?controller=product&action=index&category=$1&page=$2&sort=$3 [L,QSA]
+# Filter by category + pagination
+RewriteRule ^products/category/([a-zA-Z0-9-_]+)/page-([0-9]+)\.html$ index.php?controller=product&action=index&category=$1&page=$2 [L,QSA]
+# Filter by category + pagination + sort
+RewriteRule ^products/category/([a-zA-Z0-9-_]+)/page-([0-9]+)/sort-([a-zA-Z0-9-_]+)\.html$ index.php?controller=product&action=index&category=$1&page=$2&sort=$3 [L,QSA]
 
-# Tìm kiếm: /tim-kiem/noi-com.html
-RewriteRule ^tim-kiem/([a-zA-Z0-9-]+)\.html$ index.php?controller=product&action=index&tukhoa=$1 [L,QSA]
+# Search: /search/rice-cooker.html
+RewriteRule ^search/([a-zA-Z0-9-]+)\.html$ index.php?controller=product&action=index&search=$1 [L,QSA]
 
-# Tìm kiếm + phân trang: /tim-kiem/noi-com/trang-2.html
-RewriteRule ^tim-kiem/([a-zA-Z0-9-]+)/trang-([0-9]+)\.html$ index.php?controller=product&action=index&tukhoa=$1&page=$2 [L,QSA]
+# Search + pagination: /search/rice-cooker/page-2.html
+RewriteRule ^search/([a-zA-Z0-9-]+)/page-([0-9]+)\.html$ index.php?controller=product&action=index&search=$1&page=$2 [L,QSA]
 
-# Tìm kiếm + sort: /tim-kiem/noi-com/sort-gia-cao.html
-RewriteRule ^tim-kiem/([a-zA-Z0-9-]+)/sort-([a-zA-Z0-9-]+)\.html$ index.php?controller=product&action=index&tukhoa=$1&sort=$2 [L,QSA]
+# Search + sort: /search/rice-cooker/sort-price-high.html
+RewriteRule ^search/([a-zA-Z0-9-]+)/sort-([a-zA-Z0-9-]+)\.html$ index.php?controller=product&action=index&search=$1&sort=$2 [L,QSA]
 
-# Tìm kiếm + sort + trang: /tim-kiem/noi-com/trang-2/sort-gia-cao.html
-RewriteRule ^tim-kiem/([a-zA-Z0-9-]+)/trang-([0-9]+)/sort-([a-zA-Z0-9-]+)\.html$ index.php?controller=product&action=index&tukhoa=$1&page=$2&sort=$3 [L,QSA]
+# Search + sort + pagination: /search/rice-cooker/page-2/sort-price-high.html
+RewriteRule ^search/([a-zA-Z0-9-]+)/page-([0-9]+)/sort-([a-zA-Z0-9-]+)\.html$ index.php?controller=product&action=index&search=$1&page=$2&sort=$3 [L,QSA]
 
+# Product detail - more specific rule
+RewriteRule ^product/([a-zA-Z0-9-]+)\.html$ index.php?controller=product&action=detail&slug=$1 [L,QSA,NC]
 
-# Sản phẩm chi tiết
-RewriteRule ^san-pham/([a-zA-Z0-9-_]+)\.html$ index.php?controller=product&action=detail&slug=$1 [L,QSA]
+# Contact
+RewriteRule ^contact\.html$ index.php?controller=home&action=contact [L,QSA]
 
-#Liên hệ
-RewriteRule ^lien-he\.html$ index.php?controller=home&action=contact [L,QSA]
+# Login
+RewriteRule ^login\.html$ index.php?controller=user&action=login [L,QSA]
 
-#Đăng nhập
-RewriteRule ^dang-nhap\.html$ index.php?controller=user&action=login [L,QSA]
+# Register
+RewriteRule ^register\.html$ index.php?controller=user&action=register [L,QSA]
 
-# Đăng ký
-RewriteRule ^dang-ky\.html$ index.php?controller=user&action=register [L,QSA]
+# Forgot password
+RewriteRule ^forgot-password\.html$ index.php?controller=user&action=forgotpassword [L,QSA]
 
-# Quên mật khẩu
-RewriteRule ^quen-mat-khau\.html$ index.php?controller=user&action=forgotpassword [L,QSA]
+# Shopping cart
+RewriteRule ^cart\.html$ index.php?controller=cart&action=index [L,QSA]
 
-#giỏ hàng
-RewriteRule ^gio-hang\.html$ index.php?controller=cart&action=index [L,QSA]
+# Checkout
+RewriteRule ^checkout\.html$ index.php?controller=order&action=checkout [L,QSA]
 
-# đặt hàng
-RewriteRule ^dat-hang\.html$ index.php?controller=order&action=checkout [L,QSA]
+# Admin panel
+RewriteRule ^admin/?$ ../Admin/index.php [L,QSA]
+RewriteRule ^admin/login\.html$ ../Admin/index.php?controller=home&action=login [L,QSA]
 
-# Đơn hàng
-RewriteRule ^don-hang\.html$ index.php?controller=order&action=index [L,QSA]
+# Direct admin access
+RewriteRule ^Admin/?$ ../Admin/index.php [L,QSA]
 
-# Chi tiết đơn hàng
-RewriteRule ^don-hang/([0-9]+)\.html$ index.php?controller=order&action=detail&id=$1 [L,QSA]
+# Orders
+RewriteRule ^orders\.html$ index.php?controller=order&action=index [L,QSA]
 
-# Đánh giá đơn hàng
-RewriteRule ^don-hang/([0-9]+)/danh-gia\.html$ index.php?controller=review&action=create&order_id=$1 [L,QSA]
+# Order detail
+RewriteRule ^order/([0-9]+)\.html$ index.php?controller=order&action=detail&id=$1 [L,QSA]
 
-#Thông tin cá nhân
-RewriteRule ^thong-tin-ca-nhan\.html$ index.php?controller=user&action=index [L,QSA]
+# User profile
+RewriteRule ^profile\.html$ index.php?controller=user&action=index [L,QSA]
 
-# Chỉnh sửa thông tin cá nhân
-RewriteRule ^chinh-sua/thong-tin-ca-nhan\.html$ index.php?controller=user&action=editprofile [L,QSA]
+# Edit profile
+RewriteRule ^profile/edit\.html$ index.php?controller=user&action=editprofile [L,QSA]

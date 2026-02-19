@@ -1,5 +1,5 @@
 <?php
-require_once './Models/User_Model.php';
+require_once __DIR__ . '/../Models/User_Model.php';
 
 class UserController {
     public function index()
@@ -9,7 +9,7 @@ class UserController {
             $user = $userModel->getUserById($_SESSION['user_id']);
             include './Views/Profile.php';
         } else {
-            header("Location: .//dang-nhap.html");
+            header("Location: .//login.html");
         }
     }
     public function editprofile()
@@ -19,7 +19,7 @@ class UserController {
             $user = $userModel->getUserById($_SESSION['user_id']);
             include './Views/EditProfile.php';
         } else {
-            header("Location: .//dang-nhap.html");
+            header("Location: .//login.html");
         }
         
     }
@@ -29,7 +29,7 @@ class UserController {
     public function handleupdateprofile()
     {
         if (!isset($_SESSION['user_id'])) {
-            header("Location: .//dang-nhap.html");
+            header("Location: .//login.html");
             exit;
         }
     
@@ -41,13 +41,13 @@ class UserController {
         $phone = $_POST['phone'];
         $address = $_POST['address'];
     
-        // Gọi hàm cập nhật thông tin
+        // Call update function
         $result = $userModel->updateUser($id, $name, $email, $password, $phone, $address);
     
         if ($result) {
-            header("Location: ./trang-chu.html");
+            header("Location: ./home.html");
         } else {
-            echo "Cập nhật thất bại.";
+            echo "Update failed.";
         }
     }
     public function handleLogin() {
@@ -62,9 +62,10 @@ class UserController {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
             $_SESSION['user_role'] = $user['role'];
+            $_SESSION['user_email'] = $user['email'];
 
-            // ✅ Lấy giỏ hàng và lưu vào SESSION
-            require_once './Models/Cart_Model.php';
+            // Get cart and save to SESSION
+            require_once __DIR__ . '/../Models/Cart_Model.php';
             $cartModel = new CartModel();
             $totalAmount = $cartModel->getCartTotal($user['id'], $user['role']);
             $totalQuantityAmount = $cartModel->getCartTotalQuantity($user['id'], $user['role']);
@@ -72,10 +73,10 @@ class UserController {
             $_SESSION['totalAmount'] = $totalAmount;
             $_SESSION['totalQuantityAmount'] = $totalQuantityAmount;
 
-            header("Location: ./trang-chu.html");
+            header("Location: ./home.html");
             exit();
         } else {
-            header("Location: .//dang-nhap.html");
+            header("Location: .//login.html");
         }
     } else {
         include './Views/Login.php';
@@ -99,7 +100,7 @@ class UserController {
             $usermodel = new UserModel();
     
             // Kiểm tra email có tồn tại và active không
-            if (!$usermodel->isEmailExists($email, 'users')) {
+            if (!$usermodel->isEmailExists($email)) {
                 $error_message = "Email không tồn tại hoặc không hợp lệ!";
                 include './Views/Forgot-password.php';
                 return;
@@ -109,7 +110,7 @@ class UserController {
             // Cập nhật mật khẩu mới cho user
             if ($usermodel->updatePasswordByEmail($email, $password)) {
                 // Redirect về login với thông báo thành công hoặc hiển thị message
-                header("Location: .//dang-nhap.html");
+                header("Location: .//login.html");
                 exit();
             } else {
                 $error_message = "Có lỗi xảy ra khi cập nhật mật khẩu.";
@@ -132,12 +133,10 @@ class UserController {
         $user->name = $_POST['name'];
         $user->email = $_POST['email'];
         $user->password = $_POST['password'];
-        $user->phone = $_POST['phone'];
-        $user->address = $_POST['address'];
-        $user->status = 'Active'; // Default status
+        $user->full_name = $_POST['name']; // Map name to full_name for database
     
         // Check if the email already exists in 'users' table
-        if ($user->isEmailExists($user->email, 'users')) {
+        if ($user->isEmailExists($user->email)) {
             echo "Email already exists. Please use a different email.";
             return;
         }
@@ -145,7 +144,7 @@ class UserController {
         // Insert the new user into the database
         if ($user->insert()) {
             // Redirect to the user list on success
-            header("Location: .//dang-nhap.html");
+            header("Location: .//login.html");
             exit();
         } else {
             echo "Error when adding the user.";
@@ -159,7 +158,7 @@ class UserController {
         session_start(); // bắt buộc có dòng này để truy cập $_SESSION
         session_unset(); // xóa tất cả biến session
         session_destroy(); // huỷ session
-        header("Location: ./trang-chu.html");
+        header("Location: ./home.html");
         exit();
     }
 }

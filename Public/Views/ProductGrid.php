@@ -9,8 +9,8 @@ $categorymodel = new CategoryModel();
 $ProductModel = new ProductModel();
 
 $categories = $categorymodel->getAll();
-$topdiscountedproduct = $ProductModel->getTopDiscounted(); // giả sử hàm này tồn tại
-$topratedproduct = $ProductModel->getTopRated(); // giả sử hàm này tồn tại
+$topdiscountedproduct = $ProductModel->getTopDiscounted(); // assuming this function exists
+$topratedproduct = $ProductModel->getTopRated(); // assuming this function exists
 
 $userId = $_SESSION['user_id'] ?? null;
 $userRole = $_SESSION['user_role'] ?? 'Default';
@@ -29,7 +29,7 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
     <meta name="description" content="Ogani Template">
     <meta name="keywords" content="Ogani, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <base href="/Public/">
+    <base href="/">
     <title>OGANI</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./assets/css/bootstrap.min.css" type="text/css">
@@ -51,7 +51,7 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
         function submitHeaderSearch(form) {
             const tukhoa = form.tukhoa.value.trim();
             if (tukhoa) {
-                window.location.href = '/Public/tim-kiem/' + toSlug(tukhoa) + '.html';
+                window.location.href = '/search/' + toSlug(tukhoa) + '.html';
                 return false;
             }
             return false;
@@ -70,27 +70,27 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
     </div>
     <div class="humberger__menu__cart">
         <ul>
-            <li><a href="./gio-hang.html"><i class="fa fa-shopping-bag"></i> <span><?= htmlspecialchars($_SESSION['totalQuantityAmount']) ?></span></a></li>
-            <li><a href="./don-hang.html"><i class="fa fa-cart-arrow-down"></i></a></li>
+            <li><a href="./cart.html"><i class="fa fa-shopping-bag"></i> <span><?= htmlspecialchars($_SESSION['totalQuantityAmount']) ?></span></a></li>
+            <li><a href="./orders.html"><i class="fa fa-cart-arrow-down"></i></a></li>
             <?php if (isset($_SESSION['user_id'])): ?>
-                <li><a href="./thong-tin-ca-nhan.html"><i class="fa fa-user-circle"></i></a></li>
+                <li><a href="./profile.html"><i class="fa fa-user-circle"></i></a></li>
             <?php endif; ?>
         </ul>
-        <div class="header__cart__price">Tổng tiền: <span><?= number_format($_SESSION['totalAmount'], 0, ',', '.') ?> VNĐ</span></div>
+        <div class="header__cart__price">Total: <span>$<?= number_format($_SESSION['totalAmount'], 2) ?></span></div>
     </div>
     <div class="humberger__menu__widget">
         <div class="header__top__right__auth">
             <?php if (isset($_SESSION['user_id'])): ?>
-                <a href="./index.php?controller=user&action=logout"><i class="fa fa-sign-out"></i> Đăng xuất (<?= $_SESSION['user_name'] ?>)</a>
+                <a href="./index.php?controller=user&action=logout"><i class="fa fa-sign-out"></i> Logout (<?= $_SESSION['user_name'] ?>)</a>
             <?php else: ?>
-                <a href="/Public/dang-nhap.html"><i class="fa fa-user"></i> Đăng nhập</a>
+                <a href="/login.html"><i class="fa fa-user"></i> Login</a>
             <?php endif; ?>
         </div>
     </div>
     <nav class="humberger__menu__nav mobile-menu">
         <ul>
-            <li class="active"><a href="trang-chu.html">Trang chủ</a></li>
-            <li><a href="tat-ca-san-pham.html">Cửa hàng</a></li>
+            <li class="active"><a href="home.html">Home</a></li>
+            <li><a href="products.html">Shop</a></li>
         </ul>
     </nav>
     <div id="mobile-menu-wrap"></div>
@@ -103,7 +103,7 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
     <div class="humberger__menu__contact">
         <ul>
             <li><i class="fa fa-envelope"></i> hello@NguyenTranDinh</li>
-            <li>Freeship nội thành</li>
+            <li>Free shipping within city</li>
         </ul>
     </div>
 </div>
@@ -114,13 +114,13 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
         <div class="container">
             
             <div class="row">
-                <div class="col-lg-6"><div class="header__top__left"><ul><li><i class="fa fa-envelope"></i> hello@NguyenTranDinh</li><li>Freeship nội thành</li></ul></div></div>
+                <div class="col-lg-6"><div class="header__top__left"><ul><li><i class="fa fa-envelope"></i> hello@NguyenTranDinh</li><li>Free shipping in town</li></ul></div></div>
                 <div class="col-lg-6"><div class="header__top__right">
                     <div class="header__top__right__auth">
                         <?php if ($userId): ?>
-                            <a href="./index.php?controller=user&action=logout"><i class="fa fa-sign-out"></i> Đăng xuất (<?= $_SESSION['user_name'] ?>)</a>
+                            <a href="./index.php?controller=user&action=logout"><i class="fa fa-sign-out"></i> Logout (<?= $_SESSION['user_name'] ?>)</a>
                         <?php else: ?>
-                            <a href="/Public/dang-nhap.html"><i class="fa fa-user"></i> Đăng nhập</a>
+                            <a href="/login.html"><i class="fa fa-user"></i> Login</a>
                         <?php endif; ?>
                     </div>
                 </div></div>
@@ -131,24 +131,24 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
     <!-- Header middle -->
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-lg-3"><div class="header__logo"><a href="trang-chu.html"><img src="./assets/img/logo.png" alt=""></a></div></div>
+            <div class="col-lg-3"><div class="header__logo"><a href="home.html"><img src="./assets/img/logo.png" alt=""></a></div></div>
             <div class="col-lg-6">
                 <nav class="header__menu">
                     <?php $currentPath = $_SERVER['REQUEST_URI'] ?? ''; ?>
                     <ul>
-                        <li class="<?= strpos($currentPath, 'tat-ca-san-pham') === false ? 'active' : '' ?>"><a href="trang-chu.html">Trang chủ</a></li>
-                        <li class="<?= strpos($currentPath, 'tat-ca-san-pham') !== false ? 'active' : '' ?>"><a href="tat-ca-san-pham.html">Cửa hàng</a></li>
+                        <li class="<?= strpos($currentPath, 'products') === false ? 'active' : '' ?>"><a href="home.html">Home</a></li>
+                        <li class="<?= strpos($currentPath, 'products') !== false ? 'active' : '' ?>"><a href="products.html">Shop</a></li>
                     </ul>
                 </nav>
             </div>
             <div class="col-lg-3">
                 <div class="header__cart">
                     <ul>
-                        <li><a href="./gio-hang.html"><i class="fa fa-shopping-bag"></i> <span><?= htmlspecialchars($_SESSION['totalQuantityAmount']) ?></span></a></li>
-                        <li><a href="./don-hang.html"><i class="fa fa-cart-arrow-down"></i></a></li>
-                        <?php if ($userId): ?><li><a href="./thong-tin-ca-nhan.html"><i class="fa fa-user-circle"></i></a></li><?php endif; ?>
+                        <li><a href="./cart.html"><i class="fa fa-shopping-bag"></i> <span><?= htmlspecialchars($_SESSION['totalQuantityAmount']) ?></span></a></li>
+                        <li><a href="./orders.html"><i class="fa fa-cart-arrow-down"></i></a></li>
+                        <?php if ($userId): ?><li><a href="./profile.html"><i class="fa fa-user-circle"></i></a></li><?php endif; ?>
                     </ul>
-                    <div class="header__cart__price">Tổng tiền: <span><?= number_format($_SESSION['totalAmount'], 0, ',', '.') ?> VNĐ</span></div>
+                    <div class="header__cart__price">Total: <span>$<?= number_format($_SESSION['totalAmount'], 2) ?></span></div>
                 </div>
             </div>
         </div>
@@ -162,10 +162,10 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
         <div class="row">
             <div class="col-lg-3">
                 <div class="hero__categories">
-                    <div class="hero__categories__all"><i class="fa fa-bars"></i><span>Danh mục</span></div>
+                    <div class="hero__categories__all"><i class="fa fa-bars"></i><span>Categories</span></div>
                     <ul>
                         <?php foreach ($categories as $category): ?>
-                            <li><a href="/Public/tat-ca-san-pham/danh-muc/<?= urlencode($category['slug']) ?>.html"><?= htmlspecialchars($category['name']) ?></a></li>
+                            <li><a href="/products/category/<?= urlencode($category['slug']) ?>.html"><?= htmlspecialchars($category['name']) ?></a></li>
                         <?php endforeach; ?>
                     </ul>
                 </div>
@@ -174,8 +174,8 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
                 <div class="hero__search">
                     <div class="hero__search__form">
                         <form method="get" onsubmit="return submitHeaderSearch(this);">
-                            <input type="text" name="tukhoa" placeholder="Bạn cần tìm gì?">
-                            <button type="submit" class="site-btn">TÌM KIẾM</button>
+                            <input type="text" name="tukhoa" placeholder="What are you looking for?">
+                            <button type="submit" class="site-btn">SEARCH</button>
                         </form>
                     </div>
                     <div class="hero__search__phone">
@@ -188,8 +188,8 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
                 <?php if ($isHomePage): ?>
                     <div class="hero__item set-bg" data-setbg="./assets/img/hero/banner2.jpg">
                         <div class="hero__text">
-                            <span>Đồ gia dụng giá rẻ</span>
-                            <h2>Gia dụng<br />100% Chính hãng</h2>
+                            <span>Affordable home appliances</span>
+                            <h2>Home Appliances<br />100% Authentic</h2>
                         </div>
                     </div>
                 <?php endif; ?>
@@ -203,10 +203,10 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
             <div class="col-lg-3 col-md-5">
                 <div class="sidebar">
                     <div class="sidebar__item">
-                        <h4>Danh mục</h4>
+                        <h4>Categories</h4>
                         <ul>
                             <?php foreach ($categories as $category): ?>
-                                <li><a href="./tat-ca-san-pham/danh-muc/<?= urlencode($category['slug']) ?>.html">
+                                <li><a href="./products/category/<?= urlencode($category['slug']) ?>.html">
                                     <?php echo htmlspecialchars($category['name']); ?></a></li>
                             <?php endforeach; ?>
                         </ul>
@@ -219,35 +219,35 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
                     <div class="row">
                         <div class="col-lg-4 col-md-5">
                             <div class="filter__sort" style="position: relative; z-index: 999;">
-                                <span>Lọc</span>
+                                <span>Filter</span>
                                 <?php
                                 $currentSort = $_GET['sort'] ?? 'default';
                                 ?>
                                 <select name="sort" onchange="updateSort(this.value);" style="position: relative; z-index: 1001; background: #fff;">
                                     <option value="default" <?= $currentSort == 'default' ? 'selected' : '' ?>>Default</option>
-                                    <option value="asc" <?= $currentSort == 'asc' ? 'selected' : '' ?>>Giá từ thấp đến cao</option>
-                                    <option value="desc" <?= $currentSort == 'desc' ? 'selected' : '' ?>>Giá từ cao đến thấp</option>
-                                    <option value="rating_asc" <?= $currentSort == 'rating_asc' ? 'selected' : '' ?>>Đánh giá từ thấp đến cao</option>
-                                    <option value="rating_desc" <?= $currentSort == 'rating_desc' ? 'selected' : '' ?>>Đánh giá từ cao đến thấp</option>
+                                    <option value="asc" <?= $currentSort == 'asc' ? 'selected' : '' ?>>Price Low to High</option>
+                                    <option value="desc" <?= $currentSort == 'desc' ? 'selected' : '' ?>>Price High to Low</option>
+                                    <option value="rating_asc" <?= $currentSort == 'rating_asc' ? 'selected' : '' ?>>Rating Low to High</option>
+                                    <option value="rating_desc" <?= $currentSort == 'rating_desc' ? 'selected' : '' ?>>Rating High to Low</option>
                                 </select>
                             </div>
 
                             <script>
                             function updateSort(sort) {
-                                // Lấy pathname hiện tại
+                                // Get current pathname
                                 let path = window.location.pathname;
-                                // Xóa sort cũ nếu có
+                                // Remove old sort if exists
                                 path = path.replace(/\/sort-[a-zA-Z0-9-_]+\.html$/, '.html');
-                                // Xử lý trường hợp có .html ở cuối
+                                // Handle case with .html at end
                                 if (path.endsWith('.html')) {
-                                    path = path.slice(0, -5); // bỏ .html
+                                    path = path.slice(0, -5); // remove .html
                                 }
-                                // Thêm sort mới
+                                // Add new sort
                                 if (sort && sort !== 'default') {
                                     path += '/sort-' + sort;
                                 }
                                 path += '.html';
-                                // Giữ lại các query string khác (nếu có)
+                                // Keep other query strings (if any)
                                 const params = new URLSearchParams(window.location.search);
                                 params.delete('sort');
                                 let query = params.toString();
@@ -263,7 +263,7 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
                         </div>
                         <div class="col-lg-4 col-md-4">
                             <div class="filter__found">
-                                <h6><span><?php echo $totalProducts; ?></span> Sản phẩm được tìm thấy</h6>
+                                <h6><span><?php echo $totalProducts; ?></span> Products Found</h6>
                             </div>
                         </div>
                     </div>
@@ -323,7 +323,7 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
                         justify-content: center;
                         cursor: pointer;
                         transition: box-shadow 0.2s, background 0.2s;
-                    " title="Thêm vào giỏ hàng">
+                    " title="Add to Cart">
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#ff9800" stroke-width="2">
                             <circle cx="10" cy="20.5" r="1.5"/>
                             <circle cx="18" cy="20.5" r="1.5"/>
@@ -335,21 +335,42 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
 
             <div class="product__item__text">
                 <h6>
-                    <a href="san-pham/<?= $product['slug'] ?>.html">
+                    <a href="product/<?= $product['slug'] ?>.html">
                         <?php echo htmlspecialchars($product['name']); ?>
                     </a>
                 </h6>
                 <?php
-$role = $_SESSION['user_role'] ?? 'default';
-$price = match(strtolower($role)) {
-    'vip1' => $product['price_vip1'] ?? $product['price'],
-    'vip2' => $product['price_vip2'] ?? $product['price'],
-    default => $product['price'],
-};
+$minPrice = $product['min_price'] ?? 0;
+$maxPrice = $product['max_price'] ?? 0;
+
+// Calculate total stock from all variants
+$totalStock = 0;
+if (isset($product['variants']) && is_array($product['variants'])) {
+    foreach ($product['variants'] as $variant) {
+        $totalStock += (int)($variant['stock_quantity'] ?? 0);
+    }
+}
 ?>
-<h5 style="color: red;">
-    <?= number_format($price, 0, ',', '.') ?> VNĐ
-</h5>
+<div class="product-price-stock">
+    <h5 style="color: red;">
+        <?php if ($minPrice == $maxPrice): ?>
+            $<?= number_format($minPrice, 2) ?>
+        <?php else: ?>
+            $<?= number_format($minPrice, 2) ?> - $<?= number_format($maxPrice, 2) ?>
+        <?php endif; ?>
+    </h5>
+    <div class="stock-status" style="margin-top: 5px;">
+        <?php if ($totalStock > 0): ?>
+            <span style="color: #28a745; font-size: 0.9rem;">
+                ✓ In Stock (<?= $totalStock ?> items)
+            </span>
+        <?php else: ?>
+            <span style="color: #dc3545; font-size: 0.9rem; font-weight: bold;">
+                ✗ Out of Stock
+            </span>
+        <?php endif; ?>
+    </div>
+</div>
 
             </div>
         </div>
@@ -394,22 +415,22 @@ $price = match(strtolower($role)) {
                 <div class="product__pagination">
                     <div class="pagination">
                         <?php
-                        // Xác định base url phân trang thân thiện
+                        // Define friendly pagination base url
                         $pageBaseUrl = '';
                         if (!empty($_GET['tukhoa'])) {
-                            // Tìm kiếm
+                            // Search
                             $tukhoa = urlencode($_GET['tukhoa']);
-                            $pageBaseUrl = "./tim-kiem/{$tukhoa}";
+                            $pageBaseUrl = "./search/{$tukhoa}";
                         } elseif (!empty($_GET['category'])) {
-                            // Lọc theo danh mục
+                            // Filter by category
                             $cat = urlencode($_GET['category']);
-                            $pageBaseUrl = "./tat-ca-san-pham/danh-muc/{$cat}";
+                            $pageBaseUrl = "./products/category/{$cat}";
                         } else {
-                            // Tất cả sản phẩm
-                            $pageBaseUrl = "./tat-ca-san-pham";
+                            // All products
+                            $pageBaseUrl = "./products";
                         }
 
-                        // Giữ lại các tham số khác (sort, search, ...), loại bỏ controller, action
+                        // Keep other parameters (sort, search, ...), remove controller, action
                         $extraParams = $_GET;
                         unset($extraParams['page'], $extraParams['category'], $extraParams['tukhoa'], $extraParams['controller'], $extraParams['action']);
 
@@ -436,22 +457,7 @@ $price = match(strtolower($role)) {
     </div>
 <!-- Product Section End -->
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    fetch("/Public/Includes/Header.html")
-        .then(res => res.text())
-        .then(data => {
-            document.body.insertAdjacentHTML("afterbegin", data);
-        });
-
-    fetch("/Public/Includes/Footer.html")
-        .then(res => res.text())
-        .then(data => {
-            document.body.insertAdjacentHTML("beforeend", data);
-        });
-});
-</script>
-
+<?php include(__DIR__ . '/../Includes/Header.html'); ?>
     <script src="./assets/js/jquery-3.3.1.min.js"></script>
     <script src="./assets/js/bootstrap.min.js"></script>
     <script src="./assets/js/jquery.nice-select.min.js"></script>
@@ -460,5 +466,6 @@ document.addEventListener("DOMContentLoaded", function () {
     <script src="./assets/js/mixitup.min.js"></script>
     <script src="./assets/js/owl.carousel.min.js"></script>
     <script src="./assets/js/main.js"></script>
+<?php include(__DIR__ . '/../Includes/Footer.html'); ?>
 </body>
 </html>

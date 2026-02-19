@@ -1,5 +1,57 @@
 <?php require("Includes/Header.php"); ?>
 
+<?php
+// Helper function to get status badge class
+function getStatusBadgeClass($status) {
+    $classes = [
+        'pending' => 'badge-secondary',
+        'processing' => 'badge-info',
+        'shipping' => 'badge-warning',
+        'completed' => 'badge-success',
+        'cancelled' => 'badge-danger',
+        'refunded' => 'badge-dark'
+    ];
+    
+    $status = strtolower($status);
+    return $classes[$status] ?? 'badge-secondary';
+}
+
+// Helper function to translate status
+function translateStatus($status) {
+    $translations = [
+        'pending' => 'Chờ xử lý',
+        'processing' => 'Đang xử lý',
+        'shipping' => 'Đang giao hàng',
+        'completed' => 'Đã giao hàng',
+        'cancelled' => 'Đã hủy',
+        'refunded' => 'Hoàn tiền'
+    ];
+    
+    $status = strtolower($status);
+    return $translations[$status] ?? $status;
+}
+?>
+
+<?php if (isset($_SESSION['success_message'])): ?>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <?= htmlspecialchars($_SESSION['success_message']) ?>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <?php unset($_SESSION['success_message']); ?>
+    </div>
+<?php endif; ?>
+
+<?php if (isset($_SESSION['error_message'])): ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <?= htmlspecialchars($_SESSION['error_message']) ?>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <?php unset($_SESSION['error_message']); ?>
+    </div>
+<?php endif; ?>
+
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">Chi tiết đơn hàng #<?= htmlspecialchars($order['id']) ?></h6>
@@ -12,21 +64,36 @@
         <p><strong>Địa chỉ người nhận:</strong> <?= htmlspecialchars($order['receiver_address']) ?></p>
         <hr>
         <p><strong>Phương thức thanh toán:</strong> <?= htmlspecialchars($order['payment_method']) ?></p>
-        <p><strong>Tổng tiền:</strong> <?= htmlspecialchars($order['total']) ?> VNĐ</p>
+        <p><strong>Tổng tiền:</strong> <?= number_format($order['grand_total'], 0, ',', '.') ?> VNĐ</p>
+        <p><strong>Trạng thái thanh toán:</strong> 
+            <span class="badge <?= $order['payment_status'] === 'paid' ? 'badge-success' : 'badge-warning' ?>">
+                <?= $order['payment_status'] === 'paid' ? 'Đã thanh toán' : 'Chờ thanh toán' ?>
+            </span>
+        </p>
         <hr>
         <p>
             <strong>Trạng thái:</strong>
-            <?= htmlspecialchars($order['status']) ?>
+            <span class="badge <?= getStatusBadgeClass($order['status']) ?>">
+                <?= translateStatus($order['status']) ?>
+            </span>
 
             <form method="post" action="./index.php?controller=order&action=toggleStatus" style="display: inline-block; margin-left: 10px;">
                 <input type="hidden" name="order_id" value="<?= htmlspecialchars($order['id']) ?>">
                 <select name="status" onchange="this.form.submit()" class="form-control d-inline-block" style="width: auto; display: inline-block;">
                     <?php
-                    $statuses = ['Processing', 'Confirmed', 'Shipping', 'Delivered', 'Cancelled'];
+                    $statuses = ['pending', 'processing', 'shipping', 'completed', 'cancelled', 'refunded'];
+                    $statusLabels = [
+                        'pending' => 'Chờ xử lý',
+                        'processing' => 'Đang xử lý', 
+                        'shipping' => 'Đang giao hàng',
+                        'completed' => 'Đã giao hàng',
+                        'cancelled' => 'Đã hủy',
+                        'refunded' => 'Hoàn tiền'
+                    ];
                     foreach ($statuses as $statusOption) :
                     ?>
-                        <option value="<?= $statusOption ?>" <?= $order['status'] === $statusOption ? 'selected' : '' ?>>
-                            <?= $statusOption ?>
+                        <option value="<?= $statusOption ?>" <?= strtolower($order['status']) === $statusOption ? 'selected' : '' ?>>
+                            <?= $statusLabels[$statusOption] ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
@@ -58,7 +125,13 @@
                         ?>
                         <tr>
                             <td><?= $productAvatar ?></td>
-                            <td><?= htmlspecialchars($item['product_name']) ?></td>
+                            <td>
+                                <strong><?= htmlspecialchars($item['product_name']) ?></strong><br>
+                                <?php if (!empty($item['variant_name'])): ?>
+                                    <small class="text-muted">Variant: <?= htmlspecialchars($item['variant_name']) ?></small><br>
+                                <?php endif; ?>
+                                <small class="text-muted">SKU: <?= htmlspecialchars($item['sku']) ?></small>
+                            </td>
                             <td><?= htmlspecialchars($item['qty']) ?></td>
                             <td><?= number_format($item['price'], 0, ',', '.') ?> VNĐ</td>
                             <td><?= number_format($total, 0, ',', '.') ?> VNĐ</td>
@@ -72,33 +145,6 @@
                 </tbody>
 
         </table>
-        <hr>
-        <h6>Đánh giá sản phẩm:</h6>
-
-        <?php if (!empty($reviews)) : ?>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Sản phẩm</th>
-                        <th>Đánh giá</th>
-                        <th>Nội dung</th>
-                        <th>Ngày đánh giá</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($reviews as $review) : ?>
-                        <tr>
-                            <td><?= htmlspecialchars($review['product_name']) ?></td>
-                            <td><?= str_repeat('⭐', (int)$review['rating']) ?></td>
-                            <td><?= htmlspecialchars($review['comment']) ?></td>
-                            <td><?= date('d-m-Y H:i', strtotime($review['created_at'])) ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        <?php else : ?>
-            <p>Chưa có đánh giá nào cho đơn hàng này.</p>
-        <?php endif; ?>
 
     </div>
 </div>

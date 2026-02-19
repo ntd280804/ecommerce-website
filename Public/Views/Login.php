@@ -29,7 +29,7 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
     <meta name="description" content="Ogani Template">
     <meta name="keywords" content="Ogani, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <base href="/Public/">
+    <base href="/">
     <title>OGANI</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./assets/css/bootstrap.min.css" type="text/css">
@@ -51,7 +51,7 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
         function submitHeaderSearch(form) {
             const tukhoa = form.tukhoa.value.trim();
             if (tukhoa) {
-                window.location.href = '/Public/tim-kiem/' + toSlug(tukhoa) + '.html';
+                window.location.href = '/search/' + toSlug(tukhoa) + '.html';
                 return false;
             }
             return false;
@@ -70,10 +70,10 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
     </div>
     <div class="humberger__menu__cart">
         <ul>
-            <li><a href="./gio-hang.html"><i class="fa fa-shopping-bag"></i> <span><?= htmlspecialchars($_SESSION['totalQuantityAmount']) ?></span></a></li>
-            <li><a href="./don-hang.html"><i class="fa fa-cart-arrow-down"></i></a></li>
+            <li><a href="./cart.html"><i class="fa fa-shopping-bag"></i> <span><?= htmlspecialchars($_SESSION['totalQuantityAmount']) ?></span></a></li>
+            <li><a href="./orders.html"><i class="fa fa-cart-arrow-down"></i></a></li>
             <?php if (isset($_SESSION['user_id'])): ?>
-                <li><a href="./thong-tin-ca-nhan.html"><i class="fa fa-user-circle"></i></a></li>
+                <li><a href="./profile.html"><i class="fa fa-user-circle"></i></a></li>
             <?php endif; ?>
         </ul>
         <div class="header__cart__price">Tổng tiền: <span><?= number_format($_SESSION['totalAmount'], 0, ',', '.') ?> VNĐ</span></div>
@@ -83,14 +83,14 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
             <?php if (isset($_SESSION['user_id'])): ?>
                 <a href="./index.php?controller=user&action=logout"><i class="fa fa-sign-out"></i> Đăng xuất (<?= $_SESSION['user_name'] ?>)</a>
             <?php else: ?>
-                <a href="/Public/dang-nhap.html"><i class="fa fa-user"></i> Đăng nhập</a>
+                <a href="/login.html"><i class="fa fa-user"></i> Đăng nhập</a>
             <?php endif; ?>
         </div>
     </div>
     <nav class="humberger__menu__nav mobile-menu">
         <ul>
-            <li class="active"><a href="trang-chu.html">Trang chủ</a></li>
-            <li><a href="tat-ca-san-pham.html">Cửa hàng</a></li>
+            <li class="active"><a href="home.html">Trang chủ</a></li>
+            <li><a href="products.html">Cửa hàng</a></li>
         </ul>
     </nav>
     <div id="mobile-menu-wrap"></div>
@@ -120,7 +120,7 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
                         <?php if ($userId): ?>
                             <a href="./index.php?controller=user&action=logout"><i class="fa fa-sign-out"></i> Đăng xuất (<?= $_SESSION['user_name'] ?>)</a>
                         <?php else: ?>
-                            <a href="/Public/dang-nhap.html"><i class="fa fa-user"></i> Đăng nhập</a>
+                            <a href="/login.html"><i class="fa fa-user"></i> Đăng nhập</a>
                         <?php endif; ?>
                     </div>
                 </div></div>
@@ -131,22 +131,22 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
     <!-- Header middle -->
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-lg-3"><div class="header__logo"><a href="trang-chu.html"><img src="./assets/img/logo.png" alt=""></a></div></div>
+            <div class="col-lg-3"><div class="header__logo"><a href="home.html"><img src="./assets/img/logo.png" alt=""></a></div></div>
             <div class="col-lg-6">
                 <nav class="header__menu">
                     <?php $currentPath = $_SERVER['REQUEST_URI'] ?? ''; ?>
                     <ul>
-                        <li class="<?= strpos($currentPath, 'tat-ca-san-pham') === false ? 'active' : '' ?>"><a href="trang-chu.html">Trang chủ</a></li>
-                        <li class="<?= strpos($currentPath, 'tat-ca-san-pham') !== false ? 'active' : '' ?>"><a href="tat-ca-san-pham.html">Cửa hàng</a></li>
+                        <li class="<?= strpos($currentPath, 'products') === false ? 'active' : '' ?>"><a href="home.html">Trang chủ</a></li>
+                        <li class="<?= strpos($currentPath, 'products') !== false ? 'active' : '' ?>"><a href="products.html">Cửa hàng</a></li>
                     </ul>
                 </nav>
             </div>
             <div class="col-lg-3">
                 <div class="header__cart">
                     <ul>
-                        <li><a href="./gio-hang.html"><i class="fa fa-shopping-bag"></i> <span><?= htmlspecialchars($_SESSION['totalQuantityAmount']) ?></span></a></li>
-                        <li><a href="./don-hang.html"><i class="fa fa-cart-arrow-down"></i></a></li>
-                        <?php if ($userId): ?><li><a href="./thong-tin-ca-nhan.html"><i class="fa fa-user-circle"></i></a></li><?php endif; ?>
+                        <li><a href="./cart.html"><i class="fa fa-shopping-bag"></i> <span><?= htmlspecialchars($_SESSION['totalQuantityAmount']) ?></span></a></li>
+                        <li><a href="./orders.html"><i class="fa fa-cart-arrow-down"></i></a></li>
+                        <?php if ($userId): ?><li><a href="./profile.html"><i class="fa fa-user-circle"></i></a></li><?php endif; ?>
                     </ul>
                     <div class="header__cart__price">Tổng tiền: <span><?= number_format($_SESSION['totalAmount'], 0, ',', '.') ?> VNĐ</span></div>
                 </div>
@@ -165,7 +165,7 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
                     <div class="hero__categories__all"><i class="fa fa-bars"></i><span>Danh mục</span></div>
                     <ul>
                         <?php foreach ($categories as $category): ?>
-                            <li><a href="/Public/tat-ca-san-pham/danh-muc/<?= urlencode($category['slug']) ?>.html"><?= htmlspecialchars($category['name']) ?></a></li>
+                            <li><a href="/products/category/<?= urlencode($category['slug']) ?>.html"><?= htmlspecialchars($category['name']) ?></a></li>
                         <?php endforeach; ?>
                     </ul>
                 </div>
@@ -211,27 +211,27 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
                     <div class="col-lg-12">
                         <div class="p-5">
                             <div class="text-center">
-                                <h1 class="h4 text-gray-900 mb-4">Chào mừng trở lại!</h1>
+                                <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
                             </div>
 
                             <form class="user" method="POST" action="./index.php?controller=user&action=handleLogin"onsubmit="return validateForm()">
                                 <div class="form-group">
                                     <input type="email" name="email" class="form-control form-control-user"
-                                        placeholder="Địa chỉ email..." required>
+                                        placeholder="Email Address..." required>
                                 </div>
                                 <div class="form-group">
                                     <input type="password" name="password" class="form-control form-control-user"
-                                        placeholder="Mật khẩu" required>
+                                        placeholder="Password" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-user btn-block">Đăng nhập</button>
+                                <button type="submit" class="btn btn-primary btn-user btn-block">Login</button>
                             </form>
 
                             <hr>
                             <div class="text-center">
-                                <a class="small" href="./quen-mat-khau.html">Quên mật khẩu?</a>
+                                <a class="small" href="./forgot-password.html">Forgot Password?</a>
                             </div>
                             <div class="text-center">
-                                <a class="small" href="./dang-ky.html">Tạo tài khoản!</a>
+                                <a class="small" href="./register.html">Create an Account!</a>
                             </div>
                         </div>
                     </div>
@@ -252,29 +252,14 @@ function validateForm() {
     var emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
 
     if (!emailRegex.test(email)) {
-        alert("Email không hợp lệ!");
+        alert("Invalid email address!");
         return false;
     }
 
     return true; // Cho phép submit form
 }
 </script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    fetch("/Public/Includes/Header.html")
-        .then(res => res.text())
-        .then(data => {
-            document.body.insertAdjacentHTML("afterbegin", data);
-        });
-
-    fetch("/Public/Includes/Footer.html")
-        .then(res => res.text())
-        .then(data => {
-            document.body.insertAdjacentHTML("beforeend", data);
-        });
-});
-</script>
-
+<?php include(__DIR__ . '/../Includes/Header.html'); ?>
     <script src="./assets/js/jquery-3.3.1.min.js"></script>
     <script src="./assets/js/bootstrap.min.js"></script>
     <script src="./assets/js/jquery.nice-select.min.js"></script>
@@ -283,5 +268,6 @@ document.addEventListener("DOMContentLoaded", function () {
     <script src="./assets/js/mixitup.min.js"></script>
     <script src="./assets/js/owl.carousel.min.js"></script>
     <script src="./assets/js/main.js"></script>
+    <?php include(__DIR__ . '/../Includes/Footer.html'); ?>
 </body>
 </html>

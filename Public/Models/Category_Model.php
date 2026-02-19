@@ -11,7 +11,7 @@ class CategoryModel {
     public function getByStatus($status) {
         // Assuming you are using PDO to interact with the database
         if ($status === 'all') {
-            $query = "SELECT * FROM categories";
+            $query = "SELECT * FROM categories WHERE status = 'active'";
         } else {
             $query = "SELECT * FROM categories WHERE status = :status";
         }
@@ -26,14 +26,14 @@ class CategoryModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     public function getById($id) {
-        $sql = "SELECT * FROM categories WHERE id = :id";
+        $sql = "SELECT * FROM categories WHERE id = :id AND status = 'active'";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
     public function getAll() {
-        $sql = "SELECT * FROM categories";
+        $sql = "SELECT * FROM categories WHERE status = 'active'";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

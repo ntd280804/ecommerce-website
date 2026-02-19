@@ -29,7 +29,7 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
     <meta name="description" content="Ogani Template">
     <meta name="keywords" content="Ogani, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <base href="/Public/">
+    <base href="/">
     <title>OGANI</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./assets/css/bootstrap.min.css" type="text/css">
@@ -49,9 +49,9 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
                 .replace(/^-+|-+$/g, '');
         }
         function submitHeaderSearch(form) {
-            const tukhoa = form.tukhoa.value.trim();
-            if (tukhoa) {
-                window.location.href = '/Public/tim-kiem/' + toSlug(tukhoa) + '.html';
+            const searchTerm = form.search.value.trim();
+            if (searchTerm) {
+                window.location.href = '/search/' + toSlug(searchTerm) + '.html';
                 return false;
             }
             return false;
@@ -70,27 +70,27 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
     </div>
     <div class="humberger__menu__cart">
         <ul>
-            <li><a href="./gio-hang.html"><i class="fa fa-shopping-bag"></i> <span><?= htmlspecialchars($_SESSION['totalQuantityAmount']) ?></span></a></li>
-            <li><a href="./don-hang.html"><i class="fa fa-cart-arrow-down"></i></a></li>
+            <li><a href="./cart.html"><i class="fa fa-shopping-bag"></i> <span><?= htmlspecialchars($_SESSION['totalQuantityAmount']) ?></span></a></li>
+            <li><a href="./orders.html"><i class="fa fa-cart-arrow-down"></i></a></li>
             <?php if (isset($_SESSION['user_id'])): ?>
-                <li><a href="./thong-tin-ca-nhan.html"><i class="fa fa-user-circle"></i></a></li>
+                <li><a href="./profile.html"><i class="fa fa-user-circle"></i></a></li>
             <?php endif; ?>
         </ul>
-        <div class="header__cart__price">Tổng tiền: <span><?= number_format($_SESSION['totalAmount'], 0, ',', '.') ?> VNĐ</span></div>
+        <div class="header__cart__price">Total: <span>$<?= number_format($_SESSION['totalAmount'], 2) ?></span></div>
     </div>
     <div class="humberger__menu__widget">
         <div class="header__top__right__auth">
             <?php if (isset($_SESSION['user_id'])): ?>
-                <a href="./index.php?controller=user&action=logout"><i class="fa fa-sign-out"></i> Đăng xuất (<?= $_SESSION['user_name'] ?>)</a>
+                <a href="./index.php?controller=user&action=logout"><i class="fa fa-sign-out"></i> Logout (<?= $_SESSION['user_name'] ?>)</a>
             <?php else: ?>
-                <a href="/Public/dang-nhap.html"><i class="fa fa-user"></i> Đăng nhập</a>
+                <a href="/Public/login.html"><i class="fa fa-user"></i> Login</a>
             <?php endif; ?>
         </div>
     </div>
     <nav class="humberger__menu__nav mobile-menu">
         <ul>
-            <li class="active"><a href="trang-chu.html">Trang chủ</a></li>
-            <li><a href="tat-ca-san-pham.html">Cửa hàng</a></li>
+            <li class="active"><a href="home.html">Home</a></li>
+            <li><a href="products.html">Shop</a></li>
         </ul>
     </nav>
     <div id="mobile-menu-wrap"></div>
@@ -103,7 +103,7 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
     <div class="humberger__menu__contact">
         <ul>
             <li><i class="fa fa-envelope"></i> hello@NguyenTranDinh</li>
-            <li>Freeship nội thành</li>
+            <li>Free shipping</li>
         </ul>
     </div>
 </div>
@@ -114,13 +114,13 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
         <div class="container">
             
             <div class="row">
-                <div class="col-lg-6"><div class="header__top__left"><ul><li><i class="fa fa-envelope"></i> hello@NguyenTranDinh</li><li>Freeship nội thành</li></ul></div></div>
+                <div class="col-lg-6"><div class="header__top__left"><ul><li><i class="fa fa-envelope"></i> hello@NguyenTranDinh</li><li>Free shipping</li></ul></div></div>
                 <div class="col-lg-6"><div class="header__top__right">
                     <div class="header__top__right__auth">
                         <?php if ($userId): ?>
-                            <a href="./index.php?controller=user&action=logout"><i class="fa fa-sign-out"></i> Đăng xuất (<?= $_SESSION['user_name'] ?>)</a>
+                            <a href="./index.php?controller=user&action=logout"><i class="fa fa-sign-out"></i> Logout (<?= $_SESSION['user_name'] ?>)</a>
                         <?php else: ?>
-                            <a href="/Public/dang-nhap.html"><i class="fa fa-user"></i> Đăng nhập</a>
+                            <a href="/Public/login.html"><i class="fa fa-user"></i> Login</a>
                         <?php endif; ?>
                     </div>
                 </div></div>
@@ -131,24 +131,24 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
     <!-- Header middle -->
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-lg-3"><div class="header__logo"><a href="trang-chu.html"><img src="./assets/img/logo.png" alt=""></a></div></div>
+            <div class="col-lg-3"><div class="header__logo"><a href="home.html"><img src="./assets/img/logo.png" alt=""></a></div></div>
             <div class="col-lg-6">
                 <nav class="header__menu">
                     <?php $currentPath = $_SERVER['REQUEST_URI'] ?? ''; ?>
                     <ul>
-                        <li class="<?= strpos($currentPath, 'tat-ca-san-pham') === false ? 'active' : '' ?>"><a href="trang-chu.html">Trang chủ</a></li>
-                        <li class="<?= strpos($currentPath, 'tat-ca-san-pham') !== false ? 'active' : '' ?>"><a href="tat-ca-san-pham.html">Cửa hàng</a></li>
+                        <li class="<?= strpos($currentPath, 'products') === false ? 'active' : '' ?>"><a href="home.html">Home</a></li>
+                        <li class="<?= strpos($currentPath, 'products') !== false ? 'active' : '' ?>"><a href="products.html">Shop</a></li>
                     </ul>
                 </nav>
             </div>
             <div class="col-lg-3">
                 <div class="header__cart">
                     <ul>
-                        <li><a href="./gio-hang.html"><i class="fa fa-shopping-bag"></i> <span><?= htmlspecialchars($_SESSION['totalQuantityAmount']) ?></span></a></li>
-                        <li><a href="./don-hang.html"><i class="fa fa-cart-arrow-down"></i></a></li>
-                        <?php if ($userId): ?><li><a href="./thong-tin-ca-nhan.html"><i class="fa fa-user-circle"></i></a></li><?php endif; ?>
+                        <li><a href="./cart.html"><i class="fa fa-shopping-bag"></i> <span><?= htmlspecialchars($_SESSION['totalQuantityAmount']) ?></span></a></li>
+                        <li><a href="./orders.html"><i class="fa fa-cart-arrow-down"></i></a></li>
+                        <?php if ($userId): ?><li><a href="./profile.html"><i class="fa fa-user-circle"></i></a></li><?php endif; ?>
                     </ul>
-                    <div class="header__cart__price">Tổng tiền: <span><?= number_format($_SESSION['totalAmount'], 0, ',', '.') ?> VNĐ</span></div>
+                    <div class="header__cart__price">Total: <span>$<?= number_format($_SESSION['totalAmount'], 2) ?></span></div>
                 </div>
             </div>
         </div>
@@ -162,10 +162,10 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
         <div class="row">
             <div class="col-lg-3">
                 <div class="hero__categories">
-                    <div class="hero__categories__all"><i class="fa fa-bars"></i><span>Danh mục</span></div>
+                    <div class="hero__categories__all"><i class="fa fa-bars"></i><span>Categories</span></div>
                     <ul>
                         <?php foreach ($categories as $category): ?>
-                            <li><a href="/Public/tat-ca-san-pham/danh-muc/<?= urlencode($category['slug']) ?>.html"><?= htmlspecialchars($category['name']) ?></a></li>
+                            <li><a href="/products/category/<?= urlencode($category['slug']) ?>.html"><?= htmlspecialchars($category['name']) ?></a></li>
                         <?php endforeach; ?>
                     </ul>
                 </div>
@@ -174,22 +174,22 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
                 <div class="hero__search">
                     <div class="hero__search__form">
                         <form method="get" onsubmit="return submitHeaderSearch(this);">
-                            <input type="text" name="tukhoa" placeholder="Bạn cần tìm gì?">
-                            <button type="submit" class="site-btn">TÌM KIẾM</button>
+                            <input type="text" name="search" placeholder="Search...">
+                            <button type="submit" class="site-btn">Search</button>
                         </form>
                     </div>
                     <div class="hero__search__phone">
                         <div class="hero__search__phone__icon"><i class="fa fa-phone"></i></div>
                         <div class="hero__search__phone__text">
-                            <h5>+65 11.188.888</h5><span>support 24/7 time</span>
+                            <h5>+65 11.188.888</h5><span>Support 24/7</span>
                         </div>
                     </div>
                 </div>
                 <?php if ($isHomePage): ?>
                     <div class="hero__item set-bg" data-setbg="./assets/img/hero/banner2.jpg">
                         <div class="hero__text">
-                            <span>Đồ gia dụng giá rẻ</span>
-                            <h2>Gia dụng<br />100% Chính hãng</h2>
+                            <span>Shopping Cart</span>
+                            <h2>Shopping Cart</h2>
                         </div>
                     </div>
                 <?php endif; ?>
@@ -205,10 +205,10 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
                     <table>
                         <thead>
                             <tr>
-                                <th class="shoping__product">Sản phẩm</th>
-                                <th>Giá</th>
-                                <th>Số lương</th>
-                                <th>Tổng tiền</th>
+                                <th class="shoping__product">Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -218,66 +218,88 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
                                     <td class="shoping__cart__item">
                                         <?php echo $cartModel->getAvatarImages($item['images'], 100); ?>
                                         <h5><?php echo $item['product_name']; ?></h5>
+                                        <?php if (!empty($item['variant_name'])): ?>
+                                            <small class="text-muted">Variant: <?php echo htmlspecialchars($item['variant_name']); ?></small>
+                                        <?php endif; ?>
                                     </td>
                                     <td class="shoping__cart__price">
-                                        <?php echo number_format($item['price'], 2); ?>VNĐ
+                                        $<?php echo number_format($item['price'], 2); ?>
                                     </td>
                                     <script>
                                         document.addEventListener("DOMContentLoaded", function () {
-    // Lặp qua từng ô quantity
-    document.querySelectorAll('.pro-qty').forEach(function (qtyBox) {
-        const form = qtyBox.closest('form');
-        const input = qtyBox.querySelector('input');
+    // Function to handle quantity updates
+    function updateQuantity(input, change) {
+        const form = input.closest('form');
+        const currentQty = parseInt(input.value) || 0;
+        const newQty = Math.max(1, currentQty + change); // Ensure quantity doesn't go below 1
+        
+        input.value = newQty;
+        form.submit();
+    }
 
-        // Thêm sự kiện click cho nút + và -
-        qtyBox.querySelectorAll('.qtybtn').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                // Delay 1 chút để value cập nhật xong rồi xử lý
-                setTimeout(() => {
-                    let qty = parseInt(input.value);
-                    if (isNaN(qty) || qty < 1) {
-                        // Lấy product_id từ form để redirect xóa sản phẩm
-                        const productId = form.querySelector('input[name="product_id"]').value;
-                        window.location.href = `./index.php?controller=cart&action=deletecart&product_id=${productId}`;
-                    } else {
-                        form.submit();
-                    }
-                }, 100);
-            });
-        });
-
-        // Thêm sự kiện onchange cho input số lượng (gõ tay)
-        input.addEventListener('change', function () {
-            let qty = parseInt(input.value);
-            if (isNaN(qty) || qty < 1) {
-                const productId = form.querySelector('input[name="product_id"]').value;
-                window.location.href = `./index.php?controller=cart&action=deletecart&product_id=${productId}`;
+    // Initialize quantity controls
+    document.querySelectorAll('.quantity-control').forEach(control => {
+        const input = control.querySelector('.quantity-input');
+        const minusBtn = control.querySelector('.qtybtn.minus');
+        const plusBtn = control.querySelector('.qtybtn.plus');
+        
+        // Handle minus button click
+        minusBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const currentQty = parseInt(input.value) || 1;
+            if (currentQty > 1) {
+                updateQuantity(input, -1);
             } else {
-                form.submit();
+                // If quantity would go below 1, remove the item
+                const form = input.closest('form');
+                const productId = form.querySelector('input[name="product_id"]').value;
+                const variantId = form.querySelector('input[name="variant_id"]')?.value;
+                let deleteUrl = `./index.php?controller=cart&action=deletecart&product_id=${productId}`;
+                if (variantId) {
+                    deleteUrl += `&variant_id=${variantId}`;
+                }
+                window.location.href = deleteUrl;
             }
+        });
+        
+        // Handle plus button click
+        plusBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            updateQuantity(input, 1);
+        });
+        
+        // Handle manual input
+        input.addEventListener('change', function() {
+            const currentQty = parseInt(input.value) || 1;
+            if (currentQty < 1) {
+                input.value = 1;
+            }
+            input.value = Math.max(1, currentQty); // Ensure minimum quantity is 1
+            input.closest('form').submit();
         });
     });
 });
-
                                     </script>
                                     <td class="shoping__cart__quantity">
-                                        <form action="./index.php?controller=cart&action=updatecart" method="POST">
+                                        <form action="./index.php?controller=cart&action=updatecart" method="POST" class="quantity-control">
                                             <div class="quantity">
-                                                <div class="pro-qty">
-                                                    <!-- Chỉnh sửa input để cập nhật theo mũi tên -->
-                                                    <input type="number" name="qty" value="<?php echo $item['qty']; ?>" min="1" onchange="this.form.submit();"> <!-- Thêm sự kiện onchange để tự động submit khi thay đổi -->
+                                                <div class="cart-qty">
+                                                    <span class="qtybtn minus">-</span>
+                                                    <input type="number" name="qty" class="quantity-input" value="<?php echo $item['qty']; ?>" min="1">
+                                                    <span class="qtybtn plus">+</span>
                                                 </div>
                                             </div>
                                             <input type="hidden" name="product_id" value="<?php echo $item['product_id']; ?>">
+                                            <?php if (!empty($item['variant_id'])): ?>
+                                                <input type="hidden" name="variant_id" value="<?php echo $item['variant_id']; ?>">
+                                            <?php endif; ?>
                                         </form>
                                     </td>
-
-
                                     <td class="shoping__cart__total">
-                                        <?php echo number_format($item['price'] * $item['qty'], 2); ?>VNĐ
+                                        $<?php echo number_format($item['price'] * $item['qty'], 2); ?>
                                     </td>
                                     <td class="shoping__cart__item__close">
-                                        <a href="./index.php?controller=cart&action=deletecart&product_id=<?php echo $item['product_id']; ?>">
+                                        <a href="./index.php?controller=cart&action=deletecart&product_id=<?php echo $item['product_id']; ?><?php if (!empty($item['variant_id'])): ?>&variant_id=<?php echo $item['variant_id']; ?><?php endif; ?>">
                                             <span class="icon_close"></span>
                                         </a>
                                     </td>
@@ -293,39 +315,23 @@ if (!isset($_SESSION['totalQuantityAmount'])) {
         <div class="row">
         <div class="col-lg-12">
                 <div class="shoping__cart__btns">
-                    <a href="./trang-chu.html" class="primary-btn cart-btn">Tiếp tục mua sắm</a>
+                    <a href="./home.html" class="primary-btn cart-btn">Continue Shopping</a>
                 </div>
             </div>
             <div class="col-lg-12">
                 <div class="shoping__checkout">
                     <h5>Cart Total</h5>
                     <ul>
-                        <li>Total <span><?php echo number_format($totalAmount, 2); ?>VNĐ</span></li>
+                        <li>Total <span>$<?php echo number_format($totalAmount, 2); ?></span></li>
                     </ul>
-                    <a href="./dat-hang.html" class="primary-btn">Đặt hàng</a>
+                    <a href="./checkout.html" class="primary-btn">Proceed to Checkout</a>
                 </div>
             </div>
         </div>
     </div>
 <!-- Shoping Cart Section End -->
 
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    fetch("/Public/Includes/Header.html")
-        .then(res => res.text())
-        .then(data => {
-            document.body.insertAdjacentHTML("afterbegin", data);
-        });
-
-    fetch("/Public/Includes/Footer.html")
-        .then(res => res.text())
-        .then(data => {
-            document.body.insertAdjacentHTML("beforeend", data);
-        });
-});
-</script>
-
+<?php include(__DIR__ . '/../Includes/Header.html'); ?>
     <script src="./assets/js/jquery-3.3.1.min.js"></script>
     <script src="./assets/js/bootstrap.min.js"></script>
     <script src="./assets/js/jquery.nice-select.min.js"></script>
@@ -334,5 +340,6 @@ document.addEventListener("DOMContentLoaded", function () {
     <script src="./assets/js/mixitup.min.js"></script>
     <script src="./assets/js/owl.carousel.min.js"></script>
     <script src="./assets/js/main.js"></script>
+<?php include(__DIR__ . '/../Includes/Footer.html'); ?>
 </body>
 </html>

@@ -8,10 +8,7 @@ class ProductModel {
     public $summary;
     public $description;
     public $price;
-    public $price_vip1;
-    public $price_vip2;
     public $category_id;
-    public $brand_id;
     public $countfiles;
     public $images = '';
     public function __construct() {
@@ -20,8 +17,8 @@ class ProductModel {
 
     public function insert() {
 
-        $sql = "INSERT INTO products (name, slug, summary, description, price, price_vip1, price_vip2, images, category_id, brand_id)
-        VALUES (:name, :slug, :summary, :description, :price, :price_vip1, :price_vip2, :images, :category_id, :brand_id)";
+        $sql = "INSERT INTO products (name, slug, summary, description, price, images, category_id)
+        VALUES (:name, :slug, :summary, :description, :price, :images, :category_id)";
 
         
         $stmt = $this->conn->prepare($sql);
@@ -31,21 +28,16 @@ class ProductModel {
         $stmt->bindParam(':summary', $this->summary);
         $stmt->bindParam(':description', $this->description);
         $stmt->bindParam(':price', $this->price);
-        $stmt->bindParam(':price_vip1', $this->price_vip1);
-        $stmt->bindParam(':price_vip2', $this->price_vip2);
 
         $stmt->bindParam(':images', $this->images);
         $stmt->bindParam(':category_id', $this->category_id);
-        $stmt->bindParam(':brand_id', $this->brand_id);
 
         return $stmt->execute();
     }
     
     // Gợi ý thêm:
-    public function updateStatus($id, $currentStatus) {
-        // Toggle the status based on the current status
-        $newStatus = ($currentStatus == 'Active') ? 'Inactive' : 'Active';
-    
+    public function updateStatus($id, $newStatus) {
+        // Set the status to the provided value (no toggling)
         $sql = "UPDATE products SET status = :status WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
         
@@ -58,7 +50,10 @@ class ProductModel {
       
 
     public function getByStatus($status) {
-        // Assuming you are using PDO to interact with the database
+        require_once __DIR__ . '/ProductVariant_Model.php';
+        $variantModel = new ProductVariantModel();
+        
+        // Assuming you are using PDO to interact with database
         if ($status === 'all') {
             $query = "SELECT * FROM products";
         } else {
@@ -72,7 +67,35 @@ class ProductModel {
         }
 
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Add variants and price range to each product
+        foreach ($products as &$product) {
+            $variants = $variantModel->getByProductId($product['id']);
+            $product['variants'] = $variants;
+            
+            // Calculate price range from variants
+            if (!empty($variants)) {
+                $prices = array_column($variants, 'price');
+                $minPrice = min($prices);
+                $maxPrice = max($prices);
+                
+                if ($minPrice == $maxPrice) {
+                    $product['price_range'] = number_format($minPrice, 0, ',', '.') . ' VNĐ';
+                } else {
+                    $product['price_range'] = number_format($minPrice, 0, ',', '.') . ' - ' . number_format($maxPrice, 0, ',', '.') . ' VNĐ';
+                }
+                
+                // Calculate total stock
+                $product['total_stock'] = array_sum(array_column($variants, 'stock_quantity'));
+            } else {
+                // Fallback to product price if no variants
+                $product['price_range'] = number_format($product['price'], 0, ',', '.') . ' VNĐ';
+                $product['total_stock'] = 0;
+            }
+        }
+        
+        return $products;
     }
 
     public function getAvatarImages($arrstr,$height)
@@ -103,14 +126,6 @@ class ProductModel {
         return $result['images'] ?? ''; // Trả về chuỗi hình ảnh nếu có, nếu không trả về chuỗi rỗng
     }
     
-    public function getBrandNameById($brand_id) {
-        $stmt = $this->conn->prepare("SELECT name FROM brands WHERE id = :id");
-        $stmt->bindParam(':id', $brand_id, PDO::PARAM_INT);
-        $stmt->execute();
-        $brand = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $brand ? $brand['name'] : 'N/A';
-    }
-    
     public function getCategoryNameById($category_id) {
         $stmt = $this->conn->prepare("SELECT name FROM categories WHERE id = :id");
         $stmt->bindParam(':id', $category_id, PDO::PARAM_INT);
@@ -126,31 +141,22 @@ class ProductModel {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
     public function update($id) {
-        $sql = "UPDATE products 
-                SET name = :name, 
+        $sql = "UPDATE products SET 
+                    name = :name, 
                     slug = :slug, 
                     summary = :summary, 
                     description = :description,
-                    price = :price, 
-                    price_vip1 = :price_vip1,
-                    price_vip2 = :price_vip2,
                     images = :images, 
-                    category_id = :category_id, 
-                    brand_id = :brand_id 
+                    category_id = :category_id
                 WHERE id = :id";
-
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':name', $this->name);
         $stmt->bindParam(':slug', $this->slug);
         $stmt->bindParam(':summary', $this->summary);
         $stmt->bindParam(':description', $this->description);
-        $stmt->bindParam(':price', $this->price);
-        $stmt->bindParam(':price_vip1', $this->price_vip1);
-        $stmt->bindParam(':price_vip2', $this->price_vip2);
         $stmt->bindParam(':images', $this->images);
         $stmt->bindParam(':category_id', $this->category_id);
-        $stmt->bindParam(':brand_id', $this->brand_id);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
         return $stmt->execute();
@@ -199,4 +205,3 @@ class ProductModel {
     
     
 }
-

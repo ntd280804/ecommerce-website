@@ -1,5 +1,6 @@
 <?php
 require_once("../Config/Database.php"); 
+require_once("ProductVariant_Model.php");
 
 class ProductModel {
     private $conn;
@@ -8,14 +9,12 @@ class ProductModel {
     public $summary;
     public $description;
     public $price;
-    public $vip1_price;
-    public $vip2_price;
     public $category_id;
-    public $brand_id;
     public $countfiles;
     public $images = '';
+    
     public function __construct() {
-        $this->conn = Database::connect(); // Dùng PDO từ class Database
+        $this->conn = Database::connect();
     }
 
 // ...existing code...
@@ -35,45 +34,6 @@ class ProductModel {
         }
         return $html;
     }
-    public function getProductReviews($slug) {
-    // Lấy ID sản phẩm theo slug
-    $stmt = $this->conn->prepare("SELECT id FROM products WHERE slug = ?");
-    $stmt->execute([$slug]);
-    $product = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$product) return [];
-
-    $product_id = $product['id'];
-
-    $sql = "SELECT r.comment, r.rating, u.name AS user_name, r.created_at 
-            FROM reviews r
-            JOIN users u ON r.user_id = u.id
-            WHERE r.product_id = ?
-            ORDER BY r.created_at DESC 
-            LIMIT 5";
-    $stmt = $this->conn->prepare($sql);
-    $stmt->execute([$product_id]);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-
-
-    public function getProductRating($slug) {
-    $stmt = $this->conn->prepare("SELECT id FROM products WHERE slug = ?");
-    $stmt->execute([$slug]);
-    $product = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$product) return ['total_reviews' => 0, 'avg_rating' => 0];
-
-    $product_id = $product['id'];
-
-    $sql = "SELECT COUNT(*) as total_reviews, AVG(rating) as avg_rating 
-            FROM reviews 
-            WHERE product_id = ?";
-    $stmt = $this->conn->prepare($sql);
-    $stmt->execute([$product_id]);
-    return $stmt->fetch(PDO::FETCH_ASSOC);
-}
-
     
     public function getByCategory($category) {
         $sql = "SELECT * FROM products WHERE status = 'active' AND category_id = ?";
@@ -105,14 +65,6 @@ class ProductModel {
         return $result['images'] ?? ''; // Trả về chuỗi hình ảnh nếu có, nếu không trả về chuỗi rỗng
     }
     
-    public function getBrandNameById($brand_id) {
-        $stmt = $this->conn->prepare("SELECT name FROM brands WHERE id = :id");
-        $stmt->bindParam(':id', $brand_id, PDO::PARAM_INT);
-        $stmt->execute();
-        $brand = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $brand ? $brand['name'] : 'N/A';
-    }
-    
     public function getCategoryNameById($category_id) {
         $stmt = $this->conn->prepare("SELECT name FROM categories WHERE id = :id");
         $stmt->bindParam(':id', $category_id, PDO::PARAM_INT);
@@ -121,58 +73,47 @@ class ProductModel {
         return $category ? $category['name'] : 'N/A';
     }
     public function getByslug($slug) {
-        $sql = "SELECT * FROM products WHERE slug = :slug";
+        // First get the basic product info
+        $sql = "SELECT p.*, c.name as category_name, c.slug as category_slug 
+                FROM products p
+                LEFT JOIN categories c ON p.category_id = c.id
+                WHERE p.slug = :slug AND p.status = 'active'";
+                
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':slug', $slug, PDO::PARAM_STR);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-    public function getTopDiscounted($limit = 5) {
-    $sql = "SELECT * 
-            FROM products 
-            WHERE status = 'active' 
-            ORDER BY price DESC 
-            LIMIT :limit";
-
-    $stmt = $this->conn->prepare($sql);
-    $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-
-    
-    
-    public function getAllActiveWithPagination($limit, $offset, $sort = 'default') {
-        $limit = (int)$limit;
-        $offset = (int)$offset;
-    
-        // Xử lý sắp xếp
-        $orderBy = "";
-        if ($sort == 'asc') {
-            $orderBy = "ORDER BY p.price ASC";
-        } elseif ($sort == 'desc') {
-            $orderBy = "ORDER BY p.price DESC";
-        } elseif ($sort == 'rating_asc') {
-            $orderBy = "ORDER BY avg_rating ASC";
-        } elseif ($sort == 'rating_desc') {
-            $orderBy = "ORDER BY avg_rating DESC";
+        $product = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$product) {
+            return null;
         }
-    
-        // Truy vấn lấy sản phẩm kèm avg_rating
-        $sql = "SELECT p.*, COALESCE(AVG(r.rating), 0) AS avg_rating
-                FROM products p
-                LEFT JOIN reviews r ON p.id = r.product_id
-                WHERE p.status = 'Active' 
-                GROUP BY p.id
-                $orderBy
-                LIMIT :limit OFFSET :offset";
-    
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
-        $stmt->execute();
-    
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Get all variants for this product
+        $sqlVariants = "SELECT * FROM product_variants 
+                       WHERE product_id = :product_id 
+                       AND status = 'active'
+                       ORDER BY price ASC";
+        $stmtVariants = $this->conn->prepare($sqlVariants);
+        $stmtVariants->bindParam(':product_id', $product['id'], PDO::PARAM_INT);
+        $stmtVariants->execute();
+        $variants = $stmtVariants->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Add variants to the product data
+        $product['variants'] = $variants;
+        
+        // Calculate min and max prices
+        if (!empty($variants)) {
+            $prices = array_column($variants, 'price');
+            $product['min_price'] = min($prices);
+            $product['max_price'] = max($prices);
+            $product['has_variants'] = count($variants) > 1;
+        } else {
+            $product['min_price'] = $product['price'];
+            $product['max_price'] = $product['price'];
+            $product['has_variants'] = false;
+        }
+        
+        return $product;
     }
     
     public function getByCategoryWithPagination($slug, $limit, $offset, $sort = 'default') {
@@ -182,20 +123,15 @@ class ProductModel {
     // Xử lý sắp xếp
     $orderBy = "";
     if ($sort == 'asc') {
-        $orderBy = "ORDER BY p.price ASC";
+        $orderBy = "ORDER BY p.name ASC";
     } elseif ($sort == 'desc') {
-        $orderBy = "ORDER BY p.price DESC";
-    } elseif ($sort == 'rating_asc') {
-        $orderBy = "ORDER BY avg_rating ASC";
-    } elseif ($sort == 'rating_desc') {
-        $orderBy = "ORDER BY avg_rating DESC";
+        $orderBy = "ORDER BY p.name DESC";
     }
 
-    $sql = "SELECT p.*, COALESCE(AVG(r.rating), 0) AS avg_rating
+    $sql = "SELECT p.*
             FROM products p
-            LEFT JOIN reviews r ON p.id = r.product_id
             JOIN categories c ON p.category_id = c.id
-            WHERE c.slug = :slug AND p.status = 'Active'
+            WHERE c.slug = :slug AND p.status = 'active'
             GROUP BY p.id
             $orderBy
             LIMIT :limit OFFSET :offset";
@@ -217,55 +153,40 @@ class ProductModel {
         // Xử lý sắp xếp
         $orderBy = "";
         if ($sort == 'asc') {
-            $orderBy = "ORDER BY p.price ASC";
+            $orderBy = "ORDER BY p.name ASC";
         } elseif ($sort == 'desc') {
-            $orderBy = "ORDER BY p.price DESC";
-        } elseif ($sort == 'rating_asc') {
-            $orderBy = "ORDER BY avg_rating ASC";
-        } elseif ($sort == 'rating_desc') {
-            $orderBy = "ORDER BY avg_rating DESC";
+            $orderBy = "ORDER BY p.name DESC";
         }
 
         // Truy vấn
-        $sql = "SELECT p.*, COALESCE(AVG(r.rating), 0) AS avg_rating
+        $sql = "SELECT p.*
                 FROM products p
-                LEFT JOIN reviews r ON p.id = r.product_id
                 WHERE 
-                LOWER(p.slug) LIKE ? 
+                p.status = 'active' AND
+                (LOWER(p.slug) LIKE ? 
                 OR LOWER(REPLACE(p.slug, '-', ' ')) LIKE ? 
                 OR LOWER(p.name) LIKE ? 
-                OR LOWER(p.description) LIKE ?
-                GROUP BY p.id
+                OR LOWER(p.description) LIKE ?)
                 $orderBy
-                LIMIT $limit OFFSET $offset";
+                LIMIT :limit OFFSET :offset";
 
         $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute([$param, $param, $param, $param]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    
-    
-    
-    public function countAllActive() {
-        $sql = "SELECT COUNT(*) AS total FROM products WHERE status = 'Active'";
-        $stmt = $this->conn->query($sql);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result['total'];
-    }
-
-    
-    
-    
     public function countSearchProducts($keyword) {
         $keyword = strtolower($keyword);
         $param = '%' . $keyword . '%';
     
         $sql = "SELECT COUNT(*) FROM products 
-                WHERE LOWER(name) LIKE ? 
+                WHERE status = 'active' AND
+                (LOWER(name) LIKE ? 
                    OR LOWER(REPLACE(slug, '-', ' ')) LIKE ? 
                    OR LOWER(description) LIKE ? 
-                   OR LOWER(summary) LIKE ?";
+                   OR LOWER(summary) LIKE ?)";
     
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$param, $param, $param, $param]);
@@ -276,7 +197,7 @@ class ProductModel {
     $sql = "SELECT COUNT(*) AS total 
             FROM products 
             WHERE category_id = (SELECT id FROM categories WHERE slug = :slug) 
-              AND status = 'Active'";
+              AND status = 'active'";
     $stmt = $this->conn->prepare($sql);
     $stmt->bindParam(':slug', $slug, PDO::PARAM_STR);
     $stmt->execute();
@@ -284,24 +205,150 @@ class ProductModel {
     return $result['total'];
 }
 
-
-    public function getTopRated() {
-        $sql = "SELECT p.*, 
-                       COUNT(r.id) AS review_count,
-                       COALESCE(AVG(r.rating), 0) AS avg_rating
-                FROM products p
-                LEFT JOIN reviews r ON p.id = r.product_id
-                WHERE p.status = 'Active'
-                GROUP BY p.id
-                ORDER BY avg_rating DESC, review_count DESC
-                LIMIT 5";   // <-- giới hạn 5 sản phẩm đầu
+    // === METHODS CHO PRODUCT VARIANTS ===
+    
+    // Lấy variants của sản phẩm kèm giá min/max
+    public function getProductWithVariants($slug) {
+        $variantModel = new ProductVariantModel();
+        
+        // Lấy thông tin sản phẩm
+        $sql = "SELECT * FROM products WHERE slug = ?";
         $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$slug]);
+        $product = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$product) return null;
+        
+        // Lấy variants
+        $variants = $variantModel->getByProductId($product['id']);
+        
+        // Lấy giá min/max
+        $minPrice = $variantModel->getLowestPriceVariant($product['id']);
+        $maxPrice = $variantModel->getHighestPriceVariant($product['id']);
+        
+        $product['variants'] = $variants;
+        $product['min_price'] = $minPrice ? $minPrice['price'] : 0;
+        $product['max_price'] = $maxPrice ? $maxPrice['price'] : 0;
+        $product['price_range'] = $this->getPriceRange($product['min_price'], $product['max_price']);
+        
+        return $product;
+    }
+    
+    // Format price range
+    private function getPriceRange($min, $max) {
+        if ($min == $max) {
+            return number_format($min, 0, ',', '.') . ' VNĐ';
+        } else {
+            return number_format($min, 0, ',', '.') . ' - ' . number_format($max, 0, ',', '.') . ' VNĐ';
+        }
+    }
+    
+    // Get product variants by product ID
+    private function getProductVariants($productId) {
+        $sql = "SELECT * FROM product_variants 
+                WHERE product_id = :product_id 
+                AND status = 'active'
+                ORDER BY price ASC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':product_id', $productId, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
+    // Cập nhật getAllActiveWithPagination để làm việc với variants
+    public function getAllActiveWithPagination($limit, $offset, $sort = 'default') {
+        $limit = (int)$limit;
+        $offset = (int)$offset;
     
+        $orderBy = "";
+        if ($sort == 'asc') {
+            $orderBy = "ORDER BY min_price ASC";
+        } elseif ($sort == 'desc') {
+            $orderBy = "ORDER BY min_price DESC";
+        }
     
+        $sql = "SELECT p.*, 
+                       (SELECT MIN(pv.price) FROM product_variants pv WHERE pv.product_id = p.id) as min_price,
+                       (SELECT MAX(pv.price) FROM product_variants pv WHERE pv.product_id = p.id) as max_price
+                FROM products p
+                WHERE p.status = 'active' 
+                AND EXISTS (SELECT 1 FROM product_variants pv WHERE pv.product_id = p.id)
+                GROUP BY p.id
+                $orderBy
+                LIMIT :limit OFFSET :offset";
     
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+    
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Add variants and price range for each product
+        foreach ($products as &$product) {
+            $product['variants'] = $this->getProductVariants($product['id']);
+            $product['price_range'] = $this->getPriceRange($product['min_price'], $product['max_price']);
+        }
+        
+        return $products;
+    }
+    
+    // Cập nhật các method khác để làm việc với variants
+    public function getTopDiscounted($limit = 5) {
+        $sql = "SELECT p.*, 
+                       (SELECT MIN(pv.price) FROM product_variants pv WHERE pv.product_id = p.id) as min_price,
+                       (SELECT MAX(pv.price) FROM product_variants pv WHERE pv.product_id = p.id) as max_price
+                FROM products p
+                WHERE p.status = 'active' 
+                AND EXISTS (SELECT 1 FROM product_variants pv WHERE pv.product_id = p.id)
+                ORDER BY (max_price - min_price) DESC
+                LIMIT :limit";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        foreach ($products as &$product) {
+            $product['price_range'] = $this->getPriceRange($product['min_price'], $product['max_price']);
+        }
+        
+        return $products;
+    }
+    
+    public function getTopRated($limit = 5) {
+        $sql = "SELECT p.*, 
+                       (SELECT MIN(pv.price) FROM product_variants pv WHERE pv.product_id = p.id) as min_price,
+                       (SELECT MAX(pv.price) FROM product_variants pv WHERE pv.product_id = p.id) as max_price
+                FROM products p
+                WHERE p.status = 'active'
+                AND EXISTS (SELECT 1 FROM product_variants pv WHERE pv.product_id = p.id)
+                GROUP BY p.id
+                ORDER BY p.created_at DESC
+                LIMIT :limit";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        foreach ($products as &$product) {
+            $product['price_range'] = $this->getPriceRange($product['min_price'], $product['max_price']);
+        }
+        
+        return $products;
+    }
+    
+    // Cập nhật countAllActive để chỉ đếm sản phẩm có variants
+    public function countAllActive() {
+        $sql = "SELECT COUNT(*) AS total FROM products p 
+                WHERE p.status = 'active' 
+                AND EXISTS (SELECT 1 FROM product_variants pv WHERE pv.product_id = p.id)";
+        $stmt = $this->conn->query($sql);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total'];
+    }
 }
 
